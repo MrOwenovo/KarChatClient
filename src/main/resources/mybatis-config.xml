@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!--    <settings>-->
+<!--        <setting name="cacheEnabled" value="true" />-->
+<!--        <setting name="logImpl" value="JDK_LOGGING"/>-->
+<!--    </settings>-->
+<!--    <typeAliases>-->
+<!--        <package name="ProjectInstances.MyBatis.student"/>-->
+<!--    </typeAliases>-->
+    <environments default="development2">
+        <environment id="development2">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://localhost:3306/图书管理系统"/>
+                <property name="username" value="root"/>
+                <property name="password" value="lmq1226lmq"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+<!--        <mapper class="mybatis.Mapper.UserMapper"/>-->
+<!--        <mapper class="mybatis.Mapper.BookMapper"/>-->
+        <package name="KarChat.Server.DataBase.Mapper"/>
+        <package name="Database.Mapper"/>
+    </mappers>
+</configuration>
