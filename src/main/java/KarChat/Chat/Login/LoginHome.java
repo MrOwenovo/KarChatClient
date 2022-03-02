@@ -64,6 +64,7 @@ public class LoginHome implements ActionListener {
     private final DynamicJLabel signMessage;
     public static DynamicJLabel wrongMessage;
     public static Loading load;
+    public static Loading loadIn;
     private ImageIcon texton;
     private static String usernameMessage;
     private static String passwordMessage1;
@@ -125,6 +126,8 @@ public class LoginHome implements ActionListener {
         //未连接时的加载框
         load = new Loading();
         load.setLayout(null);
+        loadIn = new Loading();
+        loadIn.setLayout(null);
 
 
         left.setBackground(new Color(0, 0, 0, 0));   //将左半部分容器设为透明
@@ -551,6 +554,7 @@ public class LoginHome implements ActionListener {
         background.add(sign);  //加入标志图片
         if (!isAlive)
         background.add(load);  //加入标志图片
+        background.add(loadIn);  //加入标志图片
         background.add(loginLabel);  //加入登录按钮
         background.add(usernameLabel);  //加入账号框
         background.add(passwordLabel);  //加入密码框
@@ -576,6 +580,7 @@ public class LoginHome implements ActionListener {
         sign.setBounds(right.getX() + right.getWidth() / 2 - 75, 120, icon.getIconWidth(), icon.getIconHeight());
         if (!isAlive)
         load.setBounds(right.getX() + right.getWidth() / 2 - 81, 95, icon.getIconWidth()+35, icon.getIconHeight()+35);
+        loadIn.setBounds(right.getX() + right.getWidth() / 2 - 81, 95, icon.getIconWidth()+35, icon.getIconHeight()+35);
 //        load.setBounds(0 ,0, load.getWidth()+230, load.getHeight()+230);
         loginLabel.setBounds(right.getWidth() - 25, 490, loginButtonIcon.getIconWidth() + 30, loginButtonIcon.getIconHeight());
         usernameLabel.setBounds(right.getWidth() - 2, 290, text.getIconWidth(), text.getIconHeight());

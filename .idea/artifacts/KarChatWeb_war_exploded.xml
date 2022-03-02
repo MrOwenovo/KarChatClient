@@ -31,7 +31,6 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-jcl:5.3.13" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:5.3.13" />
           <element id="library" level="project" name="Maven: javazoom:jlayer:1.0.1" />
-          <element id="library" level="project" name="Maven: com.teamdev.jxbrowser:jxbrowser:7.12.2" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:1.7.25" />
         </element>
       </element>

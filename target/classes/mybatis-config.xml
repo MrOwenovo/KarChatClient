@@ -24,6 +24,7 @@
     <mappers>
 <!--        <mapper class="mybatis.Mapper.UserMapper"/>-->
 <!--        <mapper class="mybatis.Mapper.BookMapper"/>-->
+        <package name="KarChat.Server.DataBase.Mapper"/>
         <package name="Database.Mapper"/>
     </mappers>
 </configuration>

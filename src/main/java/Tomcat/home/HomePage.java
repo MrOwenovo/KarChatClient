@@ -19,7 +19,7 @@ public class HomePage extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Context context = new Context();
-        ThymeleafUtil.process("home3-4.html",context,resp.getWriter());
+        ThymeleafUtil.process("home3-1.html",context,resp.getWriter());
 //        if (req.getSession().getAttribute("login-failure") != null) {
 //            context.setVariable("failure",true);
 //            req.getSession().removeAttribute("login-failure");

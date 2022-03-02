@@ -47,7 +47,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                             if (user != null) {
                                 //判断该用户是否已经登录
                                 if (user.getState() != 1) {  //若未登录
-                                    System.out.println("登录成功");
+                                    System.out.println(client.getInetAddress()+": "+client.getPort()+" 登录成功");
                                     out.println("true");
                                     MybatisUnit.doSqlWork(mapper2 -> {
                                         mapper2.updateState(1, finalUsername);

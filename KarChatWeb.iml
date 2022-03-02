@@ -31,6 +31,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="djnativeswing" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:javax.servlet-api:4.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: jakarta.servlet:jakarta.servlet-api:5.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.thymeleaf:thymeleaf:3.0.14.RELEASE" level="project" />
@@ -57,7 +58,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.13" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.13" level="project" />
     <orderEntry type="library" name="Maven: javazoom:jlayer:1.0.1" level="project" />
-    <orderEntry type="library" name="Maven: com.teamdev.jxbrowser:jxbrowser:7.12.2" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.25" level="project" />
   </component>
 </module>

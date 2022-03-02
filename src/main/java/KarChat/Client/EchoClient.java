@@ -18,8 +18,7 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.util.Objects;
 
-import static KarChat.Chat.Login.LoginHome.load;
-import static KarChat.Chat.Login.LoginHome.sign;
+import static KarChat.Chat.Login.LoginHome.*;
 
 /**
  * 客户端程序,向服务器发送请求，并接收客户端的反馈，服务器在EchoThread类里处理信息
@@ -48,6 +47,14 @@ public class EchoClient {
                 while (true) {
                     Thread.sleep(100);  //加入多次点击延迟,防止卡服
                     if (login) {  //判断提交事件是否发生
+                        loadIn.add(sign);  //加入加载条
+                        sign.setBounds(-10,10,155,155);
+                        loadIn.setColor(new Color(115, 175, 197));
+                        LoginHome.wrongMessage.setTextDynamic("登陆中");
+                        wrongMessage.setForeground(new Color(115, 175, 197));
+                        loadIn.show();
+                        Thread.sleep(1000);
+
                         LoginHome.checkLogin(message -> {  //发送到服务器，并判断是否存在该用户
                             out.println("login");  //输出给服务器要进行的功能
                             out.println(message[0]);  //向服务器发送账号

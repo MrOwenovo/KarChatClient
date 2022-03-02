@@ -38,7 +38,7 @@ public class MybatisUnit {
      * 用消费者系统取一个session生成一个mapper对象，分配给每一个要用的消费者
      * @param comsumer
      */
-    public static void doSqlWork(Consumer<Login> comsumer) {
+    public synchronized static void doSqlWork(Consumer<Login> comsumer) {  //加入线程锁，防止多个客户端争夺查询
         try (SqlSession session = MybatisUnit.getSession(true)) {
             Login mapper = session.getMapper(Login.class);
             comsumer.accept(mapper);

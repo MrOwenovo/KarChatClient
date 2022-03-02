@@ -84,13 +84,9 @@
             <artifactId>jlayer</artifactId>
             <version>1.0.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.teamdev.jxbrowser/jxbrowser -->
         <!--   在swing中加载网页     -->
-        <dependency>
-            <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser</artifactId>
-            <version>7.12.2</version>
-        </dependency>
+
+
         <!-- 百里香叶 -->
         <dependency>
             <groupId>org.slf4j</groupId>

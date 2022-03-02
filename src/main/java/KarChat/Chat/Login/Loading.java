@@ -21,6 +21,7 @@ public class Loading extends JPanel {
 
     private static final long serialVersionUID = 1551571546L;
 
+    private Color color=Color.RED;
     private Timer timer;
     private int delay;  //转动间隔
     private int startAngle;  //设置圆角
@@ -68,6 +69,9 @@ public class Loading extends JPanel {
         this.timer = new Timer(delay, new ReboundListener());
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -83,7 +87,7 @@ public class Loading extends JPanel {
         //设置画笔颜色
         g2d.setColor(Color.WHITE);
         g2d.drawArc(width / 2 - 75, height / 2 - 55, 20 + 110, 20 + 110, 0, 360);
-        g2d.setColor(Color.RED);
+        g2d.setColor(color);
         g2d.fillArc(width / 2 - 75, height / 2 - 55, 20 + 110, 20 + 110, startAngle, arcAngle);
         g2d.setColor(Color.WHITE);
         g2d.fillArc(width / 2 - 70, height / 2 - 50, 20 + 100, 20 + 100, 0, 360);

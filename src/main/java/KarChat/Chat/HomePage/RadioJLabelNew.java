@@ -13,7 +13,7 @@ import java.awt.geom.RoundRectangle2D;
  * 通过按钮调用printComponent方法完成的圆角矩形
  */
 public class RadioJLabelNew extends JLabel {
-    private Shape shape = null;  //形状.
+    private Shape shape = null;  //形状..
 
     private Color put;  //放置时颜色
 
