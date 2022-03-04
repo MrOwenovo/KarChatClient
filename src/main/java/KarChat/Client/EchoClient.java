@@ -67,6 +67,8 @@ public class EchoClient {
                             //进入新的界面
                             break label; //退出登录功能
                         } else if ("already".equals(message)) {
+                            loadIn.setColor(new Color(0,0,0,0));
+                            wrongMessage.setForeground(new Color(215, 27, 71, 205));
                             LoginHome.loginLabel.shake();  //错误后让按钮抖动
                             LoginHome.wrongMessage.setTextDynamic("账号已经登录");
                             LoginHome.wrongMessage.shake();
@@ -79,6 +81,8 @@ public class EchoClient {
                             }.start();
                             login = false;  //登录失败标志位重置为false
                         } else {
+                            loadIn.setColor(new Color(0,0,0,0));
+                            wrongMessage.setForeground(new Color(215, 27, 71, 205));
                             LoginHome.loginLabel.shake();  //错误后让按钮抖动
                             LoginHome.wrongMessage.setTextDynamic("账号不存在或密码错误");
                             LoginHome.wrongMessage.shake();
@@ -93,6 +97,13 @@ public class EchoClient {
                         }
                     }
                     if (check) {  //判断提交事件是否发生
+                        loadIn.add(sign);  //加入加载条
+                        sign.setBounds(-10,10,155,155);
+                        loadIn.setColor(new Color(115, 175, 197));
+                        LoginHome.wrongMessage.setTextDynamic("注册中");
+                        wrongMessage.setForeground(new Color(115, 175, 197));
+                        loadIn.show();
+
                         LoginHome.checkLogin(message -> {  //发送到服务器，并判断是否存在该用户
                             out.println("login");  //输出给服务器要进行的功能
                             out.println(message[0]);  //向服务器发送账号
@@ -101,6 +112,9 @@ public class EchoClient {
                             password[0] = message[1];
                         });
                         if ("true".equals(buf.readLine())) {
+                            loadIn.setColor(new Color(0,0,0,0));
+                            wrongMessage.setForeground(new Color(215, 27, 71, 205));
+
                             LoginHome.registerAlready();
                             new Thread(){
                                 @SneakyThrows

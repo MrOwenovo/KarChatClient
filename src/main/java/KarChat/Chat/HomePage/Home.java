@@ -1,5 +1,6 @@
 package KarChat.Chat.HomePage;
 
+import KarChat.Chat.Action.Minimize;
 import KarChat.Chat.Helper.RemoveBackground;
 import KarChat.Chat.Helper.RemoveBlack;
 import KarChat.Chat.Helper.ToBufferedImage;
@@ -12,31 +13,30 @@ import KarChat.Client.EchoClient;
 import KarChat.Game.Panel.MainPanel;
 import chrriis.common.UIUtils;
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
+import com.sun.awt.AWTUtilities;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.Observable;
 
-public class Home implements ActionListener {
+public class Home extends Observable implements ActionListener , Minimize {
 
     public static JLabel menu;
     public static ImageIcon menuIcon;
     public static JLabel iconLabel ; //头像标签
     public static BufferedImage icon;  //头像图片
     public static MouseAdapter menuOpen;  //打开菜单鼠标点击事件
-    private final JLabel game1Back;
-    private final JLabel game1Top;
-    private final ImageIcon game1Icon;
-    private final ImageIcon game2Icon;
+    public static JLabel game1Back;
+    public static JLabel game1Top;
+    public static ImageIcon game1Icon;
+    public static ImageIcon game2Icon;
     private final ImageIcon game2IconNew;
-    private final ImageIcon game3Icon;
+    public static ImageIcon game3Icon;
     private final ImageIcon game3IconNew;
     private final MouseAdapter game1Adapter;  //游戏一动效事件
     public static RadioJLabelNew menuHomeUser;  //点击菜单展开的内容背景
@@ -48,28 +48,33 @@ public class Home implements ActionListener {
     public static RadioJLabelNew menuHomeUser6;
     public static MouseAdapter mouseAd;  //菜单伸缩事件
     public static JLabel menuHomeBack;    //点击菜单展开的内容背景
-    public static JLabel menuHomeBack1;
-    public static JLabel menuHomeBack2;
-    public static JLabel menuHomeBack3;
-    public static JLabel menuHomeBack4;
-    public static JLabel menuHomeBack5;
-    public static JLabel menuHomeBack6;
     public static Frameless back;
     public static RadioJLabelNew home;
+    public static RadioJLabel homeBack;
     private ImageIcon game3IconOn;
-    private final JLabel game3Back;
-    private final JLabel game3Top;
+    public static JLabel game3Back;
+    public static JLabel game3Top;
     private ImageIcon game2IconOn;
-    private final JLabel game2Back;
-    private final JLabel game2Top;
+    public static JLabel game2Back;
+    public static JLabel game2Top;
     private ImageIcon game1IconOn;
     private ImageIcon newMenuIcon;
     public static JLabel menuBack=new JLabel();
     public static JLabel menuTop=new JLabel();
-    public static boolean[] menuFlag = {false}; //是否打开菜单栏
+    public static boolean[] menuFlag = {false}; //是否打开菜单栏0
+    public static boolean[] menuFlag1 = {false}; //是否打开菜单栏1
+    public static boolean[] menuFlag2 = {false}; //是否打开菜单栏2
+    public static boolean[] menuFlag3 = {false}; //是否打开菜单栏3
+    public static boolean[] menuFlag4 = {false}; //是否打开菜单栏4
+    public static boolean[] menuFlag5 = {false}; //是否打开菜单栏5
+    public static boolean[] menuFlag6 = {false}; //是否打开菜单栏6
+    public static int openMenuIndex = -1;  //是否打开菜单栏6
     public static boolean isMenuChild = false;  //判断是否是menu中的组件，防止一直弹
-
-
+    public static JLabel game1;  //三个游戏标签
+    public static JLabel game2;  //三个游戏标签
+    public static JLabel game3;  //三个游戏标签
+    public static  boolean inHome;
+    private boolean iconified;
 
 
     @SneakyThrows
@@ -78,10 +83,35 @@ public class Home implements ActionListener {
         back = new Frameless(1300,843,false);
         back.setUndecorated(true);  //不要边框
         back.setIconImage(ImageIO.read(Resources.getResourceAsStream("login/sign.png")));
+        //背景阴影
+        homeBack = new RadioJLabel("");
+        homeBack.setColor(new Color(239, 238, 238));
+//        homeBack.setColor(new Color(166, 163, 163));
+        homeBack.setArc(40,40);
 
-        JLabel game1;  //三个游戏标签
-        JLabel game2;  //三个游戏标签
-        JLabel game3;  //三个游戏标签
+        //最大化最小化动画
+        back.addWindowListener(new WindowAdapter() {
+            @SneakyThrows
+            @Override
+            public void windowIconified(WindowEvent e) {
+                AWTUtilities.setWindowOpacity(back, 0);  //半透明
+                Home.super.setChanged();  //设置变化点
+                Home.super.notifyObservers(true);
+                //最小化状态
+                iconified = true;
+            }
+
+            @SneakyThrows
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+                AWTUtilities.setWindowOpacity(back, 0);  //半透明
+                iconified = false;
+                maximize();
+                Thread.sleep(1000);
+            }
+
+        });
+
         {  //初始化三个标签
             game1Icon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/game2.png")));
             game1 = new JLabel(game1Icon);
@@ -93,13 +123,7 @@ public class Home implements ActionListener {
 
 
         home = new RadioJLabelNew("");
-        menuHomeBack = new JLabel();   //创建菜单背景
-        menuHomeBack1 = new JLabel();
-        menuHomeBack2 = new JLabel();
-        menuHomeBack3 = new JLabel();
-        menuHomeBack4 = new JLabel();
-        menuHomeBack5 = new JLabel();
-        menuHomeBack6 = new JLabel();
+        menuHomeBack = new JLabel("");   //创建菜单背景
         menuHomeUser = new RadioJLabelNew("");   //创建菜单内容
         menuHomeUser1 = new RadioJLabelNew("");
         menuHomeUser2 = new RadioJLabelNew("");
@@ -116,8 +140,15 @@ public class Home implements ActionListener {
 
         };
         RoundButton Rbut2 = new RoundButton("", new Color(243, 58, 101, 192), new Color(238, 70, 109, 189), new Color(252, 108, 141, 189)) {
+            @SneakyThrows
             @Override
             public void mouseClicked(MouseEvent e) {
+                float MAXTRANS=1;  //透明度
+                while (MAXTRANS >= 0) {
+                    Thread.sleep(2);
+                    AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
+                    MAXTRANS -= 0.03;
+                }
                 System.exit(1);
             }
 
@@ -125,19 +156,49 @@ public class Home implements ActionListener {
 
         home.setArc(30,30);
         menuHomeUser.setArc(30,30);
+        home.setColor(new Color(166, 163, 163));
+        home.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                inHome = true;  //进入了主页面
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                inHome = false;
+            }
+        });
+//        home.setColor(new Color(239, 238, 238));
+
+        //透明开启效果
         new Thread() {  //开启窗口动画
             @SneakyThrows
             @Override
             public void run() {
-                int MAXTRANS=1;  //透明度
-                while (MAXTRANS <= 255) {
-                    Thread.sleep(6);
-                    home.setColor(new Color(239, 238, 238,MAXTRANS));
-                    home.repaint();
-                    MAXTRANS += 3;
+                float MAXTRANS=0;  //透明度
+                while (MAXTRANS <= 1.0) {
+                    Thread.sleep(4);
+                    AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
+                    MAXTRANS += 0.01;
                 }
+                AWTUtilities.setWindowOpacity(back, 1);  //半透明
             }
         }.start();
+
+//        //组件透明开启效果
+//        new Thread() {  //开启窗口动画
+//            @SneakyThrows
+//            @Override
+//            public void run() {
+//                int MAXTRANS=1;  //透明度
+//                while (MAXTRANS <= 255) {
+//                    Thread.sleep(6);
+//                    home.setColor(new Color(239, 238, 238,MAXTRANS));
+//                    home.repaint();
+//                    MAXTRANS += 3;
+//                }
+//            }
+//        }.start();
 
         {  //菜单加入图片
             menuIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/menubar2.png")));
@@ -151,7 +212,7 @@ public class Home implements ActionListener {
         }
         {  //三个游戏标签加入图像和动效
             final int[] GAME = {1};  //默认从第一个开始
-            final boolean[] keepFlag3 = {true};
+            final boolean[] keepFlag3 = {true};  //判断标签3是否在进行，如果被打断就存下当前的位置
             final int[] WIDTHNOW3 = {0};  //加入状态判断，防止来回试探卡bug
             final boolean[] keepFlag2 = {true};
             final int[] WIDTHNOW2 = {0};  //加入状态判断，防止来回试探卡bug
@@ -212,8 +273,8 @@ public class Home implements ActionListener {
 
                                                                 if (WIDTH < 285 - (game2IconOn.getIconWidth() - game2Icon.getIconWidth()))
                                                                     game2.setIcon(game2Icon);
-                                                                WIDTH -= 9;
-                                                                GAME3WIDTH -= 9;
+                                                                WIDTH -= 7;
+                                                                GAME3WIDTH -= 7;
                                                                 if (keepFlag2[0]) {
                                                                     WIDTHNOW2[0] = WIDTH;
                                                                     keepFlag2[0] = true;
@@ -243,7 +304,7 @@ public class Home implements ActionListener {
                                                                 game3Top.setBounds(WIDTH, 4, game3IconOn.getIconWidth(), game3Icon.getIconHeight());
                                                                 if (WIDTH < 315 - (game3IconOn.getIconWidth() - game3Icon.getIconWidth()))
                                                                     game3.setIcon(game3Icon);
-                                                                WIDTH -= 9;
+                                                                WIDTH -= 7;
                                                                 if (keepFlag3[0]) {
                                                                     WIDTHNOW3[0] = WIDTH;
                                                                     keepFlag3[0] = true;
@@ -262,7 +323,7 @@ public class Home implements ActionListener {
                                                     break All;
                                         }
 
-                                        Thread.sleep(350);
+                                        Thread.sleep(900);
                                         game1Back.setBounds(340, 100, game1IconOn.getIconWidth(), game1IconOn.getIconHeight());
 
                                         while (WIDTH < -48) {
@@ -272,9 +333,9 @@ public class Home implements ActionListener {
                                             game2.setBounds(GAME2WIDTH, 100, game2Icon.getIconWidth(), game2IconOn.getIconHeight());
                                             game3.setBounds(GAME3WIDTH, 100, game3Icon.getIconWidth(), game3IconOn.getIconHeight());
 
-                                            WIDTH += 9;
-                                            GAME2WIDTH += 9;
-                                            GAME3WIDTH += 9;
+                                            WIDTH += 7;
+                                            GAME2WIDTH += 7;
+                                            GAME3WIDTH += 7;
                                             if (!keepFlag[0]) {
                                                 WIDTHNOW[0] = WIDTH;
                                                 keepFlag[0] = false;
@@ -350,9 +411,9 @@ public class Home implements ActionListener {
                                                                 game2.setBounds(GAME2WIDTH, 100, game2Icon.getIconWidth(), game2IconOn.getIconHeight());
                                                                 game3.setBounds(GAME3WIDTH, 100, game3Icon.getIconWidth(), game3IconOn.getIconHeight());
 
-                                                                WIDTH -= 9;
-                                                                GAME2WIDTH -= 9;
-                                                                GAME3WIDTH -= 9;
+                                                                WIDTH -= 7;
+                                                                GAME2WIDTH -= 7;
+                                                                GAME3WIDTH -= 7;
                                                                 if (keepFlag[0]) {
                                                                     WIDTHNOW[0] = WIDTH;
                                                                     canGo[0] = true;
@@ -381,7 +442,7 @@ public class Home implements ActionListener {
                                                                 game3Top.setBounds(WIDTH, 4, game3IconOn.getIconWidth(), game3Icon.getIconHeight());
                                                                 if (WIDTH < 315 - (game3IconOn.getIconWidth() - game3Icon.getIconWidth()))
                                                                     game3.setIcon(game3Icon);
-                                                                WIDTH -= 9;
+                                                                WIDTH -= 7;
                                                                 if (keepFlag3[0]) {
                                                                     WIDTHNOW3[0] = WIDTH;
                                                                     keepFlag3[0] = true;
@@ -400,7 +461,7 @@ public class Home implements ActionListener {
                                                     break All;
                                         }
 
-                                        Thread.sleep(350);
+                                        Thread.sleep(700);
                                         game2Back.setBounds(480, 100, game2IconOn.getIconWidth(), game2IconOn.getIconHeight());
 
                                         while (WIDTH < -48) {
@@ -409,8 +470,8 @@ public class Home implements ActionListener {
                                             game2.setIcon(game2IconNew);
                                             game3.setBounds(GAME3WIDTH, 100, game3Icon.getIconWidth(), game3IconOn.getIconHeight());
 
-                                            WIDTH += 9;
-                                            GAME3WIDTH += 9;
+                                            WIDTH += 7;
+                                            GAME3WIDTH += 7;
                                             if (!keepFlag2[0]) {
                                                 WIDTHNOW2[0] = WIDTH;
                                                 keepFlag2[0] = false;
@@ -497,9 +558,9 @@ public class Home implements ActionListener {
                                                                 game2.setBounds(GAME2WIDTH, 100, game2Icon.getIconWidth(), game2IconOn.getIconHeight());
                                                                 game3.setBounds(GAME3WIDTH, 100, game3Icon.getIconWidth(), game3IconOn.getIconHeight());
 
-                                                                WIDTH -= 9;
-                                                                GAME2WIDTH -= 9;
-                                                                GAME3WIDTH -= 9;
+                                                                WIDTH -= 7;
+                                                                GAME2WIDTH -= 7;
+                                                                GAME3WIDTH -= 7;
                                                                 if (keepFlag[0]) {
                                                                     WIDTHNOW[0] = WIDTH;
                                                                     canGo[0] = true;
@@ -531,8 +592,8 @@ public class Home implements ActionListener {
 
                                                                 if (WIDTH < 285 - (game2IconOn.getIconWidth() - game2Icon.getIconWidth()))
                                                                     game2.setIcon(game2Icon);
-                                                                WIDTH -= 11;
-                                                                GAME3WIDTH -= 11;
+                                                                WIDTH -= 7;
+                                                                GAME3WIDTH -= 7;
                                                                 if (keepFlag2[0]) {
                                                                     WIDTHNOW2[0] = WIDTH;
                                                                     keepFlag2[0] = true;
@@ -551,14 +612,14 @@ public class Home implements ActionListener {
                                                 canGo[0] = true;
                                                 break All;
                                         }
-                                        Thread.sleep(350);
+                                        Thread.sleep(700);
 
                                         game3Back.setBounds(620, 100, game3IconOn.getIconWidth(), game3IconOn.getIconHeight());
                                         while (WIDTH < -48) {
                                             Thread.sleep(1);
                                             game3Top.setBounds(WIDTH, 4, game3IconOn.getIconWidth(), game3Icon.getIconHeight());
                                             game3.setIcon(game3IconNew);
-                                            WIDTH += 11;
+                                            WIDTH += 7;
                                             if (!keepFlag3[0]) {
                                                 WIDTHNOW3[0] = WIDTH;
                                                 canGo[0] = true;
@@ -609,17 +670,11 @@ public class Home implements ActionListener {
         back.add(menuBack);  //加入背景
         back.add(menuHomeBack);  //点击菜单展开的内容背景
         menuHomeBack.add(menuHomeUser);   //点击菜单展开的内容
-        back.add(menuHomeBack1);  //点击菜单展开的内容背景
         menuHomeBack.add(menuHomeUser1);   //点击菜单展开的内容
-        back.add(menuHomeBack2);  //点击菜单展开的内容背景
         menuHomeBack.add(menuHomeUser2);   //点击菜单展开的内容
-        back.add(menuHomeBack3);  //点击菜单展开的内容背景
         menuHomeBack.add(menuHomeUser3);   //点击菜单展开的内容
-        back.add(menuHomeBack4);  //点击菜单展开的内容背景
         menuHomeBack.add(menuHomeUser4);   //点击菜单展开的内容
-        back.add(menuHomeBack5);  //点击菜单展开的内容背景
         menuHomeBack.add(menuHomeUser5);   //点击菜单展开的内容
-        back.add(menuHomeBack6);  //点击菜单展开的内容背景
         menuHomeBack.add(menuHomeUser6);   //点击菜单展开的内容
 
         back.add(game1);  //加入背景
@@ -630,11 +685,13 @@ public class Home implements ActionListener {
         back.add(game3Back);  //加入背景
         home.add(Rbut1);  //加入右上角按钮
         home.add(Rbut2);
+        back.add(homeBack); //加入背景
         back.add(home);  //加入主页面
 
 
 
         home.setBounds(0,50,1300,743);
+        homeBack.setBounds(240,80,960,673);
         menu.setBounds(50, 20, menuIcon.getIconWidth(), menuIcon.getIconHeight());
         game1.setBounds(290, 100, game1Icon.getIconWidth(), game1IconOn.getIconHeight());
         Rbut1.setBounds(home.getWidth()-90, 20, 25, 25);  //设置小按钮位置
@@ -672,14 +729,22 @@ public class Home implements ActionListener {
                 isMenuChild = true;  //是子组件
             }
         });
+        final boolean[] canDo = {true,true};
         menuOpen = new MouseAdapter() {
             @SneakyThrows
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!menuFlag[0]) {  //展开
+                if (!menuFlag[0]&& canDo[0]&&canDo[1]) {  //展开
+                    canDo[0] = false;
+                    canDo[1] = false;
                     menuFlag[0] = true;//修改标记位
                     menuHomeBack.setBounds(115, 10, menuIcon.getIconWidth()+600, menuIcon.getIconHeight()+20);
                     menuHomeUser.setBounds(124, 8, menuIcon.getIconWidth()+200, menuIcon.getIconHeight());
+
+                    if (openMenuIndex != -1) {
+                        Menu.DealWithOldMenuCont(openMenuIndex,canDo);
+                    }
+
                     new Thread() {  //菜单栏开启窗口动画
                         @SneakyThrows
                         @Override
@@ -689,26 +754,11 @@ public class Home implements ActionListener {
                                 Thread.sleep(6);
                                 menuHomeUser.setColor(new Color(239, 238, 238,MAXTRANS));
                                 menuHomeUser.repaint();
-                                MAXTRANS += 4;
+                                MAXTRANS += 5;
                             }
+                            canDo[0] = true;
                         }
                     }.start();
-                    new Thread() {  //菜单栏开启窗口动画
-                        @SneakyThrows
-                        @Override
-                        public void run() {
-                            int MAXTRANS=255;  //透明度
-                            while (MAXTRANS >= 0) {
-                                Thread.sleep(6);
-                                home.setColor(new Color(239, 238, 238,MAXTRANS));
-                                home.repaint();
-                                MAXTRANS -= 3;
-                            }
-                        }
-                    }.start();
-
-                }else if (menuFlag[0]) {
-                    menuFlag[0] = false;//修改标记位
                     new Thread() {  //菜单栏开启窗口动画
                         @SneakyThrows
                         @Override
@@ -716,12 +766,41 @@ public class Home implements ActionListener {
                             int MAXTRANS=255;  //透明度
                             while (MAXTRANS >= 100) {
                                 Thread.sleep(6);
-                                menuHomeUser.setColor(new Color(239, 238, 238,MAXTRANS));
-                                menuHomeUser.repaint();
-                                MAXTRANS -= 4;
+                                home.setColor(new Color(166, 163, 163,MAXTRANS));
+                                game1Back.remove(game1Top);
+                                game2Back.remove(game2Top);
+                                game3Back.remove(game3Top);
+                                homeBack.setColor(new Color(239, 238, 238, MAXTRANS));
+                                game1.setSize(0,0);
+                                game2.setSize(0,0);
+                                game3.setSize(0,0);
+                                home.repaint();
+                                MAXTRANS -= 7;
                             }
+                            canDo[1] = true;
                         }
                     }.start();
+                    openMenuIndex = 0;
+
+                }else if (menuFlag[0]&& canDo[0]&&canDo[1]) {
+                    canDo[0] = false;
+                    canDo[1] = false;
+                    menuFlag[0] = false;//修改标记位
+                    new Thread() {  //菜单栏开启窗口动画
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            int MAXTRANS=255;  //透明度
+                            while (MAXTRANS >= 0) {
+                                Thread.sleep(6);
+                                menuHomeUser.setColor(new Color(239, 238, 238,MAXTRANS));
+                                menuHomeUser.repaint();
+                                MAXTRANS -= 5;
+                            }
+                            canDo[0] = true;
+                        }
+                    }.start();
+                    openMenuIndex = -1;
                     new Thread() {  //菜单栏开启窗口动画
                         @SneakyThrows
                         @Override
@@ -729,10 +808,17 @@ public class Home implements ActionListener {
                             int MAXTRANS=1;  //透明度
                             while (MAXTRANS <= 255) {
                                 Thread.sleep(6);
-                                home.setColor(new Color(239, 238, 238,MAXTRANS));
+                                home.setColor(new Color(166, 163, 163,MAXTRANS));
+                                game1Back.add(game1Top);
+                                game2Back.add(game2Top);
+                                game3Back.add(game3Top);
+                                game1.setSize(game1Icon.getIconWidth(),game1Icon.getIconHeight());
+                                game2.setSize(game1Icon.getIconWidth(),game1Icon.getIconHeight());
+                                game3.setSize(game1Icon.getIconWidth(),game1Icon.getIconHeight());
                                 home.repaint();
-                                MAXTRANS += 3;
+                                MAXTRANS += 12;
                             }
+                            canDo[1] = true;
                         }
                     }.start();
                 }
@@ -750,4 +836,58 @@ public class Home implements ActionListener {
         new Home();
     }
 
+    /**
+     * 最小化动画
+     */
+    @Override
+    public void minimize() {
+        //透明开启效果
+        new Thread() {  //开启窗口动画
+            @SneakyThrows
+            @Override
+            public void run() {
+                float MAXTRANS=1;  //透明度
+                while (MAXTRANS >= 0) {
+                    Thread.sleep(4);
+                    AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
+                    MAXTRANS -= 0.01;
+                }
+                AWTUtilities.setWindowOpacity(back, 1);  //半透明
+            }
+        }.start();
+    }
+
+    /**
+     * 最大化动画
+     */
+    @Override
+    public void maximize() {
+//透明开启效果
+        new Thread() {  //开启窗口动画
+            @SneakyThrows
+            @Override
+            public void run() {
+                float MAXTRANS=0;  //透明度
+                while (MAXTRANS <= 1.0) {
+                    if (iconified) {
+                        AWTUtilities.setWindowOpacity(back, 0);  //半透明
+                        return;
+                    }
+                    Thread.sleep(4);
+                    if (iconified) {
+                        AWTUtilities.setWindowOpacity(back, 0);  //半透明
+                        return;
+                    }
+                    AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
+                    MAXTRANS += 0.01;
+                    if (iconified) {
+                        AWTUtilities.setWindowOpacity(back, 0);  //半透明
+                        return;
+                    }
+                }
+                iconified = false;
+                AWTUtilities.setWindowOpacity(back, 1);  //半透明
+            }
+        }.start();
+    }
 }

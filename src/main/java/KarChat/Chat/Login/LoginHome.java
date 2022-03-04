@@ -1,7 +1,9 @@
 package KarChat.Chat.Login;
 
+import KarChat.Chat.Action.Minimize;
 import KarChat.Chat.Helper.ToBufferedImage;
 import KarChat.Chat.Helper.ToPicture;
+import KarChat.Chat.HomePage.Home;
 import KarChat.Chat.Login.Button.RoundButton;
 import KarChat.Chat.Sound.PlaySound;
 import KarChat.Client.EchoClient;
@@ -24,7 +26,10 @@ import java.util.function.Consumer;
 /**
  * 登录窗口,用绝对定位前后排列
  */
-public class LoginHome implements ActionListener {
+public class LoginHome implements ActionListener, Minimize {
+
+    static boolean iconified;
+
     public static void main(String[] args) {
         new LoginHome();
     }
@@ -90,6 +95,7 @@ public class LoginHome implements ActionListener {
         left = new JLabel();  //左半部分标签，不用容器
         right = new JPanel();  //右半部分容器
 
+        //透明开启效果
         new Thread() {  //开启窗口动画
             @SneakyThrows
             @Override
@@ -104,6 +110,27 @@ public class LoginHome implements ActionListener {
             }
         }.start();
 
+        //最大化最小化动画
+        background.addWindowListener(new WindowAdapter() {
+            @SneakyThrows
+            @Override
+            public void windowIconified(WindowEvent e) {
+                AWTUtilities.setWindowOpacity(background, 0);  //半透明
+                //最小化状态
+                iconified = true;
+            }
+
+            @SneakyThrows
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+                AWTUtilities.setWindowOpacity(background, 0);  //半透明
+                iconified = false;
+                maximize();
+                Thread.sleep(1000);
+            }
+
+
+        });
         //创建右上角圆按钮，并添加监听器
         RoundButton Rbut1 = new RoundButton("", new Color(58, 124, 243, 190), new Color(92, 143, 236, 221), new Color(132, 171, 243, 181)) {
             @Override
@@ -113,8 +140,15 @@ public class LoginHome implements ActionListener {
 
         };
         RoundButton Rbut2 = new RoundButton("", new Color(243, 58, 101, 192), new Color(238, 70, 109, 189), new Color(252, 108, 141, 189)) {
+            @SneakyThrows
             @Override
             public void mouseClicked(MouseEvent e) {
+                float MAXTRANS=1;  //透明度
+                while (MAXTRANS >= 0) {
+                    Thread.sleep(2);
+                    AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
+                    MAXTRANS -= 0.03;
+                }
                 System.exit(1);
             }
 
@@ -808,4 +842,58 @@ public class LoginHome implements ActionListener {
     }
 
 
+    /**
+     * 最小化动画
+     */
+    @Override
+    public void minimize() {
+        //透明开启效果
+        new Thread() {  //开启窗口动画
+            @SneakyThrows
+            @Override
+            public void run() {
+                float MAXTRANS=1;  //透明度
+                while (MAXTRANS >= 0) {
+                    Thread.sleep(4);
+                    AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
+                    MAXTRANS -= 0.01;
+                }
+                AWTUtilities.setWindowOpacity(background, 1);  //半透明
+            }
+        }.start();
+    }
+
+    /**
+     * 最大化动画
+     */
+    @Override
+    public void maximize() {
+//透明开启效果
+        new Thread() {  //开启窗口动画
+            @SneakyThrows
+            @Override
+            public void run() {
+                float MAXTRANS=0;  //透明度
+                while (MAXTRANS <= 1.0) {
+                    if (iconified) {
+                        AWTUtilities.setWindowOpacity(background, 0);  //半透明
+                        return;
+                    }
+                    Thread.sleep(4);
+                    if (iconified) {
+                        AWTUtilities.setWindowOpacity(background, 0);  //半透明
+                        return;
+                    }
+                    AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
+                    MAXTRANS += 0.01;
+                    if (iconified) {
+                        AWTUtilities.setWindowOpacity(background, 0);  //半透明
+                        return;
+                    }
+                }
+                iconified = false;
+                AWTUtilities.setWindowOpacity(background, 1);  //半透明
+            }
+        }.start();
+    }
 }

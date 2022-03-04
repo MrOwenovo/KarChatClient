@@ -1,6 +1,6 @@
 package KarChat.Chat.Login;
 
-import KarChat.Chat.Login.Button.Shakeable;
+import KarChat.Chat.Action.Shakeable;
 import lombok.SneakyThrows;
 
 import javax.swing.*;

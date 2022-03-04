@@ -13,6 +13,8 @@ import java.net.SocketException;
  */
 public class EchoThreadServer {
     private static Socket client = null;
+    public static UserTable table;
+
     public static void main(String[] args) throws Exception{
         //用try-with-resource处理关闭
         try(ServerSocket server = new ServerSocket(8888);  //此服务器在8888端口上进行监听
@@ -25,6 +27,13 @@ public class EchoThreadServer {
                 i++;
                 if (flag) {
                     System.out.println("服务器运行，等待客户端连接");
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            //打开用户管理页面
+                            table = new UserTable();  //总线程
+                        }
+                    }.start();
                     flag = false; //标记为负数
                 }
                 client = server.accept();  //接收客户端连接

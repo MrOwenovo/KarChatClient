@@ -1,4 +1,4 @@
-package KarChat.Chat.Login.Button;
+package KarChat.Chat.Action;
 
 /**
  * 可抖动接口

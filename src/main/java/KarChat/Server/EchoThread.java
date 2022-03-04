@@ -12,6 +12,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketException;
 
+import static KarChat.Server.EchoThreadServer.table;
+
 /**
  * 服务器处理类,加入多线程机制,在此类中处理客户端发来的数据，并返回给客户端
  */
@@ -52,6 +54,14 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                     MybatisUnit.doSqlWork(mapper2 -> {
                                         mapper2.updateState(1, finalUsername);
                                     });
+                                    new Thread() {  //新建加入用户的线程，防止影响登录时间
+                                        @Override
+                                        public void run() {
+                                            table.setAdd(client.getInetAddress().toString(), String.valueOf(client.getPort()), username, "在线");
+                                            new Thread(table).start();  //新建添加用户的子线程
+                                        }
+                                    }.start();
+
                                 }else{
                                     out.println("already");
                                 }
@@ -84,11 +94,19 @@ public class EchoThread implements Runnable {  //实现Runnable接口
 
         } catch (SocketException | NullPointerException e) {
             System.out.println(this.client.getInetAddress() + "连接异常");
+
         }finally{
             String finalUsername1 = username;
             MybatisUnit.doSqlWork(mapper->{
                 mapper.updateState(0, finalUsername1);
             });
+            new Thread() {  //新建删除用户的线程
+                @Override
+                public void run() {
+                    table.setExit(username);
+                    new Thread(table).start();  //新建删除用户的子线程
+                }
+            }.start();
         }
 
     }
