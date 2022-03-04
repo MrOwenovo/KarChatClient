@@ -23,6 +23,10 @@ public class RadioJLabel extends JLabel implements MouseListener , MouseMotionLi
         super(s);
         addMouseListener(this);
     }
+    public RadioJLabel(ImageIcon icon) {
+        super(icon);
+        addMouseListener(this);
+    }
 
     public void setColor(Color p) {
         put = p;
@@ -103,5 +107,12 @@ public class RadioJLabel extends JLabel implements MouseListener , MouseMotionLi
     public void setArc(int arcWidth, int arcHeight) {
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
+    }
+
+    /**
+     * 获得当前颜色
+     */
+    public Color getColor() {
+        return put;
     }
 }
