@@ -2,32 +2,41 @@ package KarChat.Client;
 
 import KarChat.Chat.Helper.GetPicture;
 import KarChat.Chat.HomePage.Home;
+import KarChat.Chat.HomePage.MenuContent;
 import KarChat.Chat.Login.*;
 import KarChat.Chat.Login.Button.RadioButton;
 import KarChat.Chat.Login.Button.RoundButton;
 import KarChat.Chat.Login.Button.ThreeDimensionalBorder;
 import KarChat.Chat.Sound.PlaySound;
+import KarChat.Server.DataBase.Entry.Post;
 import lombok.SneakyThrows;
+import org.apache.commons.io.input.ObservableInputStream;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.util.Objects;
+import java.util.*;
 
+import static KarChat.Chat.HomePage.MenuContent.iconLength;
+import static KarChat.Chat.HomePage.MenuContent.iconName;
 import static KarChat.Chat.Login.LoginHome.*;
 
 /**
  * 客户端程序,向服务器发送请求，并接收客户端的反馈，服务器在EchoThread类里处理信息
  */
-public class EchoClient {
+public class EchoClient{
 
     public static boolean login =false;  //判断是否登录
     public static boolean check =false;  //判断是否存在用户
     public static boolean getIcon =false;  //判断是否更换头像
+    public static boolean get =false;  //获取所有请求
+    public static boolean post =false;  //获取所有发送
+    public static boolean getSbIcon =false;  //获取某人头像
+    public static boolean getSbIconGet =false;  //获取某人头像
+    public static boolean addFriend =false;  //加好友
+    public static boolean remember =false;  //是否记住密码
 
     public static void main(String[] args) throws Exception{
         try (
@@ -37,6 +46,21 @@ public class EchoClient {
                 BufferedReader buf = new BufferedReader(new InputStreamReader(clien.getInputStream())); //接收服务器返回的信息
         ) {
             new LoginHome();  //打开客户端登录窗口
+            {  //判断是否储存密码
+                try (Scanner sc=new Scanner(new FileReader("userMessage"))) {
+                    while (sc.hasNextLine()) {
+                        String user = sc.nextLine();
+                        String pass = sc.nextLine();
+                        username.setText(user);
+                        password.setText(pass);
+                        passwordMessage.setText("");
+                    }
+
+                } catch (FileNotFoundException e) {
+                    System.out.println("EchoClient:没有保存的账号密码文件");
+                }
+
+            }
 
             final String[] username;
             final String[] password;
@@ -59,10 +83,19 @@ public class EchoClient {
                             out.println("login");  //输出给服务器要进行的功能
                             out.println(message[0]);  //向服务器发送账号
                             out.println(message[1]);  //向服务器发送密码
+                            username[0] = message[0];
+                            password[0] = message[0];
                         });
                         String message = buf.readLine();
                         if ("true".equals(message)) {
                             System.out.println("登录成功");
+                            {  //判断是否保存密码，保存了则储存密码
+                                if (remember) {  //保存密码
+                                    PrintStream userMessage = new PrintStream(new FileOutputStream("userMessage"));
+                                    userMessage.println(username[0]);
+                                    userMessage.println(password[0]);
+                                }
+                            }
                             LoginHome.background.dispose();  //登录成功关闭页面
                             //进入新的界面
                             break label; //退出登录功能
@@ -130,6 +163,7 @@ public class EchoClient {
                             out.println(password[0]);
                             out.println(LoginHome.iconString);
                             if (Objects.equals(buf.readLine(), "true")) {
+                                Thread.sleep(1000);
                                 LoginHome.registerFinish(username[0], password[0]);  //做出注册完反馈
                             }
                             check = false;  //登录失败标志位重置为false
@@ -140,9 +174,12 @@ public class EchoClient {
             }
             label2:
             {
-                new Home();  //打开客户端登录窗口
+                //打开客户端登录窗口
+                new Home();
 
                 while (true) {
+                    Thread.sleep(100);  //加入多次点击延迟,防止卡服
+
                     if (getIcon) {
                         out.println("getIcon");
                         String iconString = buf.readLine();
@@ -150,6 +187,76 @@ public class EchoClient {
                         Home.setIcon(icon);
                         getIcon = false;  //修改标签
                     }
+                    if (get) {
+                        out.println("get");
+                        out.println(username[0]);
+                        int length = Integer.parseInt(buf.readLine());
+                        Post[] posts = new Post[length];
+                        for (int i = 0; i < length; i++) {
+                            String post = buf.readLine();
+                            String get = buf.readLine();
+                            posts[i] = new Post(post, get);  //获取每一个请求
+                        }
+                        MenuContent.getPosts(posts);  //发送所有请求
+                        get = false;
+                    }
+                    if (getSbIcon) {
+
+                        out.println("getSbIcon");
+                        out.println(iconLength);
+                        for (int i = 0; i < iconLength; i++) {
+                            out.println(iconName[i]);
+                            BufferedImage icon = GetPicture.stringToImage(buf.readLine());  //转成图片
+                            MenuContent.images[i] = icon;
+                        }
+                        getSbIcon = false;
+                        MenuContent.setContext();
+//                        break label2;
+                    }
+                    if (getSbIconGet) {
+
+                        out.println("getSbIconGet");
+                        out.println(MenuContent.iconLengthGet);
+                        for (int i = 0; i < MenuContent.iconLengthGet; i++) {
+                            out.println(MenuContent.iconNameGet[i]);
+                            BufferedImage icon = GetPicture.stringToImage(buf.readLine());  //转成图片
+                            MenuContent.imagesGet[i] = icon;
+                        }
+                        getSbIconGet = false;
+                        MenuContent.setContextGet();
+//                        break label2;
+                    }
+                    if (addFriend) {
+                        out.println("addFriend");
+                        out.println(MenuContent.friendName);
+                        System.out.println(MenuContent.friendName);
+                        String bool=buf.readLine();
+                        System.out.println(bool);
+//
+                        if (bool.equals("true")) {
+                            MenuContent.searchText.setText("已发送好友邀请");
+                            MenuContent.searchText.setForeground(new Color(62, 171, 159));
+                        }else{
+                            MenuContent.searchText.setText("用户名输入错误");
+                            MenuContent.searchText.setForeground(new Color(161, 19, 19));
+                        }
+                        addFriend = false;
+                    }
+                    if (post) {
+                        out.println("post");
+                        out.println(username[0]);
+                        int length = Integer.parseInt(buf.readLine());
+                        Post[] posts = new Post[length];
+                        for (int i = 0; i < length; i++) {
+                            String post = buf.readLine();
+                            String get = buf.readLine();
+                            posts[i] = new Post(post, get);  //获取每一个请求
+                            System.out.println(post+get);
+                        }
+                        MenuContent.getGets(posts);  //发送所有请求
+                        post = false;
+                    }
+
                 }
             }
 
@@ -190,4 +297,5 @@ public class EchoClient {
             }
         }
         }
-    }
+
+}

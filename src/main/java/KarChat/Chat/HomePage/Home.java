@@ -11,8 +11,6 @@ import KarChat.Chat.Login.RadioJLabel;
 import KarChat.Chat.Login.ShakeLabel;
 import KarChat.Client.EchoClient;
 import KarChat.Game.Panel.MainPanel;
-import chrriis.common.UIUtils;
-import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import com.sun.awt.AWTUtilities;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
@@ -75,18 +73,19 @@ public class Home extends Observable implements ActionListener , Minimize {
     public static JLabel game3;  //三个游戏标签
     public static  boolean inHome;
     private boolean iconified;
+    private int xOld;
+    private int yOld;
 
 
     @SneakyThrows
     public Home() {
-        System.setProperty("sun.java2d.noddraw", "true");  //防止输入法输入时白屏，禁用DirectDraw
+//        System.setProperty("sun.java2d.noddraw", "true");  //防止输入法输入时白屏，禁用DirectDraw
         back = new Frameless(1300,843,false);
         back.setUndecorated(true);  //不要边框
         back.setIconImage(ImageIO.read(Resources.getResourceAsStream("login/sign.png")));
         //背景阴影
         homeBack = new RadioJLabel("");
         homeBack.setColor(new Color(239, 238, 238));
-//        homeBack.setColor(new Color(166, 163, 163));
         homeBack.setArc(40,40);
 
         //最大化最小化动画
@@ -112,6 +111,7 @@ public class Home extends Observable implements ActionListener , Minimize {
 
         });
 
+
         {  //初始化三个标签
             game1Icon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/game2.png")));
             game1 = new JLabel(game1Icon);
@@ -125,12 +125,46 @@ public class Home extends Observable implements ActionListener , Minimize {
         home = new RadioJLabelNew("");
         menuHomeBack = new JLabel("");   //创建菜单背景
         menuHomeUser = new RadioJLabelNew("");   //创建菜单内容
+        menuHomeUser.setColor(new Color(239, 238, 238));
         menuHomeUser1 = new RadioJLabelNew("");
+        menuHomeUser1.setColor(new Color(239, 238, 238));
         menuHomeUser2 = new RadioJLabelNew("");
+        menuHomeUser2.setColor(new Color(239, 238, 238));
         menuHomeUser3 = new RadioJLabelNew("");
+        menuHomeUser3.setColor(new Color(239, 238, 238));
         menuHomeUser4 = new RadioJLabelNew("");
+        menuHomeUser4.setColor(new Color(239, 238, 238));
         menuHomeUser5 = new RadioJLabelNew("");
+        menuHomeUser5.setColor(new Color(239, 238, 238));
         menuHomeUser6 = new RadioJLabelNew("");
+        menuHomeUser6.setColor(new Color(239, 238, 238));
+
+
+
+        //处理鼠标点击事件
+        home.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                xOld = e.getX();  //存储点击时的坐标
+                yOld = e.getY();
+            }
+        });
+        //处理鼠标拖拽事件
+        home.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int xOnScreen = e.getXOnScreen(); //获取当前鼠标拖拽时x坐标
+                int yOnScreen = e.getYOnScreen(); //获取当前鼠标拖拽时y坐标
+                int xx = xOnScreen - xOld;  //移动差值
+                int yy = yOnScreen - yOld;
+                back.setLocation(xx,yy-50);  //移动窗口
+            }
+        });
+
+
+
+
+
         //创建右上角圆按钮，并添加监听器
         RoundButton Rbut1 = new RoundButton("", new Color(58, 124, 243, 190), new Color(92, 143, 236, 221), new Color(132, 171, 243, 181)) {
             @Override
@@ -155,7 +189,14 @@ public class Home extends Observable implements ActionListener , Minimize {
         };
 
         home.setArc(30,30);
+
         menuHomeUser.setArc(30,30);
+        menuHomeUser1.setArc(30,30);
+        menuHomeUser2.setArc(30,30);
+        menuHomeUser3.setArc(30,30);
+        menuHomeUser4.setArc(30,30);
+        menuHomeUser5.setArc(30,30);
+        menuHomeUser6.setArc(30,30);
         home.setColor(new Color(166, 163, 163));
         home.addMouseListener(new MouseAdapter() {
             @Override
@@ -185,26 +226,18 @@ public class Home extends Observable implements ActionListener , Minimize {
             }
         }.start();
 
-//        //组件透明开启效果
-//        new Thread() {  //开启窗口动画
-//            @SneakyThrows
-//            @Override
-//            public void run() {
-//                int MAXTRANS=1;  //透明度
-//                while (MAXTRANS <= 255) {
-//                    Thread.sleep(6);
-//                    home.setColor(new Color(239, 238, 238,MAXTRANS));
-//                    home.repaint();
-//                    MAXTRANS += 3;
-//                }
-//            }
-//        }.start();
+//
 
         {  //菜单加入图片
             menuIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/menubar2.png")));
             menu = new JLabel(menuIcon);
             //初始化菜单
             Menu.init();
+
+        }
+        {  //初始化菜单栏
+            new MenuContent().InitAddFriends(menuHomeUser1);
+            MenuContent.InitColor(menuHomeUser3);
 
         }
         {  //加入头像
@@ -850,7 +883,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                 while (MAXTRANS >= 0) {
                     Thread.sleep(4);
                     AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
-                    MAXTRANS -= 0.01;
+                    MAXTRANS -= 0.03;
                 }
                 AWTUtilities.setWindowOpacity(back, 1);  //半透明
             }
@@ -879,7 +912,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                         return;
                     }
                     AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
-                    MAXTRANS += 0.01;
+                    MAXTRANS += 0.03;
                     if (iconified) {
                         AWTUtilities.setWindowOpacity(back, 0);  //半透明
                         return;

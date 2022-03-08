@@ -17,8 +17,8 @@ public class EchoThreadServer {
 
     public static void main(String[] args) throws Exception{
         //用try-with-resource处理关闭
-        try(ServerSocket server = new ServerSocket(8888);  //此服务器在8888端口上进行监听
-             ) {
+        try (ServerSocket server = new ServerSocket(8888);  //此服务器在8888端口上进行监听
+        ) {
             boolean flag = true;  //判断是否输出提示,第一次才提示
             boolean f = true;  //定义一个标记为true
             int i = -1;
@@ -37,7 +37,7 @@ public class EchoThreadServer {
                     flag = false; //标记为负数
                 }
                 client = server.accept();  //接收客户端连接
-                System.out.println("客户端"+client.getInetAddress()+": "+client.getPort()+"已连接");
+                System.out.println("客户端" + client.getInetAddress() + ": " + client.getPort() + "已连接");
                 threads[i] = new Thread(new EchoThread(client));
                 threads[i].start();  //实例化并启动一个线程对象
                 int finalI = i;
@@ -53,7 +53,7 @@ public class EchoThreadServer {
                             long duration = (end - start) / 1000; //总共进行了多少秒
                             long minute = duration / 60;  //运行了多少分钟
                             long hour = 0;  //运行了多少小时
-                            if (minute>60) {
+                            if (minute > 60) {
                                 hour = minute / 60;
                             }
                             //用三目表达式判断client运行时间
@@ -63,6 +63,8 @@ public class EchoThreadServer {
                     }
                 }).start();   //执行检测线程
             }
+        } catch (NullPointerException e) {
+            //
         }
     }
 }

@@ -15,7 +15,7 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver" />
-                <property name="url" value="jdbc:mysql://localhost:3306/图书管理系统"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/user"/>
                 <property name="username" value="root"/>
                 <property name="password" value="lmq1226lmq"/>
             </dataSource>
@@ -24,7 +24,8 @@
     <mappers>
 <!--        <mapper class="mybatis.Mapper.UserMapper"/>-->
 <!--        <mapper class="mybatis.Mapper.BookMapper"/>-->
+<!--        <mapper resource="KarChat/Server/DataBase/Mapper/ChatMapper.xml"/>-->
+<!--        <mapper class="KarChat.Server.DataBase.Mapper.Login"/>-->
         <package name="KarChat.Server.DataBase.Mapper"/>
-        <package name="Database.Mapper"/>
     </mappers>
 </configuration>

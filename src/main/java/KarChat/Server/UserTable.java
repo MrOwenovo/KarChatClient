@@ -24,6 +24,7 @@ public class UserTable implements Runnable{
     private static Vector newVector;
     private static JPanel panel;
     private static  MyTableCellRenderer renderer;
+    private static int deletIndex;
 
 
     /**
@@ -71,9 +72,17 @@ public class UserTable implements Runnable{
      * @param username
      */
     public synchronized static void exitUser(String username) {
-        int deletIndex=userIndex.get(username);
+        try {
+            deletIndex = userIndex.get(username);
+        } catch (NullPointerException e) {
+            System.out.println("退出异常:用户名为空");
+        }
 
-        rowData.remove(deletIndex);  //删除行
+        try {
+            rowData.remove(deletIndex);  //删除行
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("退出异常:数组越界");
+        }
 
         //重新排列数组
 //        reSortArray(rowData, deletIndex);

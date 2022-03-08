@@ -28,6 +28,10 @@ public class RadioJLabel extends JLabel implements MouseListener , MouseMotionLi
         addMouseListener(this);
     }
 
+    public RadioJLabel() {
+
+    }
+
     public void setColor(Color p) {
         put = p;
     }
@@ -115,4 +119,6 @@ public class RadioJLabel extends JLabel implements MouseListener , MouseMotionLi
     public Color getColor() {
         return put;
     }
+
+
 }

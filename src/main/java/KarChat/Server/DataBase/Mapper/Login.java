@@ -15,6 +15,11 @@ public interface Login {
     @Update("update user.user set state=#{state} where username=#{username} ")
     int updateState(@Param("state") int state,@Param("username")String username);
 
+    //获取用户姓名
+    @Select("select * from user.user where username=#{username}")
+    User getName(String username);
+
+
     //获取头像
     @Results({
             @Result(column = "icon",property = "iconString")

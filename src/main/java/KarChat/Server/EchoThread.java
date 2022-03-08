@@ -1,17 +1,21 @@
 package KarChat.Server;
 
+import KarChat.Chat.HomePage.MenuContent;
 import KarChat.Chat.Login.LoginHome;
 import KarChat.Server.DataBase.Entry.Icon;
+import KarChat.Server.DataBase.Entry.Post;
 import KarChat.Server.DataBase.Entry.User;
 import KarChat.Server.DataBase.MybatisUnit;
 import lombok.SneakyThrows;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketException;
 
+import static KarChat.Chat.HomePage.MenuContent.iconName;
 import static KarChat.Server.EchoThreadServer.table;
 
 /**
@@ -21,6 +25,8 @@ public class EchoThread implements Runnable {  //实现Runnable接口
     private Socket client = null;  //接收客户端
     public static boolean exit = false;  //判断是否退出
     String username = null;
+    private Post[] posts;
+
     public EchoThread(Socket client) {  //通过构造方法设置Socket
         this.client = client;
     }
@@ -87,6 +93,78 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                             Icon icon=mapper.getIcon(username);
                             out.println(icon.getIconString());
                         });
+                        break;
+                        //识别要加谁为好友,判断是否已经发送
+                    case "addFriend":
+                        String friendName = buf.readLine();
+                        MybatisUnit.doChatWork(mapper->{
+                            int i=mapper.addFriend(username, friendName);
+                            if (i == 1) {
+                                out.println("true");
+                            }else{
+                                out.println("false");
+
+                            }
+                        });
+                        break;
+                        //获取所有好友请求
+                    case "get":
+                        MybatisUnit.doChatWork(mapper->{
+                            try {
+                                posts = mapper.checkGet(buf.readLine());
+                                if (posts != null) {
+                                    out.println(posts.length);
+                                    for (int i = 0; i < posts.length; i++) {
+                                        out.println(posts[i].getPost());
+                                        out.println(posts[i].getGeter());
+                                    }
+                                    System.out.println("获得请求");
+                                }else {
+                                    System.out.println("请求为空");
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        break;
+                    case "post":
+                        MybatisUnit.doChatWork(mapper->{
+                            try {
+                                Post[] posts = mapper.checkPost(buf.readLine());
+                                if (posts != null) {
+                                    out.println(posts.length);
+                                    for (int i = 0; i < posts.length; i++) {
+                                        out.println(posts[i].getPost());
+                                        out.println(posts[i].getGeter());
+                                    }
+                                    System.out.println("获得请求");
+                                }else {
+                                    System.out.println("请求为空");
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        break;
+                    case "getSbIcon":
+                        int length = Integer.parseInt(buf.readLine());  //读取用户的数量
+                        for (int i = 0; i < length; i++) {
+                            String iconName = buf.readLine();
+                            MybatisUnit.doSqlWork(mapper->{
+                                Icon icon=mapper.getIcon(iconName);
+                                out.println(icon.getIconString());
+                            });
+                        }
+                        break;
+                    case "getSbIconGet":
+                        int lengthGet = Integer.parseInt(buf.readLine());  //读取已发送用户的数量
+                        for (int j = 0; j < lengthGet; j++) {
+                            String iconNameGet = buf.readLine();
+                            MybatisUnit.doSqlWork(mapper->{
+                                Icon icon=mapper.getIcon(iconNameGet);
+                                out.println(icon.getIconString());
+                            });
+                        }
                         break;
                 }
 

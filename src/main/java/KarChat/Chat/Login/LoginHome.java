@@ -1,10 +1,12 @@
 package KarChat.Chat.Login;
 
 import KarChat.Chat.Action.Minimize;
+import KarChat.Chat.Helper.ChangeToColor;
 import KarChat.Chat.Helper.ToBufferedImage;
 import KarChat.Chat.Helper.ToPicture;
-import KarChat.Chat.HomePage.Home;
+import KarChat.Chat.Login.Button.ChooseBackButton;
 import KarChat.Chat.Login.Button.RoundButton;
+import KarChat.Chat.Login.Check.sendEmail;
 import KarChat.Chat.Sound.PlaySound;
 import KarChat.Client.EchoClient;
 import com.sun.awt.AWTUtilities;
@@ -16,7 +18,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Timer;
@@ -29,6 +33,22 @@ import java.util.function.Consumer;
 public class LoginHome implements ActionListener, Minimize {
 
     static boolean iconified;
+    private final ChooseBackButton remember;
+    private final ChooseBackButton switchMode;
+    private static  JTextField emailText;
+    private final JLabel registerLabel1;
+    private final ImageIcon registerIcon1;
+    private final MouseAdapter leftAdapter;
+    private  ImageIcon leftOpenIcon;
+    private  RadioJLabel sendEmailLabel;
+    private  RadioJLabel leftContent;
+    private RadioJLabel leftBack;
+    private JLabel leftOpen;
+    private Boolean Switch;
+    private static String verrify;
+    private static boolean leftOpening = false;
+    private TimerTask timer;
+    private TimerTask timerOn;
 
     public static void main(String[] args) {
         new LoginHome();
@@ -36,32 +56,32 @@ public class LoginHome implements ActionListener, Minimize {
 
     public static Frameless background;
     private final JLabel left;
-    private final JPanel right;
+    public static   JPanel right;
     private final ImageIcon login;
     private final JLabel rightLabel;
     private final JLabel usernameLabel;
     private final ImageIcon text;
     private final JLabel passwordLabel;
-    private static JTextField passwordMessage;
+    public static JTextField passwordMessage;
     public static JLabel sign;
     private final ImageIcon icon;
     public static ShakeLabel loginLabel;
     private final ImageIcon loginButtonIcon;
     private final JButton loginButton;
-    private static JTextField username;
-    private static JPasswordField password;
+    public static JTextField username;
+    public static JPasswordField password;
     private final JLabel registerLabel;
     private final ImageIcon registerIcon;
     private final ImageIcon registerbgIcon;
     private final JButton registerButton;
-    private final JTextField registerText2;
-    private final ShakeLabel registerLabel2;
+    private static  JTextField registerText2;
+    private static  ShakeLabel registerLabel2;
     public static ShakeLabel registerLabel5;
-    private final JPasswordField registerPassword3;
+    private static  JPasswordField registerPassword3;
     private final JTextField registerMessage4;
-    private final ShakeLabel registerLabel3;
-    private final ShakeLabel registerLabel4;
-    private final JPasswordField registerPassword4;
+    private static  ShakeLabel registerLabel3;
+    private static  ShakeLabel registerLabel4;
+    private static  JPasswordField registerPassword4;
     private static JLabel registerMessage;
     private static JLabel registerLabelMessage1;
     private final JButton signButton;
@@ -76,6 +96,7 @@ public class LoginHome implements ActionListener, Minimize {
     private JLabel registerbgLabel;
     public static String iconString;  //头像的String类型储存图片,默认是官方头像
     public static boolean isAlive = true;
+    public static boolean switchFlag = false;  //判断是什么动画格式
 
     static {
         try {
@@ -93,7 +114,106 @@ public class LoginHome implements ActionListener, Minimize {
         AWTUtilities.setWindowOpacity(background, 0);  //全透明
 
         left = new JLabel();  //左半部分标签，不用容器
+        DynamicJLabel plate = new DynamicJLabel("KarGoBang", new Font("Serif", Font.BOLD, 16), 56);
+        plate.setForeground(new Color(30, 29, 29));
+
+        ImageIcon toolBarIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("login/hamburger.png")));
+        JLabel toolBar = new JLabel(toolBarIcon);
         right = new JPanel();  //右半部分容器
+
+        RadioJLabel toolMenu = new RadioJLabel("");  //菜单栏
+        toolMenu.setColor(new Color(162, 159, 159,0));
+
+        RadioJLabel toolMenuItem1 = new RadioJLabel("");
+        RadioJLabel toolMenuItem2 = new RadioJLabel("");
+        toolMenuItem1.setColor(new Color(162, 159, 159,0));
+        toolMenuItem2.setColor(new Color(162, 159, 159,0));
+        toolMenuItem1.setArc(15,15);
+        toolMenuItem2.setArc(15,15);
+        DynamicJLabel toolMenuMessage1 = new DynamicJLabel("记住密码", new Font("Serif", Font.BOLD, 16), 101);
+        toolMenuMessage1.setForeground(new Color(79, 78, 78,0));
+        DynamicJLabel toolMenuMessage2 = new DynamicJLabel("切换动画", new Font("Serif", Font.BOLD, 16), 141);
+        toolMenuMessage2.setForeground(new Color(79, 78, 78,0));
+
+
+        remember = new ChooseBackButton("main/save.png","main/saveOn.png","main/saveOn.png",toolMenuItem1,new DynamicJLabel("",null,0),ChooseBackButton.Location.EAST){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                remember.isClick(c->{
+                    EchoClient.remember=c;
+                }); //获取按钮是否点击
+            }
+        };  //单选按钮，是否记住密码
+        switchMode = new ChooseBackButton("main/switch.png","main/switchOn.png","main/switchOn.png",toolMenuItem2,new DynamicJLabel("",null,0),ChooseBackButton.Location.EAST){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                remember.isClick(c->{
+                    switchFlag = !switchFlag;
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            setPicture(left);
+                        }
+                    }.start();
+
+                }); //获取按钮是否点击
+            }
+        };  //单选按钮,切换播放动画
+
+        remember.setColor(new Color(162, 159, 159,0));
+        switchMode.setColor(new Color(162, 159, 159,0));
+
+        final boolean[] toolMenuFlag = {false};
+        //开启菜单
+        toolBar.addMouseListener(new MouseAdapter() {
+            @SneakyThrows
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (toolMenuFlag[0]) {
+                    toolMenuFlag[0] = false;
+                        toolMenuItem1.setColor(new Color(162, 159, 159, 0));
+                        toolMenuItem2.setColor(new Color(162, 159, 159, 0));
+                        toolMenuMessage1.setForeground(new Color(79, 78, 78, 0));
+                        toolMenuMessage2.setForeground(new Color(79, 78, 78, 0));
+                        remember.setBounds(left.getWidth() - 260, 98, 0,0);
+                        switchMode.setBounds(left.getWidth() - 260, 138, 0,0);
+                        toolMenu.setColor(new Color(162, 159, 159,0));
+
+
+                        toolMenuItem1.repaint();
+                        toolMenuItem2.repaint();
+                        toolMenuMessage1.repaint();
+                        toolMenuMessage2.repaint();
+                        remember.repaint();
+                        switchMode.repaint();
+                        toolMenu.repaint();
+                    toolMenuFlag[0] = false;
+
+                }else{
+                    toolMenuFlag[0] = true;
+                        toolMenuItem1.setColor(new Color(162, 159, 159, 255));
+                        toolMenuItem2.setColor(new Color(162, 159, 159, 255));
+                        toolMenuMessage1.setForeground(new Color(79, 78, 78, 255));
+                        toolMenuMessage2.setForeground(new Color(79, 78, 78, 255));
+                        remember.setBounds(left.getWidth() - 260, 98, 35,35);
+                        switchMode.setBounds(left.getWidth() - 260, 138, 35,35);
+                        toolMenu.setColor(new Color(162, 159, 159,255));
+
+                        toolMenuItem1.repaint();
+                        toolMenuItem2.repaint();
+                        toolMenuMessage1.repaint();
+                        toolMenuMessage2.repaint();
+                        remember.repaint();
+                        switchMode.repaint();
+                        toolMenu.repaint();
+                    toolMenuFlag[0] = true;
+
+                }
+            }
+        });
+
 
         //透明开启效果
         new Thread() {  //开启窗口动画
@@ -104,7 +224,7 @@ public class LoginHome implements ActionListener, Minimize {
                 while (MAXTRANS <= 1.0) {
                     Thread.sleep(5);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
-                    MAXTRANS += 0.01;
+                    MAXTRANS += 0.03;
                 }
                 AWTUtilities.setWindowOpacity(background, 1);  //半透明
             }
@@ -126,7 +246,7 @@ public class LoginHome implements ActionListener, Minimize {
                 AWTUtilities.setWindowOpacity(background, 0);  //半透明
                 iconified = false;
                 maximize();
-                Thread.sleep(1000);
+//                Thread.sleep(1000);
             }
 
 
@@ -147,7 +267,7 @@ public class LoginHome implements ActionListener, Minimize {
                 while (MAXTRANS >= 0) {
                     Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
-                    MAXTRANS -= 0.03;
+                    MAXTRANS -= 0.05;
                 }
                 System.exit(1);
             }
@@ -207,6 +327,20 @@ public class LoginHome implements ActionListener, Minimize {
                 }
             });
 
+            //账号加入键盘监听
+            username.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    super.keyTyped(e);
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //登录
+                        usernameMessage = username.getText();  //获取账号密码
+                        passwordMessage1 = password.getText();
+
+                        EchoClient.login = true;  //修改标志位
+                    }
+                }
+            });
+
             passwordLabel = new JLabel(text);
             passwordMessage = new JTextField();  //密码信息提示
             passwordMessage.setHorizontalAlignment(JTextField.HORIZONTAL);
@@ -240,6 +374,20 @@ public class LoginHome implements ActionListener, Minimize {
                     passwordLabel.setIcon(text);
                     passwordLabel.setBounds(right.getWidth() - 2, 380, text.getIconWidth(), text.getIconHeight());
                     password.setBounds(20, 10, text.getIconWidth() - 40, text.getIconHeight() - 20);
+                }
+            });
+
+            //密码加入键盘监听
+            password.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    super.keyTyped(e);
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //登录
+                        usernameMessage = username.getText();  //获取账号密码
+                        passwordMessage1 = password.getText();
+
+                        EchoClient.login = true;  //修改标志位
+                    }
                 }
             });
         }
@@ -342,8 +490,8 @@ public class LoginHome implements ActionListener, Minimize {
             registerbgLabel = new JLabel(registerbgIcon);
 
             //第一条提示标签
-            ImageIcon registerIcon1 = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("register/btext.png")));
-            JLabel registerLabel1 = new JLabel(registerIcon1);
+            registerIcon1 = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("register/btext.png")));
+            registerLabel1 = new JLabel(registerIcon1);
             registerLabelMessage1 = new JLabel("用户注册");
             registerLabelMessage1.setFont(new Font("Courier", Font.BOLD, 30));
             registerLabelMessage1.setForeground(new Color(255, 255, 255));
@@ -362,6 +510,105 @@ public class LoginHome implements ActionListener, Minimize {
             registerText2 = new JTextField();
             //账号注册框背景
             registerLabel2 = new ShakeLabel(registerIcon2);
+            //加入邮箱验证
+            ImageIcon leftOpenIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/left.png")));
+            leftOpen = new JLabel(leftOpenIcon);
+            sendEmailLabel = new RadioJLabel("");
+            sendEmailLabel.setColor(ChangeToColor.getColorFromHex("#CEAB93"));
+            DynamicJLabel sendEmailMessage = new DynamicJLabel("获取验证码", new Font("Serif", Font.BOLD, 18), 8);
+            sendEmailMessage.setCenter(150);
+            sendEmailMessage.setForeground(ChangeToColor.getColorFromHex("#FFFBE9"));
+            sendEmailLabel.add(sendEmailMessage);
+            leftContent = new RadioJLabel("");
+            leftContent.setColor(ChangeToColor.getColorFromHex("#FFFBE9"));
+            leftBack = new RadioJLabel();
+            leftBack.setColor(ChangeToColor.getColorFromHex("#AD8B73"));
+
+            emailText = new JTextField();
+            emailText.setForeground(ChangeToColor.getColorFromHex("#E3CAA5"));
+
+            registerbgLabel.add(emailText);  //加入搜索框
+
+            leftOpenIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/left.png")));
+            leftOpen = new JLabel(leftOpenIcon);
+            registerbgLabel.add(leftContent);
+            registerbgLabel.add(sendEmailLabel);
+            registerbgLabel.add(leftOpen);
+            leftOpen.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+676, 350, leftOpenIcon.getIconWidth(), leftOpenIcon.getIconHeight());
+
+            registerbgLabel.add(leftBack);
+            leftBack.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+160+registerIcon1.getIconWidth()+80+40, 330, registerIcon1.getIconWidth()+80, registerIcon1.getIconHeight());
+
+            boolean[] LEFTISFINISH = {true};  //判断展开栏是否加载完动画
+            //展开栏加入点击事件
+            leftAdapter = new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    label:
+                    {
+                        if (LEFTISFINISH[0] && !leftOpening) {
+                            leftOpening = true;
+                            LEFTISFINISH[0] = false;  //动画未加载完
+                            //储存四个内容的位置
+                            int LOCATION1 = leftBack.getX();
+                            int LOCATION2 = leftContent.getX();
+                            int LOCATION3 = sendEmailLabel.getX();
+                            int LOCATION4 = emailText.getX();
+                            final int[] LOCATION = {0};  //当前位置
+                            new Thread() {
+                                @SneakyThrows
+                                @Override
+                                public void run() {
+                                    while (LOCATION[0] <= registerIcon1.getIconWidth() + 80 + 40) {
+                                        Thread.sleep(2);
+                                        leftBack.setBounds(LOCATION1 - LOCATION[0], leftBack.getY(), leftBack.getWidth(), leftBack.getHeight());
+                                        leftContent.setBounds(LOCATION2 - LOCATION[0], leftContent.getY(), leftContent.getWidth(), leftContent.getHeight());
+                                        sendEmailLabel.setBounds(LOCATION3 - LOCATION[0], sendEmailLabel.getY(), sendEmailLabel.getWidth(), sendEmailLabel.getHeight());
+                                        emailText.setBounds(LOCATION4 - LOCATION[0], emailText.getY(), emailText.getWidth(), emailText.getHeight());
+
+                                        LOCATION[0] += 4;
+                                    }
+                                    LEFTISFINISH[0] = true;
+                                }
+                            }.start();
+                            break label;
+                        }
+                        if (LEFTISFINISH[0] && leftOpening) {
+                            leftOpening = false;
+                            LEFTISFINISH[0] = false;  //动画未加载完
+                            final int[] LOCATIONON = {0};  //当前位置
+                            //储存四个内容的位置
+                            int LOCATION1 = leftBack.getX();
+                            int LOCATION2 = leftContent.getX();
+                            int LOCATION3 = sendEmailLabel.getX();
+                            int LOCATION4 = emailText.getX();
+                            new Thread() {
+                                @SneakyThrows
+                                @Override
+                                public void run() {
+                                    while (LOCATIONON[0] <= registerIcon1.getIconWidth() + 80 + 40) {
+                                        Thread.sleep(2);
+                                        leftBack.setBounds(LOCATION1 + LOCATIONON[0], leftBack.getY(), leftBack.getWidth(), leftBack.getHeight());
+                                        leftContent.setBounds(LOCATION2 + LOCATIONON[0], leftContent.getY(), leftContent.getWidth(), leftContent.getHeight());
+                                        sendEmailLabel.setBounds(LOCATION3 + LOCATIONON[0], sendEmailLabel.getY(), sendEmailLabel.getWidth(), sendEmailLabel.getHeight());
+                                        emailText.setBounds(LOCATION4 + LOCATIONON[0], emailText.getY(), emailText.getWidth(), emailText.getHeight());
+
+                                        //registerIcon1.getIconWidth()+80
+
+                                        LOCATIONON[0] += 4;
+                                    }
+                                    LEFTISFINISH[0] = true;
+                                }
+                            }.start();
+                            break label;
+
+                        }
+                        LEFTISFINISH[0] = true;
+                    }
+                }
+            };
+            leftOpen.addMouseListener(leftAdapter);
+            //--------------------------
             registerbgLabel.add(registerLabel2);  //加入账号注册框
             registerLabel2.setBounds(246, 145, registerIcon1.getIconWidth(), registerIcon1.getIconHeight());
 
@@ -375,7 +622,7 @@ public class LoginHome implements ActionListener, Minimize {
             registerText2.addFocusListener(new FocusAdapter() {
                 @Override
                 public void focusGained(FocusEvent e) {
-                    if (registerText2.getText().equals("请输入账号") || registerText2.getText().equals("账号至少6位")) {  //若要输入账号则取消提示
+                    if (registerText2.getText().equals("请输入账号") || registerText2.getText().equals("账号应为6-20位")) {  //若要输入账号则取消提示
                         registerText2.setText("");
                     }
                     registerLabel2.setIcon(registerIcon2On);
@@ -390,16 +637,27 @@ public class LoginHome implements ActionListener, Minimize {
                         registerLabel2.setIcon(registerIcon2);
                         registerLabel2.setBounds(246, 145, registerIcon1.getIconWidth(), registerIcon1.getIconHeight());
                         registerText2.setBounds(20, 10, registerIcon2.getIconWidth() - 40, registerIcon2.getIconHeight() - 20);
-                    } else if (registerText2.getText().matches("(?=.*\\d)^.{6,12}$") || registerText2.getText().matches("(?=.*[a-z])^.{6,12}$")) {  //判断账号是否符合正则要求
+                    } else if (registerText2.getText().matches("(?=.*\\d)^.{6,20}$") || registerText2.getText().matches("(?=.*[a-z])^.{6,20}$")) {  //判断账号是否符合正则要求
                         registerLabel2.setIcon(registerIcon2);
                         registerLabel2.setBounds(246, 145, registerIcon1.getIconWidth(), registerIcon1.getIconHeight());
                         registerText2.setBounds(20, 10, registerIcon2.getIconWidth() - 40, registerIcon2.getIconHeight() - 20);
                     } else {
-                        registerText2.setText("账号至少6位");
+                        registerText2.setText("账号应为6-20位");
                         registerLabel2.shake();  //错误则抖动
                         registerLabel2.setIcon(registerIcon2Wrong);
                         registerLabel2.setBounds(246, 145, registerIcon1.getIconWidth(), registerIcon1.getIconHeight());
                         registerText2.setBounds(20, 10, registerIcon2.getIconWidth() - 40, registerIcon2.getIconHeight() - 20);
+                    }
+                }
+            });
+
+            //账号注册加入键盘监听
+            registerText2.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    super.keyTyped(e);
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //发送邮件
+                        register();
                     }
                 }
             });
@@ -464,6 +722,17 @@ public class LoginHome implements ActionListener, Minimize {
                         registerLabel3.setIcon(registerIcon3Wrong);
                         registerLabel3.setBounds(246, 238, registerIcon1.getIconWidth(), registerIcon1.getIconHeight());
                         registerPassword3.setBounds(20, 10, registerIcon2.getIconWidth() - 40, registerIcon2.getIconHeight() - 20);
+                    }
+                }
+            });
+
+            //账号注册加入键盘监听
+            registerPassword3.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    super.keyTyped(e);
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //发送邮件
+                        register();
                     }
                 }
             });
@@ -536,6 +805,15 @@ public class LoginHome implements ActionListener, Minimize {
                 }
             });
 
+            registerPassword4.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    super.keyTyped(e);
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //发送邮件
+                        register();
+                    }
+                }
+            });
             //确认注册按钮
             //登录按钮加入图片
             ImageIcon registerIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("register/rtext.png")));
@@ -560,6 +838,68 @@ public class LoginHome implements ActionListener, Minimize {
             registerButton.setContentAreaFilled(false);
             registerButton.setBorder(null);  //无边框
 
+            //注册事件
+            registerButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (Objects.equals(registerText2.getText(), "") || Objects.equals(registerText2.getText(), "请输入账号")) {
+                        registerLabel2.shake();  //若未填入账号则抖动
+                        registerLabel5.shake(); //按钮抖动
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/error.mp3");
+                            }
+                        }.start();
+                    } else if (Objects.equals(registerPassword3.getText(), "") || registerPassword3.getText().equals("请输入密码")) {
+                        registerLabel3.shake();
+                        registerLabel5.shake(); //按钮抖动
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/error.mp3");
+                            }
+                        }.start();
+                    } else if (Objects.equals(registerPassword4.getText(), "") || registerPassword4.getText().equals("请再次输入密码")) {
+                        registerLabel4.shake();
+                        registerLabel5.shake(); //按钮抖动
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/error.mp3");
+                            }
+                        }.start();
+                    } else {  //注册成功
+                        if (leftOpening) {  //若弹窗已经弹出
+                            String email = emailText.getText();  //储存邮箱
+                            if (email.matches("^\\S{6}$")) {  //若是六位随机数
+                                if (verrify.equals(email)) {  //验证码验证成功
+                                    usernameMessage = registerText2.getText();  //获取账号
+                                    passwordMessage1 = registerPassword3.getText(); //获取密码
+
+                                    EchoClient.check = true;  //查看数据库中是否存在该账户
+
+                                } else {
+                                    emailText.setText("验证码输入错误");
+                                    emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                                    emailText.setForeground(new Color(161, 19, 19));
+                                }
+                            } else {
+                                emailText.setText("验证码应为6位");
+                                emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                                emailText.setForeground(new Color(161, 19, 19));
+                            }
+                        } else {  //若未弹出则弹出弹框
+                            leftAdapter.mouseClicked(e);
+                        }
+                    }
+                }
+            });
+
+
 
             //换头像按钮
             ImageIcon signIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("register/defaultIcon.png")));
@@ -582,6 +922,161 @@ public class LoginHome implements ActionListener, Minimize {
 
         }
 
+        {  //注册邮箱验证码
+
+            leftContent.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+180+registerIcon1.getIconWidth()+80+40, 340, registerIcon1.getIconWidth()-110, registerIcon1.getIconHeight()-20);
+//            leftContent.setColor(new Color(0, 0, 0));
+
+            sendEmailLabel.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+250+registerIcon1.getIconWidth()-165+registerIcon1.getIconWidth()+80+40, 340, registerIcon1.getIconWidth()-300, registerIcon1.getIconHeight()-20);
+//            sendEmailLabel.setColor(new Color(0, 0, 0));
+
+
+            emailText.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+200+registerIcon1.getIconWidth()+80+40, 345, registerIcon1.getIconWidth()-150, registerIcon1.getIconHeight()-30);
+            emailText.setFont(new Font("Serif", Font.BOLD, 20));
+            emailText.setText("输入邮箱");
+            emailText.setOpaque(false);
+            emailText.setBorder(null);
+
+            emailText.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (emailText.getText().contains("输入邮箱") || emailText.getText().contains("验证码发送成功,清在此输入验证码")|| emailText.getText().contains("验证码发送失败")|| emailText.getText().contains("邮箱格式错误")|| emailText.getText().equals("验证码发送成功,清在此输入验证码")|| emailText.getText().equals("验证码发送失败")|| emailText.getText().equals("邮箱格式错误")||emailText.getText().equals("验证码应为6位")||emailText.getText().equals("验证码输入错误")) {  //若要输入账号则取消提示
+                        emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                        emailText.setForeground(ChangeToColor.getColorFromHex("#E3CAA5"));
+                        emailText.setText("");
+                    }
+                }
+            });
+            emailText.addFocusListener(new FocusAdapter() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (emailText.getText().equals("输入邮箱") || emailText.getText().equals("验证码发送成功,清在此输入验证码")|| emailText.getText().equals("验证码发送失败")|| emailText.getText().equals("邮箱格式错误")||emailText.getText().equals("验证码应为6位")||emailText.getText().equals("验证码输入错误")) {  //若要输入账号则取消提示
+                        emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                        emailText.setForeground(ChangeToColor.getColorFromHex("#E3CAA5"));
+                        emailText.setText("");
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (emailText.getText().equals("")) {   //若未输入内容则重新提示
+                        emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                        emailText.setForeground(ChangeToColor.getColorFromHex("#E3CAA5"));
+                        emailText.setText("输入邮箱");
+                    }
+                }
+            });
+
+            //搜索加入键盘监听
+            emailText.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    super.keyTyped(e);
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //发送邮件
+                        String email = emailText.getText();  //储存邮箱
+                        if (email.matches("[A-Za-z\\d]+([-_.][A-Za-z\\d]+)*@([A-Za-z\\d]+[-.])+[A-Za-z\\d]{2,4}")) {  //用正则表达式判断邮箱格式是否正确
+                            try {
+                                sendEmail sendEmail=new sendEmail();
+                                //设置要发送的邮箱
+                                sendEmail.setReceiveMailAccount(email);
+                                verrify = sendEmail.Send();
+                                emailText.setText("验证码发送成功,清在此输入验证码");
+                                emailText.setFont(new Font("Serif", Font.BOLD, 17));
+                                emailText.setForeground(new Color(62, 171, 159));
+                            }catch(Exception a){
+                                emailText.setText("验证码发送失败");
+                                emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                                emailText.setForeground(new Color(161, 19, 19));
+                                new Thread(){
+                                    @SneakyThrows
+                                    @Override
+                                    public void run() {
+                                        PlaySound.play("sound/error.mp3");
+                                    }
+                                }.start();
+                            }
+
+
+                        }else {
+                            if (email.matches("^\\S{6}$")) {  //若是六位随机数
+                                if (email.equals(verrify)) {  //验证码验证成功
+                                    usernameMessage = registerText2.getText();  //获取账号
+                                    passwordMessage1 = registerPassword3.getText(); //获取密码
+
+                                    EchoClient.check = true;  //查看数据库中是否存在该账户
+                                } else {
+                                    emailText.setText("验证码输入错误");
+                                    emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                                    emailText.setForeground(new Color(161, 19, 19));
+                                    new Thread(){
+                                        @SneakyThrows
+                                        @Override
+                                        public void run() {
+                                            PlaySound.play("sound/error.mp3");
+                                        }
+                                    }.start();
+                                }
+                            }else {
+                                emailText.setText("邮箱格式错误");
+                                emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                                emailText.setForeground(new Color(161, 19, 19));
+                                new Thread(){
+                                    @SneakyThrows
+                                    @Override
+                                    public void run() {
+                                        PlaySound.play("sound/error.mp3");
+                                    }
+                                }.start();
+                            }
+                        }
+                    }
+                }
+            });
+
+            sendEmailLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    String email = emailText.getText();  //储存邮箱
+                    if (email.matches("[A-Za-z\\d]+([-_.][A-Za-z\\d]+)*@([A-Za-z\\d]+[-.])+[A-Za-z\\d]{2,4}")) {  //用正则表达式判断邮箱格式是否正确
+                        try {
+                            sendEmail sendEmail=new sendEmail();
+                            //设置要发送的邮箱
+                            sendEmail.setReceiveMailAccount(email);
+                            verrify = sendEmail.Send();
+                            emailText.setText("验证码发送成功,清在此输入验证码");
+                            emailText.setFont(new Font("Serif", Font.BOLD, 17));
+                            emailText.setForeground(new Color(62, 171, 159));
+                        } catch (Exception a) {
+                            emailText.setText("验证码发送失败");
+                            emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                            emailText.setForeground(new Color(161, 19, 19));
+                            new Thread(){
+                                @SneakyThrows
+                                @Override
+                                public void run() {
+                                    PlaySound.play("sound/error.mp3");
+                                }
+                            }.start();
+                        }
+
+
+                    } else {
+                        emailText.setText("邮箱格式错误");
+                        emailText.setFont(new Font("Serif", Font.BOLD, 20));
+                        emailText.setForeground(new Color(161, 19, 19));
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/error.mp3");
+                            }
+                        }.start();
+                    }
+                }
+            });
+        }
+
+
         background.add(Rbut1);  //加入最小化按钮
         background.add(Rbut2);
         if (isAlive)
@@ -594,6 +1089,16 @@ public class LoginHome implements ActionListener, Minimize {
         background.add(passwordLabel);  //加入密码框
         background.add(registerLabel); //加入注册按钮
         background.add(wrongMessage);  //加入错误信息
+        background.add(plate);  //加入品牌名
+        plate.setCenter(left.getWidth()+1600);
+        background.add(remember);   //加入按钮
+        background.add(switchMode);   //加入按钮
+        background.add(toolMenuItem1);   //加入图像1
+        background.add(toolMenuItem2);   //加入图像2
+        background.add(toolMenuMessage1);   //加入信息1
+        background.add(toolMenuMessage2);   //加入信息2
+        background.add(toolBar);  //加入工具栏
+        background.add(toolMenu);
         background.add(right);  //加入右半部分
         background.add(registerbgLabel);  //加入背景
         background.add(left);  //加入左半部分
@@ -620,6 +1125,15 @@ public class LoginHome implements ActionListener, Minimize {
         usernameLabel.setBounds(right.getWidth() - 2, 290, text.getIconWidth(), text.getIconHeight());
         passwordLabel.setBounds(right.getWidth() - 2, 380, text.getIconWidth(), text.getIconHeight());
         registerLabel.setBounds(right.getWidth() + 172, 620, registerIcon.getIconWidth(), registerIcon.getIconHeight());
+        toolBar.setBounds(left.getWidth() - 216, 60, toolBarIcon.getIconWidth(), toolBarIcon.getIconHeight());
+        toolMenu.setBounds(left.getWidth() - 266, 93, 128, 90);
+        remember.setBounds(left.getWidth() - 260, 98, 0,0);
+        switchMode.setBounds(left.getWidth() - 260, 138, 0,0);
+        toolMenuMessage1.setCenter(2400);
+        toolMenuMessage2.setCenter(2400);
+//        leftBack.setBounds(50, 50, 150, 60);
+//        leftOpen.setBounds(50, 50, leftOpenIcon.getIconWidth()+150, leftOpenIcon.getIconHeight()+150);
+
 
 
         background.setVisible(true);  //窗口可视化
@@ -673,54 +1187,67 @@ public class LoginHome implements ActionListener, Minimize {
         top.setBounds(0, Icon1.getIconHeight(), Icon1.getIconWidth(), Icon1.getIconHeight());
         bottomBack.setBounds(0, Icon1.getIconHeight(), Icon1.getIconWidth(), Icon1.getIconHeight());  //背景容器
         bottom.setBounds(0, -Icon1.getIconHeight(), Icon1.getIconWidth(), Icon1.getIconHeight());
-        TimerTask timer = new TimerTask() {  //实现计时器类
-            int index = 0;
-            //            int Top=0;
-            @SneakyThrows
-            @Override
-            public void run() {
-                index++;
-//                new Thread() {  //上半部分启动 风格2
-//                    @SneakyThrows
-//                    @Override
-//                    public void run() {
-//                        Top = 0;
-//                        top.setIcon(icons[index++%4]);
-//                        while (Top < Icon1.getIconHeight()) {
-//                            Thread.sleep(1);
-//                            Top += 1;
-//                            top.setBounds(0,0,Icon1.getIconWidth(),Top);
-//                        }
-//                    }
-//                }.start();
-                int All = Icon1.getIconHeight() / 2;
-                int Top11 = Icon1.getIconHeight();
-                int Top22 = -Icon1.getIconHeight();
-                int Bottom11 = -Icon1.getIconHeight();
-                int Bottom22 = Icon1.getIconHeight();
-                //每次先重置位置放置闪屏
-                top.setBounds(0, Top11, Icon1.getIconWidth(), Icon1.getIconHeight());
-                topBack.setBounds(0, Top22, Icon1.getIconWidth(), Icon1.getIconHeight());
-                bottom.setBounds(0, Bottom11, Icon1.getIconWidth(), Icon1.getIconHeight());
-                bottomBack.setBounds(0, Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
-
-                top.setIcon(icons[index % 4]);  //设置新图片
-                bottom.setIcon(icons[index % 4]);
-                while ((All--) > 0) {  //每个卡片移动一半
-                    Thread.sleep(6);  //动画间隔
-                    //每次移动1
-                    top.setBounds(0, --Top11, Icon1.getIconWidth(), Icon1.getIconHeight());
-                    topBack.setBounds(0, ++Top22, Icon1.getIconWidth(), Icon1.getIconHeight());
-                    bottom.setBounds(0, ++Bottom11, Icon1.getIconWidth(), Icon1.getIconHeight());
-                    bottomBack.setBounds(0, --Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
+        if (switchFlag) {
+            timerOn = new TimerTask() {  //实现计时器类
+                int Top;
+                int index = 0;
+                @SneakyThrows
+                @Override
+                public void run() {
+                    new Thread() {  //上半部分启动 风格2
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            Top = 0;
+                            top.setIcon(icons[index++ % 4]);
+                            while (Top < Icon1.getIconHeight()) {
+                                Thread.sleep(1);
+                                Top += 1;
+                                top.setBounds(0, 0, Icon1.getIconWidth(), Top);
+                            }
+                        }
+                    }.start();
                 }
-                background.setIcon(icons[(index) % 4]);  //设置背景图片
+            };
+//            Thread.sleep(1000);  //1秒后开始
+            new Timer().scheduleAtFixedRate(timerOn, new Date(), 10000);  //16秒一换
 
-            }
-        };
-        Thread.sleep(10000);  //10秒后开始
-        new Timer().scheduleAtFixedRate(timer,new Date(),16000);  //16秒一换
+        }else {
+            timer = new TimerTask() {  //实现计时器类
+                int index = 0;
+                @SneakyThrows
+                @Override
+                public void run() {
+                    index++;
+                    int All = Icon1.getIconHeight() / 2;
+                    int Top11 = Icon1.getIconHeight();
+                    int Top22 = -Icon1.getIconHeight();
+                    int Bottom11 = -Icon1.getIconHeight();
+                    int Bottom22 = Icon1.getIconHeight();
+                    //每次先重置位置放置闪屏
+                    top.setBounds(0, Top11, Icon1.getIconWidth(), Icon1.getIconHeight());
+                    topBack.setBounds(0, Top22, Icon1.getIconWidth(), Icon1.getIconHeight());
+                    bottom.setBounds(0, Bottom11, Icon1.getIconWidth(), Icon1.getIconHeight());
+                    bottomBack.setBounds(0, Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
 
+                    top.setIcon(icons[index % 4]);  //设置新图片
+                    bottom.setIcon(icons[index % 4]);
+                    while ((All--) > 0) {  //每个卡片移动一半
+                        Thread.sleep(6);  //动画间隔
+                        //每次移动1
+                        top.setBounds(0, --Top11, Icon1.getIconWidth(), Icon1.getIconHeight());
+                        topBack.setBounds(0, ++Top22, Icon1.getIconWidth(), Icon1.getIconHeight());
+                        bottom.setBounds(0, ++Bottom11, Icon1.getIconWidth(), Icon1.getIconHeight());
+                        bottomBack.setBounds(0, --Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
+                    }
+                    background.setIcon(icons[(index) % 4]);  //设置背景图片
+
+                }
+            };
+            Thread.sleep(10000);  //10秒后开始
+            new Timer().scheduleAtFixedRate(timer, new Date(), 10000);  //16秒一换
+
+        }
         }
 
     @SneakyThrows
@@ -731,43 +1258,6 @@ public class LoginHome implements ActionListener, Minimize {
             passwordMessage1 = password.getText();
 
             EchoClient.login = true;  //修改标志位
-        } else if (e.getSource() == registerButton) {  //若点击事件是注册按钮
-            if (Objects.equals(registerText2.getText(), "") || Objects.equals(registerText2.getText(), "请输入账号")) {
-                registerLabel2.shake();  //若未填入账号则抖动
-                registerLabel5.shake(); //按钮抖动
-                new Thread(){
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        PlaySound.play("sound/error.mp3");
-                    }
-                }.start();
-            } else if (Objects.equals(registerPassword3.getText(), "") || registerPassword3.getText().equals("请输入密码")) {
-                registerLabel3.shake();
-                registerLabel5.shake(); //按钮抖动
-                new Thread(){
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        PlaySound.play("sound/error.mp3");
-                    }
-                }.start();
-            } else if (Objects.equals(registerPassword4.getText(), "") || registerPassword4.getText().equals("请再次输入密码")) {
-                registerLabel4.shake();
-                registerLabel5.shake(); //按钮抖动
-                new Thread(){
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        PlaySound.play("sound/error.mp3");
-                    }
-                }.start();
-            } else {  //注册成功
-                usernameMessage=registerText2.getText();  //获取账号
-                passwordMessage1=registerPassword3.getText(); //获取密码
-
-                EchoClient.check = true;  //查看数据库中是否存在该账户
-            }
         } else if (e.getSource() == signButton) {  //若点击的是换头像按钮
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setApproveButtonText("选择");
@@ -781,7 +1271,6 @@ public class LoginHome implements ActionListener, Minimize {
                     signLabel.setIcon(new ImageIcon(realIcon));  //更换图片
                     if (file.getPath().contains(".png"))
                         iconString = ToPicture.imageToString(realIcon,"png");
-                    System.out.println(iconString);
                     if (file.getPath().contains(".jpg"))
                         iconString = ToPicture.imageToString(realIcon,"jpg");
                 } else {
@@ -826,8 +1315,9 @@ public class LoginHome implements ActionListener, Minimize {
      * 注册完成后的第一个反馈
      */
     public static void registerFinish(String Username,String Password) {
-        registerMessage.setText("注册成功√");
+        wrongMessage.setTextDynamic("注册成功√");
         registerLabelMessage1.setText("您的用户名为"+Username);
+        loadIn.setColor(new Color(0,0,0,0));
         username.setText(Username); //设置账号
         password.setText(Password);  //设置密码
         passwordMessage.setText("");  //清空提示
@@ -856,7 +1346,7 @@ public class LoginHome implements ActionListener, Minimize {
                 while (MAXTRANS >= 0) {
                     Thread.sleep(4);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
-                    MAXTRANS -= 0.01;
+                    MAXTRANS -= 0.05;
                 }
                 AWTUtilities.setWindowOpacity(background, 1);  //半透明
             }
@@ -885,7 +1375,7 @@ public class LoginHome implements ActionListener, Minimize {
                         return;
                     }
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
-                    MAXTRANS += 0.01;
+                    MAXTRANS += 0.04;
                     if (iconified) {
                         AWTUtilities.setWindowOpacity(background, 0);  //半透明
                         return;
@@ -896,4 +1386,122 @@ public class LoginHome implements ActionListener, Minimize {
             }
         }.start();
     }
+
+    public void register() {
+        if (Objects.equals(registerText2.getText(), "") || Objects.equals(registerText2.getText(), "请输入账号")) {
+            registerLabel2.shake();  //若未填入账号则抖动
+            registerLabel5.shake(); //按钮抖动
+            new Thread() {
+                @SneakyThrows
+                @Override
+                public void run() {
+                    PlaySound.play("sound/error.mp3");
+                }
+            }.start();
+        } else if (Objects.equals(registerPassword3.getText(), "") || registerPassword3.getText().equals("请输入密码")) {
+            registerLabel3.shake();
+            registerLabel5.shake(); //按钮抖动
+            new Thread() {
+                @SneakyThrows
+                @Override
+                public void run() {
+                    PlaySound.play("sound/error.mp3");
+                }
+            }.start();
+        } else if (Objects.equals(registerPassword4.getText(), "") || registerPassword4.getText().equals("请再次输入密码")) {
+            registerLabel4.shake();
+            registerLabel5.shake(); //按钮抖动
+            new Thread() {
+                @SneakyThrows
+                @Override
+                public void run() {
+                    PlaySound.play("sound/error.mp3");
+                }
+            }.start();
+        } else {  //注册成功
+            if (leftOpening) {  //若弹窗已经弹出
+                String email = emailText.getText();  //储存邮箱
+                if (email.matches("^\\S{6}$")) {  //若是六位随机数
+                    if (email.equals(verrify)) {  //验证码验证成功
+                        usernameMessage = registerText2.getText();  //获取账号
+                        passwordMessage1 = registerPassword3.getText(); //获取密码
+
+                        EchoClient.check = true;  //查看数据库中是否存在该账户
+
+                    } else {
+                        emailText.setText("验证码输入错误");
+                        emailText.setForeground(new Color(161, 19, 19));
+                    }
+                } else {
+                    emailText.setText("验证码应为6位");
+                    emailText.setForeground(new Color(161, 19, 19));
+                }
+            } else {  //若未弹出则弹出弹框
+                boolean[] LEFTISFINISH = {true};  //判断展开栏是否加载完动画
+                label:
+                {
+                    if (LEFTISFINISH[0] && !leftOpening) {
+                        leftOpening = true;
+                        LEFTISFINISH[0] = false;  //动画未加载完
+                        //储存四个内容的位置
+                        int LOCATION1 = leftBack.getX();
+                        int LOCATION2 = leftContent.getX();
+                        int LOCATION3 = sendEmailLabel.getX();
+                        int LOCATION4 = emailText.getX();
+                        final int[] LOCATION = {0};  //当前位置
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                while (LOCATION[0] <= registerIcon1.getIconWidth() + 80 + 40) {
+                                    Thread.sleep(2);
+                                    leftBack.setBounds(LOCATION1 - LOCATION[0], leftBack.getY(), leftBack.getWidth(), leftBack.getHeight());
+                                    leftContent.setBounds(LOCATION2 - LOCATION[0], leftContent.getY(), leftContent.getWidth(), leftContent.getHeight());
+                                    sendEmailLabel.setBounds(LOCATION3 - LOCATION[0], sendEmailLabel.getY(), sendEmailLabel.getWidth(), sendEmailLabel.getHeight());
+                                    emailText.setBounds(LOCATION4 - LOCATION[0], emailText.getY(), emailText.getWidth(), emailText.getHeight());
+
+                                    LOCATION[0] += 4;
+                                }
+                                LEFTISFINISH[0] = true;
+                            }
+                        }.start();
+                        break label;
+                    }
+                    if (LEFTISFINISH[0] && leftOpening) {
+                        leftOpening = false;
+                        LEFTISFINISH[0] = false;  //动画未加载完
+                        final int[] LOCATIONON = {0};  //当前位置
+                        //储存四个内容的位置
+                        int LOCATION1 = leftBack.getX();
+                        int LOCATION2 = leftContent.getX();
+                        int LOCATION3 = sendEmailLabel.getX();
+                        int LOCATION4 = emailText.getX();
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                while (LOCATIONON[0] <= registerIcon1.getIconWidth() + 80 + 40) {
+                                    Thread.sleep(2);
+                                    leftBack.setBounds(LOCATION1 + LOCATIONON[0], leftBack.getY(), leftBack.getWidth(), leftBack.getHeight());
+                                    leftContent.setBounds(LOCATION2 + LOCATIONON[0], leftContent.getY(), leftContent.getWidth(), leftContent.getHeight());
+                                    sendEmailLabel.setBounds(LOCATION3 + LOCATIONON[0], sendEmailLabel.getY(), sendEmailLabel.getWidth(), sendEmailLabel.getHeight());
+                                    emailText.setBounds(LOCATION4 + LOCATIONON[0], emailText.getY(), emailText.getWidth(), emailText.getHeight());
+
+                                    //registerIcon1.getIconWidth()+80
+
+                                    LOCATIONON[0] += 4;
+                                }
+                                LEFTISFINISH[0] = true;
+                            }
+                        }.start();
+                        break label;
+
+                    }
+                    LEFTISFINISH[0] = true;
+                }
+            }
+        }
+    }
+
+
 }
