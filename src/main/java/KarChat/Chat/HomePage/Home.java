@@ -238,6 +238,7 @@ public class Home extends Observable implements ActionListener , Minimize {
         {  //初始化菜单栏
             new MenuContent().InitAddFriends(menuHomeUser1);
             MenuContent.InitColor(menuHomeUser3);
+            MenuContent.InitChat(menuHomeUser2);
 
         }
         {  //加入头像

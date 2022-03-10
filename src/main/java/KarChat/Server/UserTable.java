@@ -1,7 +1,9 @@
 package KarChat.Server;
 
-import KarChat.Server.DataBase.Entry.User;
+import lombok.SneakyThrows;
+import org.apache.ibatis.io.Resources;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -10,7 +12,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
-import java.util.List;
 
 public class UserTable implements Runnable{
 
@@ -101,8 +102,10 @@ public class UserTable implements Runnable{
         panel.repaint();
     }
 
+    @SneakyThrows
     public UserTable(){
         JFrame jf = new JFrame("用户管理系统");
+        jf.setIconImage(ImageIO.read(Resources.getResourceAsStream("manage/manageUser.png")));
         JComboBox<String> stateList = new JComboBox<String>();  //定义下拉列表框
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -201,9 +204,6 @@ public class UserTable implements Runnable{
         }
     }
 
-    public static void main(String[] args) {
-        new UserTable();
-    }
     /**
      * 单元格渲染器，继承已实现渲染器接口的默认渲染器 DefaultTableCellRenderer
      */

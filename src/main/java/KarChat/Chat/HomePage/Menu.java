@@ -1036,7 +1036,7 @@ public class Menu {
                     menuFlag2[0] = true;//修改标记位
                     menuHomeBack.setBounds(115, 10, menuIcon.getIconWidth() + 600, menuIcon.getIconHeight() + 20);
                     menuHomeBack.setBackground(new Color(0, 0, 0, 0));
-                    menuHomeUser2.setBounds(124, 8, menuIcon.getIconWidth() + 200, menuIcon.getIconHeight());
+                    menuHomeUser2.setBounds(124, 8, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
 
                     if (openMenuIndex != -1) {
                         Menu.DealWithOldMenuCont(openMenuIndex, canDo);

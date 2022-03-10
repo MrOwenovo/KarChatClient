@@ -2,6 +2,7 @@ package KarChat.Server;
 
 import KarChat.Chat.HomePage.MenuContent;
 import KarChat.Chat.Login.LoginHome;
+import KarChat.Server.DataBase.Entry.Friends;
 import KarChat.Server.DataBase.Entry.Icon;
 import KarChat.Server.DataBase.Entry.Post;
 import KarChat.Server.DataBase.Entry.User;
@@ -97,16 +98,28 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         //识别要加谁为好友,判断是否已经发送
                     case "addFriend":
                         String friendName = buf.readLine();
+                        final Post[] post = new Post[1];
+                        //先查询一下加好友列表里是否已经存在了这一对组合
                         MybatisUnit.doChatWork(mapper->{
-                            int i=mapper.addFriend(username, friendName);
-                            if (i == 1) {
-                                out.println("true");
-                            }else{
-                                out.println("false");
-
-                            }
+                            post[0] = mapper.checkPostIsExist(username, friendName);
                         });
+                        if (post[0]==null) {  //加好友列表中不存在该邀请
+                            //加好友
+                            MybatisUnit.doChatWork(mapper -> {
+                                int i = mapper.addFriend(username, friendName);
+                                if (i == 1) {
+                                    out.println("true");
+                                } else {
+                                    out.println("false");
+
+                                }
+                            });
+                            break;
+                        }{  //加好友列表中已经存在了该邀请
+                            out.println("already");
+                    }
                         break;
+
                         //获取所有好友请求
                     case "get":
                         MybatisUnit.doChatWork(mapper->{
@@ -136,6 +149,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                     for (int i = 0; i < posts.length; i++) {
                                         out.println(posts[i].getPost());
                                         out.println(posts[i].getGeter());
+                                        out.println(posts[i].getState());
                                     }
                                     System.out.println("获得请求");
                                 }else {
@@ -166,6 +180,111 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                             });
                         }
                         break;
+                    case "createFriendsTable":
+                        MybatisUnit.doChatWork(mapper->{
+                            //这里由于使用${},所以账号不能是纯数字，加入判断，如果是纯数字就加个D在前面
+                            if (username.matches("^[0-9]*$")){  //如果账号是纯数字
+                                mapper.createFriendsTable("_"+username);  //创建以自己为表名的好友表，用来存放好友
+                            }else {
+                                mapper.createFriendsTable(username);  //创建以自己为表名的好友表，用来存放好友
+                            }
+                        });
+                        break;
+                    case "addState":
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                String addStateName = buf.readLine();
+                                MybatisUnit.doChatWork(mapper->{
+                                    int i=mapper.updateAddState(addStateName, username);
+                                    if (i == 1) {
+                                        out.println("true");
+                                    }
+                                });
+
+                                //在两个人的好友表中添加对方
+                                MybatisUnit.doChatWork(mapper->{
+                                    if (username.matches("^[0-9]*$")) {  //如果自己账号是纯数字
+                                        mapper.addFriendName("_"+username, addStateName);  //给自己的好友表中添加人名
+                                    } else {
+                                        mapper.addFriendName(username, addStateName);  //给自己的好友表中添加人名
+                                    }
+                                    if (addStateName.matches("^[0-9]*$")) {  //如果对方账号是纯数字
+                                        mapper.addFriendName("_"+addStateName, username);  //给对方的好友表中添加自己
+                                    } else {
+                                        mapper.addFriendName(addStateName, username);  //给对方的好友表中添加自己
+                                    }
+                                });
+
+                                //创建聊天表，并把表名存储到两个人的好友表中
+                                MybatisUnit.doChatWork(mapper->{
+                                    String chatLocation = username + "_" + addStateName;  //聊天表名
+                                    mapper.createChatTable(chatLocation);
+                                    //加入两个人的表
+                                    if (username.matches("^[0-9]*$")) {  //如果自己账号是纯数字
+                                        mapper.updateChatLocation("_" + username, chatLocation, addStateName);
+                                    } else {
+                                        mapper.updateChatLocation(username, chatLocation, addStateName);
+                                    }
+                                    if (addStateName.matches("^[0-9]*$")) {  //如果好友账号是纯数字
+                                        mapper.updateChatLocation("_" + addStateName, chatLocation, username);
+                                    } else {
+                                        mapper.updateChatLocation(addStateName, chatLocation, username);
+                                    }
+                                });
+
+
+                            }
+                        }.start();
+                        break;
+                    case "deleteAddFriend":
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                String deleteAddFriendName=buf.readLine();
+                                MybatisUnit.doChatWork(mapper->{
+                                    mapper.deleteFriendName(deleteAddFriendName, username);
+                                });
+                            }
+                        }.start();
+                        break;
+                    case "checkFriends":
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                MybatisUnit.doChatWork(mapper->{
+                                    Friends[] friends;  //好友列表
+                                    if (username.matches("^[0-9]*$")) {  //如果好友账号是纯数字
+                                        friends=mapper.checkFriends("_" + username);
+                                    } else {
+                                        friends=mapper.checkFriends(username);
+                                    }
+                                    out.println(friends.length);  //发送长度
+                                    for (int i = 0; i < friends.length; i++) {
+                                        out.println(friends[i].getFriends());
+                                        out.println(friends[i].getChatLocation());
+                                    }
+
+                                });
+                            }
+                        }.start();
+                        break;
+                    case "getFriendIcon":
+                        int ChatLength = Integer.parseInt(buf.readLine());  //读取用户的数量
+                        for (int i = 0; i < ChatLength; i++) {
+                            String iconName = buf.readLine();
+                            MybatisUnit.doSqlWork(mapper->{
+                                Icon icon=mapper.getIcon(iconName);
+                                out.println(icon.getIconString());
+                            });
+                        }
+                        break;
+//                    case "getUserState":
+//                        User user=buf
+//                        break;
+
                 }
 
             }

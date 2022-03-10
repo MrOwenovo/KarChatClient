@@ -8,7 +8,9 @@ import KarChat.Chat.Login.Button.RadioButton;
 import KarChat.Chat.Login.Button.RoundButton;
 import KarChat.Chat.Login.Button.ThreeDimensionalBorder;
 import KarChat.Chat.Sound.PlaySound;
+import KarChat.Server.DataBase.Entry.Friends;
 import KarChat.Server.DataBase.Entry.Post;
+import KarChat.Server.DataBase.MybatisUnit;
 import lombok.SneakyThrows;
 import org.apache.commons.io.input.ObservableInputStream;
 
@@ -37,6 +39,14 @@ public class EchoClient{
     public static boolean getSbIconGet =false;  //获取某人头像
     public static boolean addFriend =false;  //加好友
     public static boolean remember =false;  //是否记住密码
+    public static boolean addState =false;  //是否修改addFriend中的state
+    public static String addStateName ;  //是否修改addFriend中的被邀请者
+    public static String deleteAddFriendName ;  //删除好友邀请的好友姓名
+    public static boolean deleteAddFriend=false ;  //是否删除好友邀请
+    public static boolean checkFriends=false ;  //查看用户的所有好友
+    public static boolean getFriendIcon=false ;  //获得好友的头像
+    public static boolean getUserState=false ;  //获得好友在线状态
+    private static Friends[] friends;
 
     public static void main(String[] args) throws Exception{
         try (
@@ -166,6 +176,8 @@ public class EchoClient{
                                 Thread.sleep(1000);
                                 LoginHome.registerFinish(username[0], password[0]);  //做出注册完反馈
                             }
+                            //创建好友表，以该用户名为表名
+                            out.println("createFriendsTable");
                             check = false;  //登录失败标志位重置为false
                         }
                     }
@@ -195,7 +207,7 @@ public class EchoClient{
                         for (int i = 0; i < length; i++) {
                             String post = buf.readLine();
                             String get = buf.readLine();
-                            posts[i] = new Post(post, get);  //获取每一个请求
+                            posts[i] = new Post(post, get,null);  //获取每一个请求
                         }
                         MenuContent.getPosts(posts);  //发送所有请求
                         get = false;
@@ -233,12 +245,29 @@ public class EchoClient{
                         String bool=buf.readLine();
                         System.out.println(bool);
 //
-                        if (bool.equals("true")) {
+                        if ("true".equals(bool)) {
                             MenuContent.searchText.setText("已发送好友邀请");
                             MenuContent.searchText.setForeground(new Color(62, 171, 159));
-                        }else{
+                        }else if ("false".equals(bool)){
                             MenuContent.searchText.setText("用户名输入错误");
                             MenuContent.searchText.setForeground(new Color(161, 19, 19));
+                            new Thread(){
+                                @SneakyThrows
+                                @Override
+                                public void run() {
+                                    PlaySound.play("sound/error.mp3");
+                                }
+                            }.start();
+                        }else if ("already".equals(bool)){  //已经存在了邀请
+                            MenuContent.searchText.setText("已经发送过该邀请");
+                            MenuContent.searchText.setForeground(new Color(161, 19, 19));
+                            new Thread(){
+                                @SneakyThrows
+                                @Override
+                                public void run() {
+                                    PlaySound.play("sound/error.mp3");
+                                }
+                            }.start();
                         }
                         addFriend = false;
                     }
@@ -250,11 +279,91 @@ public class EchoClient{
                         for (int i = 0; i < length; i++) {
                             String post = buf.readLine();
                             String get = buf.readLine();
-                            posts[i] = new Post(post, get);  //获取每一个请求
-                            System.out.println(post+get);
+                            String state = buf.readLine();
+                            posts[i] = new Post(post, get,state);  //获取每一个请求
                         }
                         MenuContent.getGets(posts);  //发送所有请求
                         post = false;
+                    }
+                    if (addState) {  //修改addFriend中的状态
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                out.println("addState");
+                                out.println(addStateName);
+                                addState = false;
+                                String BooleanFlag = buf.readLine();
+                                if ("true".equals(BooleanFlag)) {
+                                    MenuContent.searchText.setText("已同意好友邀请");
+                                    MenuContent.searchText.setForeground(new Color(62, 171, 159));
+                                }
+
+
+                            }
+                        }.start();
+
+                    }
+                    if (deleteAddFriend) {
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                out.println("deleteAddFriend");
+                                out.println(deleteAddFriendName);
+                                MenuContent.searchText.setText("已拒绝好友邀请");
+                                MenuContent.searchText.setForeground(new Color(102, 48, 180));
+
+                                deleteAddFriend = false;
+                            }
+                        }.start();
+                    }
+                    if (checkFriends) {
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                out.println("checkFriends");
+                                int length = Integer.parseInt(buf.readLine());  //好友个数
+                                friends = new Friends[length];
+                                for (int i = 0; i < length; i++) {
+                                    String friend = buf.readLine();
+                                    String getChatLocation = buf.readLine();
+                                    friends[i] = new Friends(0,friend,getChatLocation);
+                                }
+                                System.out.println(friends.length);
+                                MenuContent.getChat(friends);
+
+                            }
+                        }.start();
+                        checkFriends = false;
+                    }
+                    if (getFriendIcon) {
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                BufferedImage[] icons=new BufferedImage[friends.length];
+                                out.println("getFriendIcon");
+                                out.println(friends.length);
+                                for (int i = 0; i < friends.length; i++) {
+                                    out.println(friends[i].getFriends());
+                                    BufferedImage icon = GetPicture.stringToImage(buf.readLine());  //转成图片
+                                    icons[i] = icon;
+                                }
+                                MenuContent.setContextChat(icons);
+                            }
+                        }.start();
+                        getFriendIcon = false;
+                    }
+                    if (getUserState) {
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                out.println("getUserState");
+                                
+                            }
+                        }.start();
+                        getUserState = false;
                     }
 
                 }

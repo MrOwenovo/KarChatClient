@@ -11,4 +11,5 @@ import lombok.Data;
 public class Post {
     String post;  //请求人
     String geter; //被请求人
+    String state;  //状态
 }

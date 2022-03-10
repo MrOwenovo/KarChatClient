@@ -22,10 +22,9 @@
         </environment>
     </environments>
     <mappers>
-<!--        <mapper class="mybatis.Mapper.UserMapper"/>-->
-<!--        <mapper class="mybatis.Mapper.BookMapper"/>-->
-<!--        <mapper resource="KarChat/Server/DataBase/Mapper/ChatMapper.xml"/>-->
-<!--        <mapper class="KarChat.Server.DataBase.Mapper.Login"/>-->
-        <package name="KarChat.Server.DataBase.Mapper"/>
+        <mapper resource="KarChat/Server/DataBase/Mapper/ChatMapper.xml"/>
+        <mapper class="KarChat.Server.DataBase.Mapper.Login"/>
+<!--        <mapper class="KarChat.Server.DataBase.Mapper.Chat"/>-->
+<!--        <package name="KarChat.Server.DataBase.Mapper"/>-->
     </mappers>
 </configuration>
