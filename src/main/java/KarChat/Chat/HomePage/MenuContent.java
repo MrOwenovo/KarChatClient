@@ -79,11 +79,13 @@ public class MenuContent extends Observable {
     private static JTextField searchTextChat;
     private static RadioJLabel contextChat;
     private static Friends[] getsChats;
-    private static int iconLengthChat;
+    public static int iconLengthChat;
     private static String[] iconNameChat;
     private static RadioJLabel[] labelsChar;
     private static JLabel[] iconLabelsChar;
     private static DynamicJLabel[] textsChar;
+    private static RadioJLabel[] stateIcon;
+    private static RadioJLabel[] stateIconBack;
 
     static {  //创造容纳邀请的标签
         labels = new RadioJLabel[20];
@@ -951,6 +953,15 @@ public class MenuContent extends Observable {
     @SneakyThrows
     public static void setContextChat(BufferedImage[] icons) {
 
+        {  //初始化状态图像
+            stateIcon = new RadioJLabel[iconLengthChat];
+            stateIconBack = new RadioJLabel[iconLengthChat];
+            for (int i = 0; i < iconLengthChat; i++) {
+                stateIcon[i] = new RadioJLabel("");
+                stateIconBack[i] = new RadioJLabel("");
+            }
+        }
+
         //上下拖动条
         ImageIcon downIconChat = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/down.png")));
         ImageIcon upIconChar = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/up.png")));
@@ -971,6 +982,9 @@ public class MenuContent extends Observable {
         for (int i = 0; i < iconLengthChat; i++) {
             labelsChar[i] = new RadioJLabel("");
             labelsChar[i].setColor(new Color(253, 252, 252));
+            labelsChar[i].add(stateIcon[i]);
+            labelsChar[i].add(stateIconBack[i]);
+            stateIconBack[i].setSize(0, 0);
             contextChat.add(labelsChar[i]);
             labelsChar[i].setBounds(15, heightChat, background1.getWidth() - 20 - 10, 80);
 
@@ -989,6 +1003,20 @@ public class MenuContent extends Observable {
             textsChar[i].setForeground(new Color(7, 7, 7));
             labelsChar[i].add(textsChar[i]);
 
+            //聊天标签添加点击事件
+            int finalI = i;
+            labelsChar[i].addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {  //双击后
+                        chatContent[finalI].setBounds(360,70,700,700);
+                    }
+                }
+
+            });
+
+
+
 //            DynamicJLabel sendMessageGet;
 //            if (getsChats[i].getState().equals("0")) {
 //                sendMessageGet = new DynamicJLabel("邀请等待同意···", new Font("Serif", Font.BOLD, 13), 50);
@@ -998,7 +1026,8 @@ public class MenuContent extends Observable {
 //            sendMessageGet.setForeground(new Color(62, 171, 159));
 //            sendMessageGet.setCenter(labelsChar[i].getWidth()-140);
 //            labelsChar[i].add(sendMessageGet);
-
+            System.out.println("运行到0");
+            EchoClient.getUserState = true;
 
             heightChat += 90;
         }
@@ -1060,7 +1089,25 @@ public class MenuContent extends Observable {
         });
     }
 
-
+    /**
+     * 添加是否在线的绿点点
+     */
+    public static void setStateIcon(int[] states) {
+        for (int i = 0; i < iconLengthChat; i++) {
+            if (states[i] == 0) {  //账号不在线
+                stateIcon[i].setColor(new Color(110, 108, 108));
+                stateIcon[i].setBounds(54, 51, 15, 15);
+                stateIcon[i].setArc(15,15);
+            } else {  //账号在线
+                stateIcon[i].setColor(new Color(47, 199, 47));
+                stateIconBack[i].setColor(new Color(238, 237, 237));
+                stateIcon[i].setBounds(54, 51, 15, 15);
+                stateIconBack[i].setBounds(52, 49, 19, 19);
+                stateIcon[i].setArc(15,15);
+                stateIconBack[i].setArc(19,19);
+            }
+        }
+    }
 
 
     /**

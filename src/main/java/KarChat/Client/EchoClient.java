@@ -356,11 +356,21 @@ public class EchoClient{
                         getFriendIcon = false;
                     }
                     if (getUserState) {
+                        System.out.println("运行到1");
                         new Thread() {
+                            @SneakyThrows
                             @Override
                             public void run() {
+                                System.out.println("运行到5");
                                 out.println("getUserState");
-                                
+                                int state[] = new int[friends.length];
+                                for (int i = 0; i < friends.length; i++) {
+                                    out.println(friends[i].getFriends());
+                                    state[i] = Integer.parseInt(buf.readLine());
+                                }
+                                System.out.println(state[0]);
+                                System.out.println(Arrays.toString(state));
+                                MenuContent.setStateIcon(state);  //传入状态
                             }
                         }.start();
                         getUserState = false;

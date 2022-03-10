@@ -26,7 +26,8 @@ public class EchoThread implements Runnable {  //实现Runnable接口
     private Socket client = null;  //接收客户端
     public static boolean exit = false;  //判断是否退出
     String username = null;
-    private Post[] posts;
+    private Post[] posts;//好友列表
+    private Friends[] friends;
 
     public EchoThread(Socket client) {  //通过构造方法设置Socket
         this.client = client;
@@ -255,11 +256,10 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                             @Override
                             public void run() {
                                 MybatisUnit.doChatWork(mapper->{
-                                    Friends[] friends;  //好友列表
                                     if (username.matches("^[0-9]*$")) {  //如果好友账号是纯数字
-                                        friends=mapper.checkFriends("_" + username);
+                                        friends =mapper.checkFriends("_" + username);
                                     } else {
-                                        friends=mapper.checkFriends(username);
+                                        friends =mapper.checkFriends(username);
                                     }
                                     out.println(friends.length);  //发送长度
                                     for (int i = 0; i < friends.length; i++) {
@@ -281,9 +281,22 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                             });
                         }
                         break;
-//                    case "getUserState":
-//                        User user=buf
-//                        break;
+                    case "getUserState":
+                        MybatisUnit.doChatWork(mapper->{
+                            for (int i = 0; i < friends.length; i++) {
+                                String friendsName= null;
+                                try {
+                                    friendsName = buf.readLine();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                User user = mapper.getUserState(friendsName);
+                                            out.println(user.getState());
+                            }
+                });
+
+                break;
+
 
                 }
 
@@ -307,4 +320,17 @@ public class EchoThread implements Runnable {  //实现Runnable接口
         }
 
     }
+
+    /**
+     * 从服务器获取信息
+     */
+    @SneakyThrows
+    public void getMessage(String message) {
+        try (PrintStream out = new PrintStream(
+                client.getOutputStream());  //实例化客户端的输出流
+        ) {
+            out.println(message);
+        }
+    }
+
 }

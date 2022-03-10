@@ -2,13 +2,11 @@ package KarChat.Chat.HomePage;
 
 import KarChat.Chat.Action.Minimize;
 import KarChat.Chat.Helper.RemoveBackground;
-import KarChat.Chat.Helper.RemoveBlack;
 import KarChat.Chat.Helper.ToBufferedImage;
+import KarChat.Chat.HomePage.Label.InnerLabel;
 import KarChat.Chat.Login.Button.RoundButton;
-import KarChat.Chat.Login.DynamicJLabel;
 import KarChat.Chat.Login.Frameless;
 import KarChat.Chat.Login.RadioJLabel;
-import KarChat.Chat.Login.ShakeLabel;
 import KarChat.Client.EchoClient;
 import KarChat.Game.Panel.MainPanel;
 import com.sun.awt.AWTUtilities;
@@ -75,6 +73,7 @@ public class Home extends Observable implements ActionListener , Minimize {
     private boolean iconified;
     private int xOld;
     private int yOld;
+    public static InnerLabel[] chatContent;
 
 
     @SneakyThrows
@@ -240,6 +239,20 @@ public class Home extends Observable implements ActionListener , Minimize {
             MenuContent.InitColor(menuHomeUser3);
             MenuContent.InitChat(menuHomeUser2);
 
+            new Thread(){
+                @SneakyThrows
+                @Override
+                public void run() {
+                    Thread.sleep(2000);
+                    //先创建40个存储好友，之后再慢慢移动
+                    chatContent = new InnerLabel[MenuContent.iconLengthChat];
+                    for (int i = 0; i < MenuContent.iconLengthChat; i++) {
+                        chatContent[i] = new InnerLabel();
+                        chatContent[i].setSize(0, 0);
+                        back.add(chatContent[i]);
+                    }
+                }
+            }.start();
         }
         {  //加入头像
             EchoClient.getIcon = true;  //修改标志位
@@ -695,45 +708,54 @@ public class Home extends Observable implements ActionListener , Minimize {
         }
 
 
-        back.add(menu);  //加入菜单
-        back.add(menuTop);  //加入背景
-        menuBack.add(menuTop);
-        game1Back.add(game1Top);
-        game2Back.add(game2Top);
-        game3Back.add(game3Top);
-        back.add(menuBack);  //加入背景
-        back.add(menuHomeBack);  //点击菜单展开的内容背景
-        menuHomeBack.add(menuHomeUser);   //点击菜单展开的内容
-        menuHomeBack.add(menuHomeUser1);   //点击菜单展开的内容
-        menuHomeBack.add(menuHomeUser2);   //点击菜单展开的内容
-        menuHomeBack.add(menuHomeUser3);   //点击菜单展开的内容
-        menuHomeBack.add(menuHomeUser4);   //点击菜单展开的内容
-        menuHomeBack.add(menuHomeUser5);   //点击菜单展开的内容
-        menuHomeBack.add(menuHomeUser6);   //点击菜单展开的内容
 
-        back.add(game1);  //加入背景
-        back.add(game1Back);  //加入背景
-        back.add(game2);  //加入背景
-        back.add(game2Back);  //加入背景
-        back.add(game3);  //加入背景
-        back.add(game3Back);  //加入背景
-        home.add(Rbut1);  //加入右上角按钮
-        home.add(Rbut2);
-        back.add(homeBack); //加入背景
-        back.add(home);  //加入主页面
+        new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                Thread.sleep(2000);
+                back.add(menu);  //加入菜单
+                back.add(menuTop);  //加入背景
+                menuBack.add(menuTop);
+                game1Back.add(game1Top);
+                game2Back.add(game2Top);
+                game3Back.add(game3Top);
+                back.add(menuBack);  //加入背景
+                back.add(menuHomeBack);  //点击菜单展开的内容背景
+                menuHomeBack.add(menuHomeUser);   //点击菜单展开的内容
+                menuHomeBack.add(menuHomeUser1);   //点击菜单展开的内容
+                menuHomeBack.add(menuHomeUser2);   //点击菜单展开的内容
+                menuHomeBack.add(menuHomeUser3);   //点击菜单展开的内容
+                menuHomeBack.add(menuHomeUser4);   //点击菜单展开的内容
+                menuHomeBack.add(menuHomeUser5);   //点击菜单展开的内容
+                menuHomeBack.add(menuHomeUser6);   //点击菜单展开的内容
 
-
-
-        home.setBounds(0,50,1300,743);
-        homeBack.setBounds(240,80,960,673);
-        menu.setBounds(50, 20, menuIcon.getIconWidth(), menuIcon.getIconHeight());
-        game1.setBounds(290, 100, game1Icon.getIconWidth(), game1IconOn.getIconHeight());
-        Rbut1.setBounds(home.getWidth()-90, 20, 25, 25);  //设置小按钮位置
-        Rbut2.setBounds(home.getWidth()-50, 20, 25, 25);
+                back.add(game1);  //加入背景
+                back.add(game1Back);  //加入背景
+                back.add(game2);  //加入背景
+                back.add(game2Back);  //加入背景
+                back.add(game3);  //加入背景
+                back.add(game3Back);  //加入背景
+                home.add(Rbut1);  //加入右上角按钮
+                home.add(Rbut2);
+                back.add(homeBack); //加入背景
+                back.add(home);  //加入主页面
 
 
+                home.setBounds(0,50,1300,743);
+                homeBack.setBounds(240,80,960,673);
+                menu.setBounds(50, 20, menuIcon.getIconWidth(), menuIcon.getIconHeight());
+                game1.setBounds(290, 100, game1Icon.getIconWidth(), game1IconOn.getIconHeight());
+                Rbut1.setBounds(home.getWidth()-90, 20, 25, 25);  //设置小按钮位置
+                Rbut2.setBounds(home.getWidth()-50, 20, 25, 25);
 
-        back.setVisible(true);  //窗口可视化
+
+                back.setVisible(true);  //窗口可视化
+            }
+        }.start();
+
+
+
 
     }
 
