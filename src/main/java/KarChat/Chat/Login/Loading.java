@@ -1,5 +1,7 @@
 package KarChat.Chat.Login;
 
+import KarChat.Chat.Helper.ChangeToColor;
+
 import java.awt.Color;
         import java.awt.Graphics;
         import java.awt.Graphics2D;
@@ -17,16 +19,18 @@ import java.awt.Color;
  * 在paintComponent方法中绘制一个图形(圆)再更改画笔颜色去填充，填充时根据变量X设定填充开始位置(角度)
  * 在ActionListener事件中不断修改变量X的值和调用重写的paintComponent方法
  */
-public class Loading extends JPanel {
+public class Loading extends RadioJLabel {
 
     private static final long serialVersionUID = 1551571546L;
 
-    private Color color=Color.RED;
+    private Color color = Color.RED;
     private Timer timer;
     private int delay;  //转动间隔
-    private int startAngle;  //设置圆角
+    private int startAngle=-10;  //设置圆角
     private int arcAngle = 0;
     private int orientation;  //转动方向
+    private int WIDTH = 130;  //宽度
+
 
     public static final int CLOCKWISE = 0;  //顺时针
     public static final int ANTICLOCKWISE = 1;  //逆时针
@@ -43,6 +47,21 @@ public class Loading extends JPanel {
         init();
     }
 
+    public Loading(int width, Color color) {
+        this.WIDTH = width;
+        this.delay = 1;
+        this.orientation = CLOCKWISE;
+        this.color = color;
+        if (WIDTH > 110 && WIDTH <= 130)
+            this.setArc(WIDTH, WIDTH);
+        if (WIDTH > 130 && WIDTH <= 170)
+            this.setArc(WIDTH - 10, WIDTH - 10);
+        if (WIDTH > 170 && WIDTH <= 210)
+            this.setArc(WIDTH - 10, WIDTH - 10);
+//
+        init();
+    }
+
     public Loading(int delay, int orientation) {
         this.delay = delay;
         this.orientation = orientation;
@@ -55,11 +74,9 @@ public class Loading extends JPanel {
     }
 
     /**
-     * @param orientation	set the direction of rotation
-     *
-     * @beaninfo
-     *        enum: CLOCKWISE LodingPanel.CLOCKWISE
-     *        		ANTICLOCKWISE LodingPanel.ANTICLOCKWISE
+     * @param orientation set the direction of rotation
+     * @beaninfo enum: CLOCKWISE LodingPanel.CLOCKWISE
+     * ANTICLOCKWISE LodingPanel.ANTICLOCKWISE
      */
     public void setOrientation(int orientation) {
         this.orientation = orientation;
@@ -72,8 +89,9 @@ public class Loading extends JPanel {
     public void setColor(Color color) {
         this.color = color;
     }
+
     @Override
-    protected void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawArc(g);
     }
@@ -85,12 +103,20 @@ public class Loading extends JPanel {
         int width = getWidth();
         int height = getHeight();
         //设置画笔颜色
-        g2d.setColor(Color.WHITE);
-        g2d.drawArc(width / 2 - 75, height / 2 - 55, 20 + 110, 20 + 110, 0, 360);
+//        g2d.setColor(Color.WHITE);
+        g2d.setColor(ChangeToColor.getColorFromHex("#333333"));
+        g2d.drawArc(width / 2 - WIDTH / 2, height / 2 - WIDTH / 2, WIDTH, WIDTH, 0, 360);
         g2d.setColor(color);
-        g2d.fillArc(width / 2 - 75, height / 2 - 55, 20 + 110, 20 + 110, startAngle, arcAngle);
-        g2d.setColor(Color.WHITE);
-        g2d.fillArc(width / 2 - 70, height / 2 - 50, 20 + 100, 20 + 100, 0, 360);
+        if (WIDTH > 110 && WIDTH <= 130)
+            g2d.fillArc(width / 2 - WIDTH / 2, height / 2 - WIDTH / 2, WIDTH, WIDTH, startAngle, arcAngle);
+        if (WIDTH > 130 && WIDTH <= 170)
+            g2d.fillArc(width / 2 - WIDTH / 2, height / 2 - WIDTH / 2, WIDTH, WIDTH, startAngle + 30, arcAngle);
+        if (WIDTH > 170 && WIDTH <= 210)
+            g2d.fillArc(width / 2 - WIDTH / 2, height / 2 - WIDTH / 2, WIDTH, WIDTH, startAngle + 60, arcAngle);
+
+        g2d.setColor(ChangeToColor.getColorFromHex("#333333"));
+//        g2d.setColor(Color.WHITE);
+        g2d.fillArc(width / 2 - WIDTH / 2 + 5, height / 2 - WIDTH / 2 + 5, WIDTH - 10, WIDTH - 10, 0, 360);
         g2d.dispose();
     }
 
@@ -100,44 +126,22 @@ public class Loading extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (startAngle < 360) {
-                //控制每个DELAY周期旋转的角度，+ 为逆时针  - 为顺时针
-                switch (orientation) {
-                    case CLOCKWISE:
-                        startAngle = startAngle + 1;
-                        break;
-                    case ANTICLOCKWISE:
-                        startAngle = startAngle - 1;
-                        break;
-                    default:
-                        startAngle = startAngle + 1;
-                        break;
-                }
-            } else {
-                startAngle = 0;
-            }
-
-            if (o == 0) {
-                if (arcAngle >= 359) {
-                    o = 1;
-                    orientation = ANTICLOCKWISE;
-                }else {
-                    if (orientation == CLOCKWISE) {
-                        arcAngle += 1;
+//            if (startAngle < 360) {
+            //控制每个DELAY周期旋转的角度，+ 为逆时针  - 为顺时针
+                    if (WIDTH > 110 && WIDTH <= 130) {
+                        startAngle = startAngle - 5;
+                        arcAngle = 100;
                     }
-                }
-            }else {
-                if (arcAngle <= 1) {
-                    o = 0;
-                    orientation = CLOCKWISE;
-                }else {
-                    if (orientation == ANTICLOCKWISE) {
-                        arcAngle -= 1;
+                    if (WIDTH > 130 && WIDTH <= 170) {
+                        startAngle = startAngle - 4;
+                        arcAngle = 100;
                     }
-                }
-            }
+                    if (WIDTH > 170 && WIDTH <= 210) {
+                        startAngle = startAngle - 3;
+                        arcAngle = 100;
+                    }
 
             repaint();
         }
-    }
-}
+            }
+        }

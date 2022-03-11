@@ -55,14 +55,16 @@ public class messageLabel extends RadioJLabel {
             this.myHeight = height; //将最终聊天信息的高度保存
 
         } else {  //左方消息
-            iconLabels.setBounds( 0, 0, image.getWidth(), image.getHeight());
-            for (int i = 0; i < line; i++) {
-                MyMessages[i].setCenter(this.getWidth()*2);
+            iconLabels.setBounds(0, 0, image.getWidth(), image.getHeight());
+            for (int i = 0; i < line; i++) {  //把拆分的语句拼起来
+                MyMessages[i].setCenter(this.getWidth()+image.getWidth()-9);
                 this.add(MyMessages[i]);  //添加头像和消息
-                height += this.getHeight();
+                height += HEIGHT/2;
             }
-            back.setColor(new Color(253, 252, 252));
-            back.setBounds(MyMessages[0].getWidth() + 10 + image.getWidth(), 0, MyMessages[0].getWidth() + 15 + image.getWidth(), height);
+            back.setColor(new Color(253, 253, 252));
+            back.setBounds(image.getWidth()+3, 2, MyMessages[0].getWidth() +15 + image.getWidth(), height-4);
+            this.setSize(this.getWidth(),height);
+            this.myHeight = height; //将最终聊天信息的高度保存
 
         }
         this.add(iconLabels);

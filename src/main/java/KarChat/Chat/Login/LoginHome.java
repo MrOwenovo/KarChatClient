@@ -222,9 +222,9 @@ public class LoginHome implements ActionListener, Minimize {
             public void run() {
                 float MAXTRANS=0;  //透明度
                 while (MAXTRANS <= 1.0) {
-                    Thread.sleep(5);
+                    Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
-                    MAXTRANS += 0.03;
+                    MAXTRANS += 0.01;
                 }
                 AWTUtilities.setWindowOpacity(background, 1);  //半透明
             }
@@ -1116,9 +1116,9 @@ public class LoginHome implements ActionListener, Minimize {
         Rbut2.setBounds(right.getWidth() + 450, 60, 25, 25);
         wrongMessage.setCenter(2039);
         if (isAlive)
-        sign.setBounds(right.getX() + right.getWidth() / 2 - 75, 120, icon.getIconWidth(), icon.getIconHeight());
+        sign.setBounds(right.getX() + right.getWidth() / 2 - 73, 122, icon.getIconWidth(), icon.getIconHeight());
         if (!isAlive)
-        load.setBounds(right.getX() + right.getWidth() / 2 - 81, 95, icon.getIconWidth()+35, icon.getIconHeight()+35);
+        load.setBounds(right.getX() + right.getWidth() / 2 - 79, 95, icon.getIconWidth()+35, icon.getIconHeight()+35);
         loadIn.setBounds(right.getX() + right.getWidth() / 2 - 81, 95, icon.getIconWidth()+35, icon.getIconHeight()+35);
 //        load.setBounds(0 ,0, load.getWidth()+230, load.getHeight()+230);
         loginLabel.setBounds(right.getWidth() - 25, 490, loginButtonIcon.getIconWidth() + 30, loginButtonIcon.getIconHeight());

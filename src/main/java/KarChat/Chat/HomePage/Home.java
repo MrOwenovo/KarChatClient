@@ -211,20 +211,6 @@ public class Home extends Observable implements ActionListener , Minimize {
         });
 //        home.setColor(new Color(239, 238, 238));
 
-        //透明开启效果
-        new Thread() {  //开启窗口动画
-            @SneakyThrows
-            @Override
-            public void run() {
-                float MAXTRANS=0;  //透明度
-                while (MAXTRANS <= 1.0) {
-                    Thread.sleep(4);
-                    AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
-                    MAXTRANS += 0.01;
-                }
-                AWTUtilities.setWindowOpacity(back, 1);  //半透明
-            }
-        }.start();
 
 //
 
@@ -710,11 +696,31 @@ public class Home extends Observable implements ActionListener , Minimize {
 
 
 
-        new Thread(){
+        LoadingHome loadingHome = new LoadingHome();//加入加载界面
+        back.add(loadingHome);
+        AWTUtilities.setWindowOpacity(back, 0);  //半透明
+        back.setVisible(true);  //窗口可视化
+        float MAXTRANS = 0;  //透明度
+        while (MAXTRANS <= 1.0) {
+            Thread.sleep(4);
+            AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
+            MAXTRANS += 0.02;
+        }
+
+        new Thread() {
             @SneakyThrows
             @Override
             public void run() {
                 Thread.sleep(2000);
+
+                float MAXTRANS = 1;  //透明度
+                while (MAXTRANS >= 0) {
+                    Thread.sleep(4);
+                    AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
+                    MAXTRANS -= 0.02;
+                }
+
+                loadingHome.setSize(0, 0);
                 back.add(menu);  //加入菜单
                 back.add(menuTop);  //加入背景
                 menuBack.add(menuTop);
@@ -743,15 +749,23 @@ public class Home extends Observable implements ActionListener , Minimize {
                 back.add(home);  //加入主页面
 
 
-                home.setBounds(0,50,1300,743);
-                homeBack.setBounds(240,80,960,673);
+                home.setBounds(0, 50, 1300, 743);
+                homeBack.setBounds(240, 80, 960, 673);
                 menu.setBounds(50, 20, menuIcon.getIconWidth(), menuIcon.getIconHeight());
                 game1.setBounds(290, 100, game1Icon.getIconWidth(), game1IconOn.getIconHeight());
-                Rbut1.setBounds(home.getWidth()-90, 20, 25, 25);  //设置小按钮位置
-                Rbut2.setBounds(home.getWidth()-50, 20, 25, 25);
+                Rbut1.setBounds(home.getWidth() - 90, 20, 25, 25);  //设置小按钮位置
+                Rbut2.setBounds(home.getWidth() - 50, 20, 25, 25);
 
 
                 back.setVisible(true);  //窗口可视化
+                float MAXTRANS2 = 0;  //透明度
+                while (MAXTRANS2 <= 1.0) {
+                    Thread.sleep(4);
+                    AWTUtilities.setWindowOpacity(back, MAXTRANS2);  //半透明
+                    MAXTRANS2 += 0.02;
+                }
+                AWTUtilities.setWindowOpacity(back, 1);  //半透明
+
             }
         }.start();
 

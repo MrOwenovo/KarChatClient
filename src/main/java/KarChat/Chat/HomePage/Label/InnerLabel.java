@@ -47,6 +47,7 @@ public class InnerLabel extends RadioJLabel {
     public BufferedImage mine;  //我方头像
     public BufferedImage friend;  //好友头像
     public RadioJLabel bottomBack;
+    public RadioJLabel topLabel;
 
 
     @SneakyThrows
@@ -54,9 +55,8 @@ public class InnerLabel extends RadioJLabel {
         super("");
         this.setBounds(50,50,width,height);
         this.setColor(new Color(fameColor1, fameColor2, fameColor3));
-        addUpAndDown(this);
         //添加顶部信息
-        RadioJLabel topLabel = new RadioJLabel("");
+        topLabel = new RadioJLabel("");
         topLabel.setBounds(0, 0, this.getWidth(), this.getHeight() / 9);
         topLabel.setColor(new Color(topColor1, topColor2, topColor3));
         topLabel.setArc(5,5);
@@ -69,6 +69,8 @@ public class InnerLabel extends RadioJLabel {
         bottomBack.setColor(new Color(bottomColor1, bottomColor2, bottomColor3));
         bottomBack.setArc(5,5);
         this.add(bottomBack);
+
+        addUpAndDown(this);
 
         //底部背景加入输入框
 
@@ -136,6 +138,7 @@ public class InnerLabel extends RadioJLabel {
 
         //搜索加入键盘监听
         chatText.addKeyListener(new KeyAdapter() {
+            @SneakyThrows
             @Override
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
@@ -143,7 +146,8 @@ public class InnerLabel extends RadioJLabel {
                     //发送事件
                     String message=chatText.getText();
                     send(Type.RIGHT, message, mine);  //发送信息
-
+                    Thread.sleep(2000);
+                    send(Type.LEFT, message, mine);  //发送信息
                 }
             }
         });
@@ -209,7 +213,7 @@ public class InnerLabel extends RadioJLabel {
     private void send(int type, String message, BufferedImage image) {
         if (type == Type.RIGHT) {  //若我方发消息
             messages.add(new messageLabel(KarChat.Chat.HomePage.Label.messageLabel.Type.RIGHT, mine, message));  //加入新消息
-            messages.get(index).setColor(new Color(255,255,255));
+            messages.get(index).setColor(new Color(fameColor1,fameColor2,fameColor3));
             this.add(messages.get(index));  //加入消息
             //判断放置位置
             messages.get(index).setLocation(this.getWidth()-messages.get(index).getWidth()-10,this.getHeight() - bottomBack.getHeight()-messages.get(index).myHeight-20);
@@ -219,7 +223,16 @@ public class InnerLabel extends RadioJLabel {
             this.repaint();
             index++;
         } else {  //对方消息
-
+            messages.add(new messageLabel(messageLabel.Type.LEFT, mine, message));  //加入新消息
+            messages.get(index).setColor(new Color(fameColor1,fameColor2,fameColor3));
+            this.add(messages.get(index));  //加入消息
+            //判断放置位置
+            messages.get(index).setLocation(0,this.getHeight() - bottomBack.getHeight()-messages.get(index).myHeight-20);
+            for (int i = messages.size() - 2; i >=0; i--) {  //所有信息标签上移
+                messages.get(i).setLocation(messages.get(i).getX(),messages.get(i).getY()-messages.get(messages.size()-1).getHeight()-10);
+            }
+            this.repaint();
+            index++;
         }
     }
 
@@ -234,12 +247,12 @@ public class InnerLabel extends RadioJLabel {
 
         JLabel downIconLabelChar = new JLabel();
         downIconLabelChar.setIcon(downIconChat);
-        downIconLabelChar.setBounds(frame.getWidth() - 30, 0, 30, 30);
+        downIconLabelChar.setBounds(frame.getWidth() - 30, topLabel.getHeight()+10, 30, 30);
         frame.add(downIconLabelChar);
 
         JLabel upIconLabelChar = new JLabel();
         upIconLabelChar.setIcon(upIconChar);
-        upIconLabelChar.setBounds(frame.getWidth() - 30, frame.getHeight() - 30, 30, 30);
+        upIconLabelChar.setBounds(frame.getWidth() - 30, frame.getHeight() - 30-bottomBack.getHeight(), 30, 30);
         frame.add(upIconLabelChar);
 
 
