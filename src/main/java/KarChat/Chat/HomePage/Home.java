@@ -31,6 +31,7 @@ public class Home extends Observable implements ActionListener , Minimize {
     public static JLabel game1Top;
     public static ImageIcon game1Icon;
     public static ImageIcon game2Icon;
+    public static BufferedImage transparencyIcon;
     private final ImageIcon game2IconNew;
     public static ImageIcon game3Icon;
     private final ImageIcon game3IconNew;
@@ -774,7 +775,7 @@ public class Home extends Observable implements ActionListener , Minimize {
         //修改一下图像大小
         BufferedImage realIcon= ToBufferedImage.toBufferedImage(Icon.getScaledInstance(defaultIcon.getIconWidth(),defaultIcon.getIconHeight(),0));  //将图片改为合适的大小，并转化为BufferedImage
         //去除黑色背景
-        BufferedImage transparencyIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(realIcon));
+        transparencyIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(realIcon));
         iconLabel = new JLabel(defaultIcon);  //默认头像
         menu.setLayout(null);
         menu.add(iconLabel); //加入头像标签

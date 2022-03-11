@@ -916,7 +916,7 @@ public class MenuContent extends Observable {
         //下半部分
         contextChat = new RadioJLabel("");
         contextChat.setColor(new Color(239, 238, 238));
-        contextChat.setBounds(0, blackBack.getY() + blackBack.getHeight() + 10, background2.getWidth(), background2.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
+        contextChat.setBounds(0,  150+20, background2.getWidth(), background2.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
 
 
         EchoClient.checkFriends = true;  //获取请求
@@ -1006,10 +1006,24 @@ public class MenuContent extends Observable {
             //聊天标签添加点击事件
             int finalI = i;
             labelsChar[i].addMouseListener(new MouseAdapter() {
+                @SneakyThrows
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {  //双击后
                         chatContent[finalI].setBounds(360,70,700,700);
+                        //修改一下图像大小
+                        BufferedImage chatIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
+                        //去除黑色背景
+                        BufferedImage newChatIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(chatIcon));
+                        chatContent[finalI].mine =newChatIcon;  //我的头像
+
+                        //修改一下图像大小
+                        BufferedImage friendIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
+                        //去除黑色背景
+                        BufferedImage newFriendIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(friendIcon));
+
+                        chatContent[finalI].friend = newFriendIcon;  //好友头像
+
                     }
                 }
 
@@ -1026,7 +1040,6 @@ public class MenuContent extends Observable {
 //            sendMessageGet.setForeground(new Color(62, 171, 159));
 //            sendMessageGet.setCenter(labelsChar[i].getWidth()-140);
 //            labelsChar[i].add(sendMessageGet);
-            System.out.println("运行到0");
             EchoClient.getUserState = true;
 
             heightChat += 90;
