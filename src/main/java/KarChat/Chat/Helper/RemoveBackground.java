@@ -1,32 +1,12 @@
 package KarChat.Chat.Helper;
 
-import java.awt.Graphics;
-
-import java.awt.Graphics2D;
-
-import java.awt.GraphicsConfiguration;
-
-import java.awt.GraphicsDevice;
-
-import java.awt.GraphicsEnvironment;
-
-import java.awt.HeadlessException;
-
-import java.awt.Image;
-
-import java.awt.Transparency;
-
-import java.awt.image.BufferedImage;
-
-import java.io.ByteArrayInputStream;
-
-import java.io.ByteArrayOutputStream;
-
-import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 
 

@@ -2,13 +2,11 @@ package KarChat.Chat.Login.Button;
 
 
 import KarChat.Chat.Login.DynamicJLabel;
-import KarChat.Chat.Login.LoginHome;
 import KarChat.Chat.Login.RadioJLabel;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

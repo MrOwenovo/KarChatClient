@@ -1,7 +1,6 @@
 package KarChat.Chat.HomePage;
 
 import KarChat.Chat.Helper.ChangeToColor;
-import KarChat.Chat.Login.Loading;
 import KarChat.Chat.Login.RadioJLabel;
 
 import java.awt.*;
@@ -15,9 +14,9 @@ public class LoadingHome extends RadioJLabel {
     private int xOld;
 
     public LoadingHome() {
-        this.setArc(30,30);
+        this.setArc(30, 30);
         this.setColor(new Color(166, 163, 163));
-        this.setBounds(0,50,1300,743);
+        this.setBounds(0, 50, 1300, 743);
 
 
         //处理鼠标点击事件
@@ -42,11 +41,11 @@ public class LoadingHome extends RadioJLabel {
 
         //加入加载条
 //        this.setColor(ChangeToColor.getColorFromHex("#333333"));
-        this.setColor(new Color(51,51,51));
+        this.setColor(new Color(51, 51, 51));
 
-        Loading load1 = new Loading(130, ChangeToColor.getColorFromHex("#F317FE"));
-        Loading load2 = new Loading(170, ChangeToColor.getColorFromHex("#AD55CB"));
-        Loading load3 = new Loading(210, ChangeToColor.getColorFromHex("#9172DB"));
+        LoadingBack load1 = new LoadingBack(130, ChangeToColor.getColorFromHex("#F317FE"));
+        LoadingBack load2 = new LoadingBack(170, ChangeToColor.getColorFromHex("#AD55CB"));
+        LoadingBack load3 = new LoadingBack(210, ChangeToColor.getColorFromHex("#9172DB"));
         load1.show();
         load2.show();
         load3.show();
@@ -60,4 +59,4 @@ public class LoadingHome extends RadioJLabel {
         load2.setLocation(100+this.getWidth()/2 - load2.getWidth()-19, 120-60+this.getHeight()/2 - load2.getHeight());
         load3.setLocation(100+this.getWidth()/2 - load3.getWidth(), 120+this.getHeight()/2 - load3.getHeight()-40);
     }
-}
+    }

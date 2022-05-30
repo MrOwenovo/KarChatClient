@@ -1,12 +1,10 @@
 package KarChat.Chat.Login;
 
 import KarChat.Chat.Login.Button.RoundButton;
-import com.sun.awt.AWTUtilities;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.RoundRectangle2D;
 
 /**
  * 自定义无边框容器，需要外界调用:

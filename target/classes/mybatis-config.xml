@@ -22,9 +22,10 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="KarChat/Server/DataBase/Mapper/ChatMapper.xml"/>
+        <mapper resource="KarChat/Server/DataBase/Mapper/AddFriend.xml"/>
         <mapper class="KarChat.Server.DataBase.Mapper.Login"/>
-<!--        <mapper class="KarChat.Server.DataBase.Mapper.Chat"/>-->
+        <mapper class="KarChat.Server.DataBase.Mapper.Chat"/>
+<!--        <mapper class="KarChat.Server.DataBase.Mapper.AddFriend"/>-->
 <!--        <package name="KarChat.Server.DataBase.Mapper"/>-->
     </mappers>
 </configuration>

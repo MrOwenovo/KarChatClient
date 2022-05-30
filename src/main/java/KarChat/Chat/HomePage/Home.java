@@ -7,6 +7,7 @@ import KarChat.Chat.HomePage.Label.InnerLabel;
 import KarChat.Chat.Login.Button.RoundButton;
 import KarChat.Chat.Login.Frameless;
 import KarChat.Chat.Login.RadioJLabel;
+import KarChat.Chat.Sound.PlaySound;
 import KarChat.Client.EchoClient;
 import KarChat.Game.Panel.MainPanel;
 import com.sun.awt.AWTUtilities;
@@ -19,6 +20,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Observable;
+
+import static KarChat.Chat.HomePage.MenuContent.iconNameChat;
 
 public class Home extends Observable implements ActionListener , Minimize {
 
@@ -231,12 +234,29 @@ public class Home extends Observable implements ActionListener , Minimize {
                 @Override
                 public void run() {
                     Thread.sleep(2000);
-                    //先创建40个存储好友，之后再慢慢移动
                     chatContent = new InnerLabel[MenuContent.iconLengthChat];
                     for (int i = 0; i < MenuContent.iconLengthChat; i++) {
                         chatContent[i] = new InnerLabel();
                         chatContent[i].setSize(0, 0);
                         back.add(chatContent[i]);
+
+
+                        //初始化用户聊天界面的存储信息
+                        //修改一下图像大小
+                        BufferedImage chatIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
+                        //去除黑色背景
+                        BufferedImage newChatIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(chatIcon));
+                        chatContent[i].mine = newChatIcon;  //我的头像
+
+                        //修改一下图像大小
+                        BufferedImage friendIcon = ToBufferedImage.toBufferedImage(MenuContent.Chaticons[i].getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
+                        //去除黑色背景
+                        BufferedImage newFriendIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(friendIcon));
+
+                        chatContent[i].friend = newFriendIcon;  //好友头像
+                        chatContent[i].friendName = iconNameChat[i];  //储存好友姓名
+
+                        MenuContent.initMessage(iconNameChat[i]);  //初始化聊天内容
                     }
                 }
             }.start();
@@ -259,6 +279,14 @@ public class Home extends Observable implements ActionListener , Minimize {
             final boolean[] keepFlag = {true};
             final int[] WIDTHNOW = {0};  //加入状态判断，防止来回试探卡bug
             boolean[] canGo = {true};  //判断能否继续进行，必须在一个动效执行完后再执行别的动效
+            game1Top.addMouseListener(new MouseAdapter() {
+                @SneakyThrows
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler "+"http://localhost:8080/KarCharWeb/home/select");
+                    Home.back.setExtendedState(JFrame.ICONIFIED);
+                }
+            });
             game1Adapter = new MouseAdapter() {
                 @SneakyThrows
                 @Override
@@ -398,6 +426,14 @@ public class Home extends Observable implements ActionListener , Minimize {
             //背景
             game2Back = new JLabel();
             game2Top = new JLabel();
+            game2Top.addMouseListener(new MouseAdapter() {
+                @SneakyThrows
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler "+"https://f01-1309918226.file.myqcloud.com/13/2022/04/22/KarGoBang2/loading2.html?x-cos-traffic-limit=819200");
+                    Home.back.setExtendedState(JFrame.ICONIFIED);
+                }
+            });
             game2.addMouseListener(new MouseAdapter() {
                 @SneakyThrows
                 @Override
@@ -535,6 +571,13 @@ public class Home extends Observable implements ActionListener , Minimize {
             game3Top.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    new Thread(){
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            PlaySound.play("sound/loginsuccess.mp3");
+                        }
+                    }.start();
                     JFrame btn = new JFrame();
 
                     btn.add(MainPanel.getInstance());

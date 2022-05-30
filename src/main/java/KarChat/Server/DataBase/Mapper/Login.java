@@ -27,5 +27,16 @@ public interface Login {
     @Select("select user.icon from user.user where username=#{username}")
     Icon getIcon(String username);
 
+    //保存用户名与客户端下标的关系
+    @Insert("insert into user.clientIndex(username,indexs) VALUES(#{username},#{indexs})")
+    int insertIndex(@Param("username")String username,@Param("indexs")int indexs);
+
+    //删除用户名与客户端下标的关系
+    @Delete("delete from user.clientIndex where username=#{username}")
+    int deleteIndex(String username);
+
+    //通过用户名查找客户端下标
+    @Select("select indexs from user.clientIndex where username=#{username}")
+    int getIndex(String username);
 
 }

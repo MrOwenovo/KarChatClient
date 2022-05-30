@@ -6,7 +6,6 @@ import KarChat.Game.Listiner.ModeListener;
 import KarChat.Game.Listiner.RegretListener;
 import KarChat.Game.Listiner.StopListener;
 
-
 import javax.swing.*;
 import java.awt.*;
 

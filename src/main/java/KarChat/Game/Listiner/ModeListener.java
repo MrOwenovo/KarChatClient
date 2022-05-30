@@ -4,6 +4,7 @@ import KarChat.Game.Domain.AI;
 import KarChat.Game.Domain.ChessPad;
 import KarChat.Game.Panel.ButtonPanel;
 import KarChat.Game.Panel.ChessPadPanel;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

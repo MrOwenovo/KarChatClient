@@ -18,7 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -80,12 +79,18 @@ public class MenuContent extends Observable {
     private static RadioJLabel contextChat;
     private static Friends[] getsChats;
     public static int iconLengthChat;
-    private static String[] iconNameChat;
+    public static String[] iconNameChat;
     private static RadioJLabel[] labelsChar;
     private static JLabel[] iconLabelsChar;
     private static DynamicJLabel[] textsChar;
-    private static RadioJLabel[] stateIcon;
+    private static RadioJLabel[] stateIcon;  //是否在线的图标
+    public static RadioJLabel[] messageIcon;  //是否有新消息的图标
     private static RadioJLabel[] stateIconBack;
+
+    public static HashMap<String, Integer> userContent;
+
+    //储存好友头像
+    public static DynamicJLabel[] latestMessages;
 
     static {  //创造容纳邀请的标签
         labels = new RadioJLabel[20];
@@ -99,6 +104,8 @@ public class MenuContent extends Observable {
         texts = new DynamicJLabel[20];
         textsGet = new DynamicJLabel[20];
 
+        //判断用户名对应的哪个表
+        userContent = new HashMap<>();
 
     }
 
@@ -110,6 +117,7 @@ public class MenuContent extends Observable {
     private static RadioJLabel contextPost;
     private static RadioJLabel blackBack;
     private RadioJLabel blackBackLeft;
+    public static BufferedImage[] Chaticons;
 
 
     /**
@@ -191,6 +199,15 @@ public class MenuContent extends Observable {
                     friendName = searchText.getText();  //储存用户名
                     if (friendName.length()>=6) {
                         EchoClient.addFriend = true;
+
+                        //播放发送音效
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/sendmsg.mp3");
+                            }
+                        }.start();
                     }else {
                         searchText.setText("用户名不能为空");
                         searchText.setForeground(new Color(161, 19, 19));
@@ -213,6 +230,14 @@ public class MenuContent extends Observable {
                     friendName = searchText.getText();  //储存用户名
                     if (friendName.length()>=6) {
                         EchoClient.addFriend = true;
+                        //播放发送音效
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/sendmsg.mp3");
+                            }
+                        }.start();
                     }else {
                         searchText.setText("用户名不能为空");
                         searchText.setForeground(new Color(161, 19, 19));
@@ -953,13 +978,18 @@ public class MenuContent extends Observable {
     @SneakyThrows
     public static void setContextChat(BufferedImage[] icons) {
 
+        Chaticons=icons;
         {  //初始化状态图像
             stateIcon = new RadioJLabel[iconLengthChat];
+            messageIcon = new RadioJLabel[iconLengthChat];
             stateIconBack = new RadioJLabel[iconLengthChat];
             for (int i = 0; i < iconLengthChat; i++) {
                 stateIcon[i] = new RadioJLabel("");
+                messageIcon[i] = new RadioJLabel("");
                 stateIconBack[i] = new RadioJLabel("");
             }
+            //所有最新显示消息
+            latestMessages = new DynamicJLabel[icons.length];
         }
 
         //上下拖动条
@@ -983,13 +1013,14 @@ public class MenuContent extends Observable {
             labelsChar[i] = new RadioJLabel("");
             labelsChar[i].setColor(new Color(253, 252, 252));
             labelsChar[i].add(stateIcon[i]);
+            labelsChar[i].add(messageIcon[i]);
             labelsChar[i].add(stateIconBack[i]);
             stateIconBack[i].setSize(0, 0);
             contextChat.add(labelsChar[i]);
             labelsChar[i].setBounds(15, heightChat, background1.getWidth() - 20 - 10, 80);
 
             //修改一下图像大小
-            BufferedImage realIcon = ToBufferedImage.toBufferedImage(icons[0].getScaledInstance(50, 50, 0));  //将图片改为合适的大小，并转化为BufferedImage
+            BufferedImage realIcon = ToBufferedImage.toBufferedImage(icons[i].getScaledInstance(50, 50, 0));  //将图片改为合适的大小，并转化为BufferedImage
             //去除黑色背景
             BufferedImage transparencyIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(realIcon));
 
@@ -1003,6 +1034,12 @@ public class MenuContent extends Observable {
             textsChar[i].setForeground(new Color(7, 7, 7));
             labelsChar[i].add(textsChar[i]);
 
+            //存储用户名与界面的关系
+            userContent.put(iconNameChat[i], i);
+
+
+            final int[] OPENINDEX = {-1};  //记录上一次是谁在发消息
+
             //聊天标签添加点击事件
             int finalI = i;
             labelsChar[i].addMouseListener(new MouseAdapter() {
@@ -1010,36 +1047,31 @@ public class MenuContent extends Observable {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {  //双击后
+                        //关闭上一次打开的页面
+                        if (OPENINDEX[0] != -1) {  //若不是第一次打开
+                            chatContent[OPENINDEX[0]].setSize(0,0);  //关闭界面
+                        }
+                        OPENINDEX[0] = finalI;  //记录当前打开位置
+
                         chatContent[finalI].setBounds(360,70,700,700);
-                        //修改一下图像大小
-                        BufferedImage chatIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
-                        //去除黑色背景
-                        BufferedImage newChatIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(chatIcon));
-                        chatContent[finalI].mine =newChatIcon;  //我的头像
+                        //判断是否新消息红点亮了，如果亮了就取消红点
+                        if (messageIcon[finalI].getSize().getHeight() == 8) {  //若亮了则高度和宽度为8
+                            messageIcon[finalI].setSize(0,0);  //取消红点
+                        }
 
-                        //修改一下图像大小
-                        BufferedImage friendIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
-                        //去除黑色背景
-                        BufferedImage newFriendIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(friendIcon));
-
-                        chatContent[finalI].friend = newFriendIcon;  //好友头像
-
+//                        MenuContent.initMessage(iconNameChat[finalI]);  //初始化聊天内容
                     }
                 }
 
             });
 
+            //显示最近的消息
+            latestMessages[i] = new DynamicJLabel("aaa", new Font("Serif", Font.BOLD, 22), 39);
 
+            latestMessages[i].setForeground(new Color(98, 97, 97));
+            latestMessages[i].setCenter(230);
+            labelsChar[i].add(latestMessages[i]);
 
-//            DynamicJLabel sendMessageGet;
-//            if (getsChats[i].getState().equals("0")) {
-//                sendMessageGet = new DynamicJLabel("邀请等待同意···", new Font("Serif", Font.BOLD, 13), 50);
-//            } else {
-//                sendMessageGet = new DynamicJLabel("邀请已通过", new Font("Serif", Font.BOLD, 13), 50);
-//            }
-//            sendMessageGet.setForeground(new Color(62, 171, 159));
-//            sendMessageGet.setCenter(labelsChar[i].getWidth()-140);
-//            labelsChar[i].add(sendMessageGet);
             EchoClient.getUserState = true;
 
             heightChat += 90;
@@ -1119,7 +1151,20 @@ public class MenuContent extends Observable {
                 stateIcon[i].setArc(15,15);
                 stateIconBack[i].setArc(19,19);
             }
+            //设置新发送信息的红点
+            messageIcon[i].setColor(new Color(227, 34, 34));
+            messageIcon[i].setBounds(57, 19, 8, 8);
+//            messageIcon[i].setSize(0,0);
+            messageIcon[i].setArc(8,8);
+
         }
+    }
+
+    /**
+     * 初始化信息，即登录时就获得与所有好友的聊天记录
+     */
+    public static void initMessage(String friendName) {
+        EchoClient.getChatHistory(friendName);
     }
 
 
