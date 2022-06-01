@@ -327,7 +327,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                 });
                                 System.out.println(q[0]);
 
-                                EchoThreadServer.sendToClient(myName,sendToName,sendMessage);
+//                                EchoThreadServer.sendToClient(myName,sendToName,sendMessage);
 
                             }
                         }.start();

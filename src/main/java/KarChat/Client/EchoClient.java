@@ -6,12 +6,13 @@ import KarChat.Chat.HomePage.Label.InnerLabel;
 import KarChat.Chat.HomePage.Menu;
 import KarChat.Chat.HomePage.MenuContent;
 import KarChat.Chat.Login.LoginHome;
-import KarChat.Chat.Login.RadioJLabel;
 import KarChat.Chat.Sound.PlaySound;
 import KarChat.Server.DataBase.Entry.Friends;
+import KarChat.Server.DataBase.Entry.History;
 import KarChat.Server.DataBase.Entry.Post;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
+import org.thymeleaf.expression.Lists;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -19,6 +20,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.*;
+import java.util.List;
 
 import static KarChat.Chat.HomePage.MenuContent.*;
 import static KarChat.Chat.Login.LoginHome.*;
@@ -43,6 +45,7 @@ public class EchoClient{
     public static String deleteAddFriendName ;  //删除好友邀请的好友姓名
     public static boolean deleteAddFriend=false ;  //是否删除好友邀请
     public static boolean checkFriends=false ;  //查看用户的所有好友
+    public static boolean checkFriendsNameOnly=false ;  //查看用户的所有好友姓名
     public static boolean getFriendIcon=false ;  //获得好友的头像
     public static boolean getUserState=false ;  //获得好友在线状态
     public static boolean getChatHistory=false ;  //获得聊天历史记录
@@ -406,11 +409,31 @@ public class EchoClient{
                                     friends[i] = new Friends(0,friend,getChatLocation);
                                 }
                                 System.out.println(friends.length);
-                                MenuContent.getChat(friends);  //把得到的全部好友（姓名+聊天表位置）传给getChat
+                                MenuContent.getChat(friends,true);  //把得到的全部好友（姓名+聊天表位置）传给getChat
 
                             }
                         }.start();
                         checkFriends = false;
+                    }
+                    if (checkFriendsNameOnly) {
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                out.println("checkFriends");
+                                int length = Integer.parseInt(buf.readLine());  //好友个数
+                                friends = new Friends[length];
+                                for (int i = 0; i < length; i++) {
+                                    String friend = buf.readLine();
+                                    String getChatLocation = buf.readLine();
+                                    friends[i] = new Friends(0,friend,getChatLocation);
+                                }
+                                System.out.println(friends.length);
+                                MenuContent.getChat(friends,false);  //把得到的全部好友（姓名+聊天表位置）传给getChat
+
+                            }
+                        }.start();
+                        checkFriendsNameOnly = false;
                     }
                     if (getFriendIcon) {
                         new Thread() {
@@ -438,7 +461,7 @@ public class EchoClient{
                             public void run() {
                                 System.out.println("运行到5");
                                 out.println("getUserState");
-                                int state[] = new int[friends.length];
+                                int[] state = new int[friends.length];
                                 for (int i = 0; i < friends.length; i++) {
                                     out.println(friends[i].getFriends());
                                     state[i] = Integer.parseInt(buf.readLine());
@@ -452,7 +475,7 @@ public class EchoClient{
                     }
 
                     {
-                        if (ifStartFlash) {
+                        if (ifStartFlash) {   //这个boolean值可以让两个线程只运行一次
                             //执行一次刷新好友列表以及获取历史记录
                             new Thread() {
                                 @SneakyThrows
@@ -462,7 +485,8 @@ public class EchoClient{
                                     timer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {
-                                            if (!Menu.isClick1_1[0]) {
+                                            if (!Menu.isClick1_1[0]&&!isCheckingHistory&&!isSending) {  //需要不在加好友界面，并且不在进行查找历史记录
+                                                isFlashing = true;
                                                 System.out.println("刷新了一次");
                                                 //刷新get画布
                                                 for (int i = 0; i < iconLength; i++) {  //清空画布,为下一次刷新做准备
@@ -495,12 +519,43 @@ public class EchoClient{
                                                 for (int i = 0; i < iconLengthGet; i++) {  //刷新画布
                                                     labelsGet[i].repaint();
                                                 }
+                                                isFlashing = false;  //执行完刷新
                                             }
                                         }
                                     },8000,8000);
 
 
 
+
+                                }
+                            }.start();
+
+
+                            //*开启更新聊天线程:
+                            // 先获取好友数量，分别看每个好友是否有新消息
+                            // */
+                            new Thread(){
+                                @Override
+                                public void run() {
+                                    Timer timer=new Timer();
+                                    timer.schedule(new TimerTask() {
+                                        @SneakyThrows
+                                        @Override
+                                        public void run() {
+                                            if (!isFlashing&&!isSending) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                                                isCheckingHistory = true;  //正在查询记录
+                                                System.out.println("检查聊天记录");
+
+                                                EchoClient.checkFriendsNameOnly = true;  //获取请求
+                                                Thread.sleep(1000);
+                                                for (int i = 0; i < MenuContent.iconLengthChat; i++) {
+                                                    EchoClient.getChatHistoryAmount(iconNameChat[i]);  //统计聊天记录内容
+                                                }
+
+                                                isCheckingHistory = false;  //查询完成
+                                            }
+                                        }
+                                    },8000,5000);
 
                                 }
                             }.start();
@@ -530,6 +585,11 @@ public class EchoClient{
         }
         }
 
+    public static boolean isFlashing = false;  //是否正在执行刷新加好友画布
+    public static boolean isCheckingHistory = false;  //是否正在执行查找历史记录
+    public static boolean isSending = false;  //是否正在发送
+
+
     /**
      * 向服务器发送信息
      * @param message
@@ -537,13 +597,107 @@ public class EchoClient{
      */
     @SneakyThrows
     public static void send(String message, String geter) {
-        System.out.println("我发送了1");
-         PrintStream out = new PrintStream(
+        new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                System.out.println("我发送了1");
+                PrintStream out = new PrintStream(
+                        clien.getOutputStream());  //向服务器端输出信息
+                label:
+                {
+                    while (true) {
+                        if (!isFlashing && !isCheckingHistory) {  //找到其他刷新任务不在的间隙进行
+                            isSending = true;  //正在发送
+                            out.println("send");
+                            out.println(message);
+                            out.println(geter);
+                            out.println(usernameAll[0]);
+                            Thread.sleep(1000);
+                            isSending = false;  //发送完成
+                            break label;  //退出while循环
+                        }
+                    }
+                }
+            }
+        }.start();
+
+        }
+
+    public static HashMap<String, Integer> historyAmount = new HashMap<>();
+    public static HashMap<String, ArrayList<History>> historysFactory = new HashMap<>();
+    /**
+     * 定时获取该好友的所有历史记录，以及记录历史数量
+     * @param friend
+     */
+    public static void getChatHistoryAmount(String friend) throws IOException {
+        ArrayList<History> oldHistroys = historysFactory.get(friend);  //上一次的历史记录
+        ArrayList<History> histroys = new ArrayList<>();    //新的历史记录
+
+        PrintStream out = new PrintStream(
                 clien.getOutputStream());  //向服务器端输出信息
-            out.println("send");
-            out.println(message);
-            out.println(geter);
-            out.println(usernameAll[0]);
+        BufferedReader buf = new BufferedReader(new InputStreamReader(clien.getInputStream())); //接收服务器返回的信息
+
+        out.println("getChatHistory");
+        out.println(usernameAll[0]); //发送我的姓名
+        out.println(friend);  //发送朋友的姓名
+
+        //获取是在跟谁聊天
+        int index = userContent.get(friend);//获取表下标
+
+        InnerLabel friendContext = Home.chatContent[index];  //获取聊天界面
+        int length = 0;
+        try {
+            length = Integer.parseInt(buf.readLine());  //消息长度
+        } catch (NumberFormatException e) {
+            log.info(friend+"没有聊天记录");
+        }
+
+        String message = null; //接收的信息
+        for (int i = 0; i < length; i++) {
+            String type = buf.readLine();   //获取是发送信息还是获取信息
+            switch (type) {
+                case "post":  //我发送信息
+                    message = buf.readLine();  //获取发送的信息
+                    histroys.add(new History("post", message));  //将历史记录加入数组
+                    System.out.println("post:" + message);
+
+                    break;
+                case "get":  //我获取信息
+                    message = buf.readLine();  //获取别人发送的信息
+                    histroys.add(new History("get", message));  //将历史记录加入数组
+                    System.out.println("get:" + message);
+
+                    break;
+            }
+            if (i == length - 1&&length!=0) {  //如果是最后一句，显示在主界面的最新消息
+                latestMessages[index].setTextDynamic(message);
+            }
+        }
+            //判断如果记录是否比之前数量多
+            System.out.println(friend+   "!!!!!!!"+histroys.size());
+            System.out.println(histroys);
+            System.out.println(friend+   "!!!!!!!"+historyAmount.get(friend));
+            if (histroys.size() > historyAmount.get(friend)) {  //数量确实多
+
+                //将对方发送来的消息显示在聊天窗口上
+                for (int j = historyAmount.get(friend); j < histroys.size(); j++) {
+                    if ("get".equals(histroys.get(j).type)) {  //我获取信息
+                        message = histroys.get(j).message;  //获取别人发送的信息
+
+                        friendContext.send(InnerLabel.Type.LEFT, message, friendContext.friend);
+                    }
+                }
+
+                //将状态红点标红：
+                messageIcon[userContent.get(friend)].setColor(new Color(227, 34, 34));
+
+            }
+
+            historyAmount.put(friend, histroys.size());  //记录该用户的历史记录数量
+            historysFactory.put(friend, histroys);  //将新历史记录保存
+
+
         }
 
     /**
@@ -551,6 +705,7 @@ public class EchoClient{
      */
     @SneakyThrows
     public static void getChatHistory(String friend) {
+        ArrayList<History> histroys = new ArrayList<>();  //记录所有历史记录
         System.out.println("获取历史记录1");
         PrintStream out = new PrintStream(
                 clien.getOutputStream());  //向服务器端输出信息
@@ -582,20 +737,28 @@ public class EchoClient{
                 case "post":  //我发送信息
                     message = buf.readLine();  //获取发送的信息
                     System.out.println("post:"+message);
+                    histroys.add(new History("post",message));  //将历史记录加入数组
 
                     friendContext.send(InnerLabel.Type.RIGHT,message,friendContext.mine);
                     break;
                 case "get":  //我获取信息
                     message = buf.readLine();  //获取别人发送的信息
                     System.out.println("get:"+message);
+                    histroys.add(new History("get",message));  //将历史记录加入数组
 
                     friendContext.send(InnerLabel.Type.LEFT,message,friendContext.friend);
                     break;
             }
+
+
             if (i == length - 1&&length!=0) {  //如果是最后一句，显示在主界面的最新消息
                 latestMessages[index].setTextDynamic(message);
             }
         }
+
+        System.out.println("teshu"+histroys.size());
+        historyAmount.put(friend, histroys.size());  //记录该用户的历史记录数量
+        historysFactory.put(friend, histroys);  //存储聊天记录全部--对应某个好友
 
         }
 

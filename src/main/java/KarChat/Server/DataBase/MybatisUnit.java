@@ -23,6 +23,7 @@ public class MybatisUnit {
     private static AddFriend mapper2;
 
     private static Chat mapper3;
+    static SqlSession session;
 
     static{
         String path = "mybatis-config.xml";
@@ -32,7 +33,7 @@ public class MybatisUnit {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        SqlSession session = MybatisUnit.getSession(true);
+        session = MybatisUnit.getSession(true);
         mapper1 = session.getMapper(Login.class);
         mapper2 = session.getMapper(AddFriend.class);
         mapper3 = session.getMapper(Chat.class);
@@ -53,7 +54,7 @@ public class MybatisUnit {
      * @param comsumer
      */
     public synchronized static void doSqlWork(Consumer<Login> comsumer) {  //加入线程锁，防止多个客户端争夺查询
-              comsumer.accept(mapper1);
+              comsumer.accept(session.getMapper(Login.class));
     }
 
     /**
@@ -61,13 +62,13 @@ public class MybatisUnit {
      * @param comsumer
      */
     public synchronized static void doAddFriendWork(Consumer<AddFriend> comsumer) {  //加入线程锁，防止多个客户端争夺查询
-             comsumer.accept(mapper2);
+             comsumer.accept(session.getMapper(AddFriend.class));
     }
     /**
      * 用消费者系统取一个session生成一个mapper对象，分配给每一个要用的消费者
      * @param comsumer
      */
     public synchronized static void doChatWork(Consumer<Chat> comsumer) {  //加入线程锁，防止多个客户端争夺查询
-             comsumer.accept(mapper3);
+             comsumer.accept(getSession(true).getMapper(Chat.class));
     }
 }

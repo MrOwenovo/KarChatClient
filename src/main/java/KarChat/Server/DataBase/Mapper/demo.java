@@ -1,27 +1,34 @@
 package KarChat.Server.DataBase.Mapper;
 
 import KarChat.Server.DataBase.Entry.Friends;
+import KarChat.Server.DataBase.Entry.Message;
 import KarChat.Server.DataBase.MybatisUnit;
+import lombok.SneakyThrows;
+
+import java.util.Arrays;
 
 public class demo {
+    @SneakyThrows
     public static void main(String[] args) {
-        Friends[] friend=new Friends[1];
-        String[] chatLocation = new String[1];
-        MybatisUnit.doChatWork(mapper -> {
-            if ("123123".matches("^[0-9]*$")) {
-                friend[0] = mapper.getChatLocation("_" + "123123", "1231234");
-            } else {
-                friend[0] = mapper.getChatLocation("123123", "1231234");
-            }
-            chatLocation[0] = friend[0].getChatLocation();
-            System.out.println(chatLocation[0]);
-        });
-        final int[] q = new int[1];
-        //存到聊天表里
-        MybatisUnit.doChatWork(mapper->{
-            q[0] =mapper.insertMessage(chatLocation[0], "123123", "1231234", "你好");  //添加信息
-        });
-        System.out.println(q[0]);
 
-    }
+
+        while (true) {
+            Thread.sleep(5000);
+            MybatisUnit.doChatWork(mapper -> {
+                Message[] chatHistory = mapper.getChatHistory("1231234_123123");//获取全部聊天内容
+                //发送给客户端
+                System.out.println(Arrays.toString(chatHistory));
+                System.out.println(chatHistory.length);
+            });
+            Thread.sleep(2000);
+            //存到聊天表里
+            MybatisUnit.doChatWork(mapper->{
+                mapper.insertMessage("1231234_123123", "1231234", "123123", "测试信息5");  //添加信息
+            });
+        }
+
+
+
+
+        }
 }

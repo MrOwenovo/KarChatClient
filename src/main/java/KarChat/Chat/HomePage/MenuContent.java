@@ -1063,9 +1063,12 @@ public class MenuContent extends Observable {
 
     /**
      * 获得所有好友的姓名
+     * 新加入:boolean flag
+     * 如果flag是true,则获取所有名字的同时加载头像并创建标签
+     * 如果flag是false,则只获得所有名字
      */
     @SneakyThrows
-    public static void getChat(Friends[] friends) {
+    public static void getChat(Friends[] friends,boolean flag) {
         //储存我发送的请求
         getsChats = friends;  //所有好友信息
         iconLengthChat = friends.length;  //好友长度
@@ -1075,7 +1078,9 @@ public class MenuContent extends Observable {
             iconNameChat[i] = friends[i].getFriends();
         }
 
-        EchoClient.getFriendIcon = true;
+        if(flag) {
+            EchoClient.getFriendIcon = true;
+        }
     }
 
     /**
@@ -1260,7 +1265,7 @@ public class MenuContent extends Observable {
                 stateIconBack[i].setArc(19, 19);
             }
             //设置新发送信息的红点
-            messageIcon[i].setColor(new Color(227, 34, 34));
+            messageIcon[i].setColor(new Color(227, 34, 34,0));
             messageIcon[i].setBounds(57, 19, 8, 8);
 //            messageIcon[i].setSize(0,0);
             messageIcon[i].setArc(8, 8);

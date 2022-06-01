@@ -2,10 +2,9 @@ package KarChat.Server.DataBase.Mapper;
 
 import KarChat.Server.DataBase.Entry.Friends;
 import KarChat.Server.DataBase.Entry.Message;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.cache.decorators.LruCache;
+@CacheNamespace(size=512,readWrite=false,flushInterval = 6000,eviction = LruCache.class)
 public interface Chat {
 
     //在聊天表中添加聊天内容
@@ -18,6 +17,7 @@ public interface Chat {
     Friends getChatLocation(@Param("table")String table, @Param("friends") String friends);
 
     //获得聊天历史内容
+    @Options(useCache = false,flushCache = Options.FlushCachePolicy.TRUE)
     @Select("select * from user.${table}")
     Message[] getChatHistory(String table);
 
