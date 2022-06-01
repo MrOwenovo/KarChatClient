@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="djnativeswing (2)">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/djnativeswing.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
