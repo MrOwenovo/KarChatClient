@@ -5,7 +5,6 @@ import KarChat.Game.Domain.Sequence;
 import KarChat.Game.Panel.ButtonPanel;
 import KarChat.Game.Panel.ChessPadPanel;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

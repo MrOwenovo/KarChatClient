@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static jdk.nashorn.internal.objects.Global.undefined;
-
 public class RemoveBlack {
     public static BufferedImage resize(int faceWidth, BufferedImage srcImg) throws IOException {
 

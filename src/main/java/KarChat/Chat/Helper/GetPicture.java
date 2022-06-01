@@ -2,15 +2,10 @@ package KarChat.Chat.Helper;
 
 import lombok.SneakyThrows;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.imageio.ImageIO;
 
 /**
  * 将数据库中的图像字符串解析成BufferedImage

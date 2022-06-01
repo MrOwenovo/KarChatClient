@@ -32,6 +32,8 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:5.3.13" />
           <element id="library" level="project" name="Maven: javazoom:jlayer:1.0.1" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:1.7.25" />
+          <element id="library" level="project" name="Maven: javax.mail:mail:1.4.7" />
+          <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
         </element>
       </element>
       <element id="directory" name="META-INF">

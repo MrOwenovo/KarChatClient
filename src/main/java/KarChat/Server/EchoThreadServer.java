@@ -1,11 +1,12 @@
 package KarChat.Server;
 
 
-import java.io.IOException;
+import KarChat.Server.DataBase.MybatisUnit;
+import lombok.SneakyThrows;
+
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 /**
  * 服务器集中处理client请求，使用多线程实现并发访问,开启服务器后，每当接收到一个client就发送给一个EchoClient线程处理客户端请求，
@@ -14,6 +15,8 @@ import java.net.SocketException;
 public class EchoThreadServer {
     private static Socket client = null;
     public static UserTable table;
+    public static Thread[] threads;
+    private static Socket[] clients;
 
     public static void main(String[] args) throws Exception{
         //用try-with-resource处理关闭
@@ -22,7 +25,9 @@ public class EchoThreadServer {
             boolean flag = true;  //判断是否输出提示,第一次才提示
             boolean f = true;  //定义一个标记为true
             int i = -1;
-            Thread[] threads = new Thread[500];  //500并发
+            //500并发
+            threads = new Thread[500];
+            clients = new Socket[500];
             while (f) {  //无限制接受客户端连接
                 i++;
                 if (flag) {
@@ -38,7 +43,10 @@ public class EchoThreadServer {
                 }
                 client = server.accept();  //接收客户端连接
                 System.out.println("客户端" + client.getInetAddress() + ": " + client.getPort() + "已连接");
-                threads[i] = new Thread(new EchoThread(client));
+                clients[i] = client;
+                EchoThread echoThread = new EchoThread(client);
+                echoThread.index = i;  //保存当前的下标
+                threads[i] = new Thread(echoThread);
                 threads[i].start();  //实例化并启动一个线程对象
                 int finalI = i;
                 new Thread(() -> {  //lambda表达式  ,判断上面的线程是否消亡
@@ -67,4 +75,22 @@ public class EchoThreadServer {
             //
         }
     }
-}
+
+    @SneakyThrows
+    public static synchronized void sendToClient(String myName,String sendToFriend,String message) {
+        //找到这个用户
+        MybatisUnit.doSqlWork(mapper->{
+            try {
+                int index = mapper.getIndex(sendToFriend);  //获取用户客户端下标  ,该用户不存在则报错
+                Socket friendClient = clients[index];  //获取到对应的客户端
+                PrintStream out = new PrintStream(friendClient.getOutputStream());
+                    out.println("getMessage");
+                    out.println(message);  //发送信息
+                    out.println(myName); //发送发送人姓名
+            } catch (Exception e) {
+                System.out.println("该用户不在线");
+            }
+        });
+
+        }
+    }

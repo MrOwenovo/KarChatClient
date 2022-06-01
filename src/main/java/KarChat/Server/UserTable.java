@@ -11,7 +11,8 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class UserTable implements Runnable{
 

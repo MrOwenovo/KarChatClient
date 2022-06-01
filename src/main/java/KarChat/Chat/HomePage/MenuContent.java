@@ -18,7 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -60,7 +59,7 @@ public class MenuContent extends Observable {
 
     public static RadioJLabel[] refuseGet = new RadioJLabel[20];  //3.接收按钮
 
-    public static int iconLength ;  //3.查到的用户个数
+    public static int iconLength;  //3.查到的用户个数
 
     public static BufferedImage[] images = new BufferedImage[20];  //3.头像
 
@@ -80,12 +79,18 @@ public class MenuContent extends Observable {
     private static RadioJLabel contextChat;
     private static Friends[] getsChats;
     public static int iconLengthChat;
-    private static String[] iconNameChat;
+    public static String[] iconNameChat;
     private static RadioJLabel[] labelsChar;
     private static JLabel[] iconLabelsChar;
     private static DynamicJLabel[] textsChar;
-    private static RadioJLabel[] stateIcon;
+    private static RadioJLabel[] stateIcon;  //是否在线的图标
+    public static RadioJLabel[] messageIcon;  //是否有新消息的图标
     private static RadioJLabel[] stateIconBack;
+
+    public static HashMap<String, Integer> userContent;
+
+    //储存好友头像
+    public static DynamicJLabel[] latestMessages;
 
     static {  //创造容纳邀请的标签
         labels = new RadioJLabel[20];
@@ -99,17 +104,20 @@ public class MenuContent extends Observable {
         texts = new DynamicJLabel[20];
         textsGet = new DynamicJLabel[20];
 
+        //判断用户名对应的哪个表
+        userContent = new HashMap<>();
 
     }
 
     public static RadioJLabel chooseBack;
     public static RadioJLabel chooseGet;
     public static RadioJLabel choosePost;
-    public static  String friendName;
+    public static String friendName;
     public static JTextField searchText;
-    private static RadioJLabel contextPost;
+    public static RadioJLabel contextPost;
     private static RadioJLabel blackBack;
     private RadioJLabel blackBackLeft;
+    public static BufferedImage[] Chaticons;
 
 
     /**
@@ -158,7 +166,7 @@ public class MenuContent extends Observable {
         searchText.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (searchText.getText().contains("输入用户名") || searchText.getText().contains("已发送好友邀请")|| searchText.getText().contains("用户名不能为空")|| searchText.getText().contains("用户名输入错误")||searchText.getText().equals("已同意好友邀请")||searchText.getText().equals("已拒绝好友邀请")) {  //若要输入账号则取消提示
+                if (searchText.getText().contains("输入用户名") || searchText.getText().contains("已发送好友邀请") || searchText.getText().contains("用户名不能为空") || searchText.getText().contains("用户名输入错误") || searchText.getText().equals("已同意好友邀请") || searchText.getText().equals("已拒绝好友邀请")) {  //若要输入账号则取消提示
                     searchText.setForeground(new Color(79, 78, 78));
                     searchText.setText("");
                 }
@@ -167,7 +175,7 @@ public class MenuContent extends Observable {
         searchText.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (searchText.getText().equals("输入用户名") || searchText.getText().equals("已发送好友邀请")|| searchText.getText().equals("用户名不能为空")|| searchText.getText().equals("用户名输入错误")||searchText.getText().equals("已同意好友邀请")||searchText.getText().equals("已拒绝好友邀请")) {  //若要输入账号则取消提示
+                if (searchText.getText().equals("输入用户名") || searchText.getText().equals("已发送好友邀请") || searchText.getText().equals("用户名不能为空") || searchText.getText().equals("用户名输入错误") || searchText.getText().equals("已同意好友邀请") || searchText.getText().equals("已拒绝好友邀请")) {  //若要输入账号则取消提示
                     searchText.setForeground(new Color(79, 78, 78));
                     searchText.setText("");
                 }
@@ -189,12 +197,21 @@ public class MenuContent extends Observable {
                 super.keyTyped(e);
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //搜索
                     friendName = searchText.getText();  //储存用户名
-                    if (friendName.length()>=6) {
+                    if (friendName.length() >= 6) {
                         EchoClient.addFriend = true;
-                    }else {
+
+                        //播放发送音效
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/sendmsg.mp3");
+                            }
+                        }.start();
+                    } else {
                         searchText.setText("用户名不能为空");
                         searchText.setForeground(new Color(161, 19, 19));
-                        new Thread(){
+                        new Thread() {
                             @SneakyThrows
                             @Override
                             public void run() {
@@ -210,25 +227,129 @@ public class MenuContent extends Observable {
         searchIconLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                    friendName = searchText.getText();  //储存用户名
-                    if (friendName.length()>=6) {
-                        EchoClient.addFriend = true;
-                    }else {
-                        searchText.setText("用户名不能为空");
-                        searchText.setForeground(new Color(161, 19, 19));
-                        new Thread(){
-                            @SneakyThrows
-                            @Override
-                            public void run() {
-                                PlaySound.play("sound/error.mp3");
-                            }
-                        }.start();
-                    }
+                friendName = searchText.getText();  //储存用户名
+                if (friendName.length() >= 6) {
+                    EchoClient.addFriend = true;
+                    //播放发送音效
+                    new Thread() {
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            PlaySound.play("sound/sendmsg.mp3");
+                        }
+                    }.start();
+                } else {
+                    searchText.setText("用户名不能为空");
+                    searchText.setForeground(new Color(161, 19, 19));
+                    new Thread() {
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            PlaySound.play("sound/error.mp3");
+                        }
+                    }.start();
+                }
             }
         });
 
         background1.add(LeftTopMessage);
         background1.add(search);
+
+        //加入刷新按钮
+        LoadingSmall flash = new LoadingSmall();
+        flash.setLayout(null);
+        flash.setBounds(230, 225, background1.getWidth() - 30 - 20, 70);
+
+        flash.setColor(new Color(115, 175, 197));
+        flash.show();
+//        background1.add(flash);
+
+
+        //加入刷新按钮
+        ImageIcon refreshIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("chat/refresh.png")));
+        ImageIcon refreshIcon1 = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("chat/loading/loading1.png")));
+        ImageIcon refreshIcon2 = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("chat/loading/loading2.png")));
+        ImageIcon refreshIcon3 = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("chat/loading/loading3.png")));
+        ImageIcon refreshIcon4 = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("chat/loading/loading4.png")));
+        ImageIcon[] loadings = new ImageIcon[4];
+        loadings[0] = refreshIcon1;
+        loadings[1] = refreshIcon2;
+        loadings[2] = refreshIcon3;
+        loadings[3] = refreshIcon4;
+
+        JLabel refresh = new JLabel(refreshIcon);
+        refresh.setBounds(190, 205, background1.getWidth() - 30 - 20, 70);
+        background1.add(refresh);
+
+
+
+        refresh.addMouseListener(new MouseAdapter() {
+            @SneakyThrows
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new Thread() {
+                    @SneakyThrows
+                    @Override
+                    public void run() {
+//                        background1.remove(refresh);
+                        background1.add(flash);
+                        refresh.setBounds(190, 205, 0, 0);
+
+                        flash.repaint();
+                        refresh.repaint();
+
+
+                        //刷新get画布
+                        for (int i = 0; i < iconLength; i++) {  //清空画布,为下一次刷新做准备
+                            contextGet.remove(labels[i]);
+                        }
+                        height = 0;  //刷新高度
+                        contextGet.repaint();  //刷新面板
+                        EchoClient.get = true;  //获取请求
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException f) {
+                            f.printStackTrace();
+                        }
+                        for (int i = 0; i < iconLength; i++) {  //刷新画布
+                            labels[i].repaint();
+                        }
+
+                        //刷新post画布
+                        for (int i = 0; i < iconLengthGet; i++) {  //清空画布,为下一次刷新做准备
+                            contextPost.remove(labelsGet[i]);
+                        }
+                        heightGet = 0;  //刷新高度
+                        contextPost.repaint();  //刷新面板
+                        EchoClient.post = true;  //获取发送
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException f) {
+                            f.printStackTrace();
+                        }
+                        for (int i = 0; i < iconLengthGet; i++) {  //刷新画布
+                            labelsGet[i].repaint();
+                        }
+
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        background1.remove(flash);
+//                        background1.add(refresh);
+                        refresh.setBounds(190, 205, background1.getWidth() - 30 - 20, 70);
+                        flash.repaint();
+                        refresh.repaint();
+
+                    }
+                }.start();
+
+
+            }
+        });
+
 
         //下半部分
         //选择
@@ -264,7 +385,7 @@ public class MenuContent extends Observable {
         blackBack.add(blackBackRight);
         blackBack.setBounds(20, 170 + 40, background1.getWidth() - 20 - 20, 9);
         blackBackLeft.setBounds(0, 0, blackBack.getWidth() / 2, 9);
-                                                                        //background1.getWidth() - 20 - 20
+        //background1.getWidth() - 20 - 20
         blackBackRight.setBounds(blackBack.getWidth() / 2, 0, 0, 9);
 
         background1.add(blackBack);
@@ -298,12 +419,12 @@ public class MenuContent extends Observable {
 
         home.add(background1);
 
-        final boolean[] RightIsFinish = new boolean[]{true,true};
+        final boolean[] RightIsFinish = new boolean[]{true, true};
         //切换框加入点击事件
         choosePost.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (RightIsFinish[0]&&RightIsFinish[1]&& blackBackLeft.getWidth()!=0) {
+                if (RightIsFinish[0] && RightIsFinish[1] && blackBackLeft.getWidth() != 0) {
                     RightIsFinish[0] = false;  //右边缘动画未加载完
                     RightIsFinish[1] = false;  //右边缘动画未加载完
 
@@ -334,7 +455,7 @@ public class MenuContent extends Observable {
                         public void run() {
                             while (LOCATIONLeft[0] >= 0) {
                                 Thread.sleep(TIMELeft[0]);
-                                blackBackLeft.setBounds((blackBack.getWidth() / 2)-LOCATIONLeft[0], 0, LOCATIONLeft[0], 9);
+                                blackBackLeft.setBounds((blackBack.getWidth() / 2) - LOCATIONLeft[0], 0, LOCATIONLeft[0], 9);
 
                                 LOCATIONLeft[0] -= 3;
                                 blackBackLeft.repaint();
@@ -354,7 +475,7 @@ public class MenuContent extends Observable {
                             while (HORIZON[0] >= 0) {
                                 Thread.sleep(1);
 
-                                contextGet.setBounds(HORIZON[0]-background1.getWidth(), blackBack.getY() + blackBack.getHeight() + 10, background1.getWidth(), background1.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
+                                contextGet.setBounds(HORIZON[0] - background1.getWidth(), blackBack.getY() + blackBack.getHeight() + 10, background1.getWidth(), background1.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
                                 contextPost.setBounds(HORIZON[0], blackBack.getY() + blackBack.getHeight() + 10, background1.getWidth(), background1.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
                                 contextGet.repaint();
                                 contextPost.repaint();
@@ -374,7 +495,7 @@ public class MenuContent extends Observable {
         chooseGet.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (RightIsFinish[0]&&RightIsFinish[1]&&blackBackRight.getWidth()!=0) {
+                if (RightIsFinish[0] && RightIsFinish[1] && blackBackRight.getWidth() != 0) {
                     RightIsFinish[0] = false;  //右边缘动画未加载完
                     final int[] LOCATIONRight = {blackBack.getWidth() / 2};  //右边延展了多少
                     final int[] LOCATIONLeft = {0};  //左边延展了多少
@@ -404,12 +525,12 @@ public class MenuContent extends Observable {
                         public void run() {
                             while (LOCATIONLeft[0] <= blackBack.getWidth() / 2) {
                                 Thread.sleep(TIMELeft[0]);
-                                blackBackLeft.setBounds((blackBack.getWidth() / 2)-LOCATIONLeft[0], 0, LOCATIONLeft[0], 9);
+                                blackBackLeft.setBounds((blackBack.getWidth() / 2) - LOCATIONLeft[0], 0, LOCATIONLeft[0], 9);
 
                                 LOCATIONLeft[0] += 3;
                                 blackBackLeft.repaint();
                                 if (LOCATIONLeft[0] >= blackBack.getWidth() / 4)
-                                TIMELeft[0] += 1;
+                                    TIMELeft[0] += 1;
                             }
                             RightIsFinish[1] = true;
 
@@ -419,7 +540,7 @@ public class MenuContent extends Observable {
                     //切换页面
                     background1.remove(scrPost);
 //                    background1.add(scr);
-                    scr.setBackground(new Color(0,0,0));
+                    scr.setBackground(new Color(0, 0, 0));
 
                     background1.repaint();
                     final int[] HORIZON = {0};
@@ -431,7 +552,7 @@ public class MenuContent extends Observable {
                             while (HORIZON[0] <= background1.getWidth()) {
                                 Thread.sleep(1);
 
-                                contextGet.setBounds(-background1.getWidth()+HORIZON[0], blackBack.getY() + blackBack.getHeight() + 10, background1.getWidth(), background1.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
+                                contextGet.setBounds(-background1.getWidth() + HORIZON[0], blackBack.getY() + blackBack.getHeight() + 10, background1.getWidth(), background1.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
                                 contextPost.setBounds(HORIZON[0], blackBack.getY() + blackBack.getHeight() + 10, background1.getWidth(), background1.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
                                 contextGet.repaint();
                                 contextPost.repaint();
@@ -450,7 +571,6 @@ public class MenuContent extends Observable {
     public static int height = 0;  //邀请的高度
 
 
-
     /**
      * 看服务器是否识别到请求，识别到则调用
      */
@@ -465,6 +585,8 @@ public class MenuContent extends Observable {
 
         EchoClient.getSbIcon = true;
     }
+
+    static boolean setContextLabelsFlag = true;//setContext中的每个标签是否第一次声明
 
     /**
      * 设置标签内容
@@ -571,7 +693,7 @@ public class MenuContent extends Observable {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     //从addFriend中删除该条指令，并让所有标签上移
-                    EchoClient.deleteAddFriendName=iconName[finalI1];
+                    EchoClient.deleteAddFriendName = iconName[finalI1];
                     EchoClient.deleteAddFriend = true;
 
                     contextGet.remove(labels[finalI]);
@@ -600,8 +722,6 @@ public class MenuContent extends Observable {
             });
 
 
-
-
             DynamicJLabel acceptMessage = new DynamicJLabel("Accept", new Font("Serif", Font.BOLD, 18), 6);
             acceptMessage.setForeground(new Color(255, 255, 255));
             acceptMessage.setCenter(accept[i].getWidth());
@@ -614,19 +734,20 @@ public class MenuContent extends Observable {
 
             height += 150;
         }
+
         //上升下降添加点击事件
         contextGet.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getWheelRotation() == 1) {  //向前
-                        for (int i = 0; i < iconLength; i++) {
-                            labels[i].setBounds(labels[i].getX(), labels[i].getY() - 10, labels[i].getWidth(), labels[i].getHeight());
-                        }
+                    for (int i = 0; i < iconLength; i++) {
+                        labels[i].setBounds(labels[i].getX(), labels[i].getY() - 10, labels[i].getWidth(), labels[i].getHeight());
+                    }
                 }
                 if (e.getWheelRotation() == -1) {
-                            for (int i = 0; i < iconLength; i++) {
-                                labels[i].setBounds(labels[i].getX(), labels[i].getY() + 10, labels[i].getWidth(), labels[i].getHeight());
-                            }
+                    for (int i = 0; i < iconLength; i++) {
+                        labels[i].setBounds(labels[i].getX(), labels[i].getY() + 10, labels[i].getWidth(), labels[i].getHeight());
+                    }
                 }
             }
         });
@@ -690,22 +811,27 @@ public class MenuContent extends Observable {
         EchoClient.getSbIconGet = true;
     }
 
+    static boolean setContextGetLabelsFlag = true;  //是否是第一次声明标签
+
     /**
      * 设置标签内容
      */
     @SneakyThrows
     public static void setContextGet() {
-
+        ImageIcon downIconGet;
+        ImageIcon upIconGet;
+        JLabel downIconLabelGet = null;
+        JLabel upIconLabelGet = null;
         //上下拖动条
-        ImageIcon downIconGet = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/down.png")));
-        ImageIcon upIconGet = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/up.png")));
+        downIconGet = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/down.png")));
+        upIconGet = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/up.png")));
 
-        JLabel downIconLabelGet = new JLabel();
+        downIconLabelGet = new JLabel();
         downIconLabelGet.setIcon(downIconGet);
         downIconLabelGet.setBounds(contextPost.getWidth() - 30, 0, 30, 30);
         contextPost.add(downIconLabelGet);
 
-        JLabel upIconLabelGet = new JLabel();
+        upIconLabelGet = new JLabel();
         upIconLabelGet.setIcon(upIconGet);
         upIconLabelGet.setBounds(contextPost.getWidth() - 30, contextPost.getHeight() - 30, 30, 30);
         contextPost.add(upIconLabelGet);
@@ -713,8 +839,9 @@ public class MenuContent extends Observable {
         for (int i = 0; i < iconLengthGet; i++) {
             labelsGet[i] = new RadioJLabel("");
             labelsGet[i].setColor(new Color(253, 252, 252));
-            contextPost.add(labelsGet[i]);
             labelsGet[i].setBounds(15, heightGet, background1.getWidth() - 20 - 10, 80);
+
+            contextPost.add(labelsGet[i]);
 
             //修改一下图像大小
             BufferedImage realIcon = ToBufferedImage.toBufferedImage(imagesGet[0].getScaledInstance(50, 50, 0));  //将图片改为合适的大小，并转化为BufferedImage
@@ -722,14 +849,16 @@ public class MenuContent extends Observable {
             BufferedImage transparencyIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(realIcon));
 
             iconLabelsGet[i] = new JLabel();
-            iconLabelsGet[i].setIcon(new ImageIcon(transparencyIcon));
             iconLabelsGet[i].setBounds(15, 15, 50, 50);
             labelsGet[i].add(iconLabelsGet[i]);
+            iconLabelsGet[i].setIcon(new ImageIcon(transparencyIcon));
 
             textsGet[i] = new DynamicJLabel(iconNameGet[i], new Font("Serif", Font.BOLD, 22), 14);
             textsGet[i].setCenter(240);
             textsGet[i].setForeground(new Color(7, 7, 7));
+
             labelsGet[i].add(textsGet[i]);
+
 
             DynamicJLabel sendMessageGet;
             if (getsPosts[i].getState().equals("0")) {
@@ -738,27 +867,28 @@ public class MenuContent extends Observable {
                 sendMessageGet = new DynamicJLabel("邀请已通过", new Font("Serif", Font.BOLD, 13), 50);
             }
             sendMessageGet.setForeground(new Color(62, 171, 159));
-            sendMessageGet.setCenter(labelsGet[i].getWidth()-140);
+            sendMessageGet.setCenter(labelsGet[i].getWidth() - 140);
             labelsGet[i].add(sendMessageGet);
 
 
             heightGet += 90;
         }
 
+
         //上升下降添加点击事件
         contextPost.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getWheelRotation() == 1) {  //向前
-                        for (int i = 0; i < iconLengthGet; i++) {
-                            labelsGet[i].setBounds(labelsGet[i].getX(), labelsGet[i].getY() - 10, labelsGet[i].getWidth(), labelsGet[i].getHeight());
-                        }
+                    for (int i = 0; i < iconLengthGet; i++) {
+                        labelsGet[i].setBounds(labelsGet[i].getX(), labelsGet[i].getY() - 10, labelsGet[i].getWidth(), labelsGet[i].getHeight());
+                    }
                 }
                 if (e.getWheelRotation() == -1) {
-                        for (int i = 0; i < iconLengthGet; i++) {
-                            labelsGet[i].setBounds(labelsGet[i].getX(), labelsGet[i].getY() + 10, labelsGet[i].getWidth(), labelsGet[i].getHeight());
-                        }
+                    for (int i = 0; i < iconLengthGet; i++) {
+                        labelsGet[i].setBounds(labelsGet[i].getX(), labelsGet[i].getY() + 10, labelsGet[i].getWidth(), labelsGet[i].getHeight());
                     }
+                }
             }
         });
         downIconLabelGet.addMouseListener(new MouseAdapter() {
@@ -801,6 +931,7 @@ public class MenuContent extends Observable {
 
         });
     }
+
     /**
      * 初始化聊天界面
      */
@@ -916,7 +1047,7 @@ public class MenuContent extends Observable {
         //下半部分
         contextChat = new RadioJLabel("");
         contextChat.setColor(new Color(239, 238, 238));
-        contextChat.setBounds(0,  150+20, background2.getWidth(), background2.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
+        contextChat.setBounds(0, 150 + 20, background2.getWidth(), background2.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
 
 
         EchoClient.checkFriends = true;  //获取请求
@@ -931,14 +1062,14 @@ public class MenuContent extends Observable {
     public static int heightChat = 0;  //邀请的高度
 
     /**
-     * 获取所有已发送的请求
+     * 获得所有好友的姓名
      */
     @SneakyThrows
     public static void getChat(Friends[] friends) {
         //储存我发送的请求
-        getsChats = friends;
-        iconLengthChat = friends.length;
-        iconNameChat = new String[iconLengthChat];
+        getsChats = friends;  //所有好友信息
+        iconLengthChat = friends.length;  //好友长度
+        iconNameChat = new String[iconLengthChat]; //存储用户姓名信息
         //获取所有发送请求的人的姓名
         for (int i = 0; i < iconLengthChat; i++) {
             iconNameChat[i] = friends[i].getFriends();
@@ -953,13 +1084,18 @@ public class MenuContent extends Observable {
     @SneakyThrows
     public static void setContextChat(BufferedImage[] icons) {
 
+        Chaticons = icons;  //储存全部好友头像
         {  //初始化状态图像
             stateIcon = new RadioJLabel[iconLengthChat];
+            messageIcon = new RadioJLabel[iconLengthChat];
             stateIconBack = new RadioJLabel[iconLengthChat];
-            for (int i = 0; i < iconLengthChat; i++) {
+            for (int i = 0; i < iconLengthChat; i++) {  //初始化所有
                 stateIcon[i] = new RadioJLabel("");
+                messageIcon[i] = new RadioJLabel("");
                 stateIconBack[i] = new RadioJLabel("");
             }
+            //所有最新显示消息
+            latestMessages = new DynamicJLabel[icons.length];
         }
 
         //上下拖动条
@@ -983,25 +1119,34 @@ public class MenuContent extends Observable {
             labelsChar[i] = new RadioJLabel("");
             labelsChar[i].setColor(new Color(253, 252, 252));
             labelsChar[i].add(stateIcon[i]);
+            labelsChar[i].add(messageIcon[i]);
             labelsChar[i].add(stateIconBack[i]);
             stateIconBack[i].setSize(0, 0);
             contextChat.add(labelsChar[i]);
             labelsChar[i].setBounds(15, heightChat, background1.getWidth() - 20 - 10, 80);
 
             //修改一下图像大小
-            BufferedImage realIcon = ToBufferedImage.toBufferedImage(icons[0].getScaledInstance(50, 50, 0));  //将图片改为合适的大小，并转化为BufferedImage
+            BufferedImage realIcon = ToBufferedImage.toBufferedImage(icons[i].getScaledInstance(50, 50, 0));  //将图片改为合适的大小，并转化为BufferedImage
             //去除黑色背景
             BufferedImage transparencyIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(realIcon));
 
+            //好友头像
             iconLabelsChar[i] = new JLabel();
             iconLabelsChar[i].setIcon(new ImageIcon(transparencyIcon));
             iconLabelsChar[i].setBounds(15, 15, 50, 50);
             labelsChar[i].add(iconLabelsChar[i]);
 
+            //好友姓名
             textsChar[i] = new DynamicJLabel(iconNameChat[i], new Font("Serif", Font.BOLD, 22), 14);
             textsChar[i].setCenter(240);
             textsChar[i].setForeground(new Color(7, 7, 7));
             labelsChar[i].add(textsChar[i]);
+
+            //存储用户名与界面的关系
+            userContent.put(iconNameChat[i], i);
+
+
+            final int[] OPENINDEX = {-1};  //记录上一次是谁在发消息
 
             //聊天标签添加点击事件
             int finalI = i;
@@ -1010,36 +1155,31 @@ public class MenuContent extends Observable {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {  //双击后
-                        chatContent[finalI].setBounds(360,70,700,700);
-                        //修改一下图像大小
-                        BufferedImage chatIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
-                        //去除黑色背景
-                        BufferedImage newChatIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(chatIcon));
-                        chatContent[finalI].mine =newChatIcon;  //我的头像
+                        //关闭上一次打开的页面
+                        if (OPENINDEX[0] != -1) {  //若不是第一次打开
+                            chatContent[OPENINDEX[0]].setSize(0, 0);  //关闭界面
+                        }
+                        OPENINDEX[0] = finalI;  //记录当前打开位置
 
-                        //修改一下图像大小
-                        BufferedImage friendIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
-                        //去除黑色背景
-                        BufferedImage newFriendIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(friendIcon));
+                        chatContent[finalI].setBounds(360, 70, 700, 700);
+                        //判断是否新消息红点亮了，如果亮了就取消红点
+                        if (messageIcon[finalI].getSize().getHeight() == 8) {  //若亮了则高度和宽度为8
+                            messageIcon[finalI].setSize(0, 0);  //取消红点
+                        }
 
-                        chatContent[finalI].friend = newFriendIcon;  //好友头像
-
+//                        MenuContent.initMessage(iconNameChat[finalI]);  //初始化聊天内容
                     }
                 }
 
             });
 
+            //显示最近的消息
+            latestMessages[i] = new DynamicJLabel("aaa", new Font("Serif", Font.BOLD, 22), 39);
 
+            latestMessages[i].setForeground(new Color(98, 97, 97));
+            latestMessages[i].setCenter(230);
+            labelsChar[i].add(latestMessages[i]);
 
-//            DynamicJLabel sendMessageGet;
-//            if (getsChats[i].getState().equals("0")) {
-//                sendMessageGet = new DynamicJLabel("邀请等待同意···", new Font("Serif", Font.BOLD, 13), 50);
-//            } else {
-//                sendMessageGet = new DynamicJLabel("邀请已通过", new Font("Serif", Font.BOLD, 13), 50);
-//            }
-//            sendMessageGet.setForeground(new Color(62, 171, 159));
-//            sendMessageGet.setCenter(labelsChar[i].getWidth()-140);
-//            labelsChar[i].add(sendMessageGet);
             EchoClient.getUserState = true;
 
             heightChat += 90;
@@ -1110,16 +1250,29 @@ public class MenuContent extends Observable {
             if (states[i] == 0) {  //账号不在线
                 stateIcon[i].setColor(new Color(110, 108, 108));
                 stateIcon[i].setBounds(54, 51, 15, 15);
-                stateIcon[i].setArc(15,15);
+                stateIcon[i].setArc(15, 15);
             } else {  //账号在线
                 stateIcon[i].setColor(new Color(47, 199, 47));
                 stateIconBack[i].setColor(new Color(238, 237, 237));
                 stateIcon[i].setBounds(54, 51, 15, 15);
                 stateIconBack[i].setBounds(52, 49, 19, 19);
-                stateIcon[i].setArc(15,15);
-                stateIconBack[i].setArc(19,19);
+                stateIcon[i].setArc(15, 15);
+                stateIconBack[i].setArc(19, 19);
             }
+            //设置新发送信息的红点
+            messageIcon[i].setColor(new Color(227, 34, 34));
+            messageIcon[i].setBounds(57, 19, 8, 8);
+//            messageIcon[i].setSize(0,0);
+            messageIcon[i].setArc(8, 8);
+
         }
+    }
+
+    /**
+     * 初始化信息，即登录时就获得与所有好友的聊天记录
+     */
+    public static void initMessage(String friendName) {
+        EchoClient.getChatHistory(friendName);
     }
 
 

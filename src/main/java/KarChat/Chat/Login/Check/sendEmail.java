@@ -1,5 +1,9 @@
 package KarChat.Chat.Login.Check;
 
+
+
+import com.sun.mail.util.MailSSLSocketFactory;
+
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -10,7 +14,7 @@ import java.util.Properties;
 public class sendEmail {
     //发件人的邮箱和授权码
     private final String myEmailAccount = "lmq122677@qq.com";//发送的邮箱
-    private final String myEmailPassword = "enpxgswidtigbacd";
+    private final String myEmailPassword = "padinijckuvafgij";
     private String receiveMailAccount = null ;
     private String info=null;
     // 信息内容
@@ -30,6 +34,7 @@ public class sendEmail {
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
         props.setProperty("mail.smtp.host", myEmailSMTPServer);   // 发件人的邮箱的 SMTP 服务器地址
         props.setProperty("mail.smtp.auth", "true");            // 需要请求认证
+
         // PS: 某些邮箱服务器要求 SMTP 连接需要使用 SSL 安全认证 (为了提高安全性, 邮箱支持SSL连接, 也可以自己开启),
         //     如果无法连接邮件服务器, 仔细查看控制台打印的 log, 如果有有类似 “连接失败, 要求 SSL 安全连接” 等错误,
         //     打开下面 /* ... */ 之间的注释代码, 开启 SSL 安全连接。

@@ -96,6 +96,29 @@
             <scope>compile</scope>
         </dependency>
 
+<!--        &lt;!&ndash; Java Mail &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>javax.mail</groupId>-->
+<!--            <artifactId>javax.mail-api</artifactId>-->
+<!--            <version>1.6.2</version>-->
+<!--        </dependency>-->
+
+
+        <dependency >
+            <groupId >javax.mail </groupId >
+            <artifactId >mail </artifactId >
+            <version >1.4.7 </version >
+        </dependency >
+
+
+<!--        &lt;!&ndash;    邮件    &ndash;&gt;-->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/javax.mail/javax.mail-api &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>javax.mail</groupId>-->
+<!--            <artifactId>javax.mail-api</artifactId>-->
+<!--            <version>1.6.2</version>-->
+<!--        </dependency>-->
+
 
     </dependencies>
 

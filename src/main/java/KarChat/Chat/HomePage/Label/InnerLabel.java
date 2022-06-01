@@ -1,15 +1,10 @@
 package KarChat.Chat.HomePage.Label;
 
-import KarChat.Chat.Helper.RemoveBackground;
-import KarChat.Chat.Helper.ToBufferedImage;
-import KarChat.Chat.HomePage.Home;
+import KarChat.Chat.HomePage.MenuContent;
 import KarChat.Chat.Login.Button.RoundButton;
-import KarChat.Chat.Login.DynamicJLabel;
-import KarChat.Chat.Login.Frameless;
 import KarChat.Chat.Login.RadioJLabel;
 import KarChat.Chat.Sound.PlaySound;
 import KarChat.Client.EchoClient;
-import com.sun.awt.AWTUtilities;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
 
@@ -19,10 +14,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
-import static KarChat.Chat.HomePage.Home.*;
-import static KarChat.Chat.HomePage.Home.chatContent;
+import static KarChat.Chat.HomePage.MenuContent.latestMessages;
 
 public class InnerLabel extends RadioJLabel {
 
@@ -46,6 +39,7 @@ public class InnerLabel extends RadioJLabel {
     public int buttonBackground3=234;
     public BufferedImage mine;  //我方头像
     public BufferedImage friend;  //好友头像
+    public String  friendName;  //好友姓名
     public RadioJLabel bottomBack;
     public RadioJLabel topLabel;
 
@@ -146,12 +140,61 @@ public class InnerLabel extends RadioJLabel {
                     //发送事件
                     String message=chatText.getText();
                     send(Type.RIGHT, message, mine);  //发送信息
-                    Thread.sleep(2000);
-                    send(Type.LEFT, message, mine);  //发送信息
+                    EchoClient.send(message,friendName);  //发送信息给service
+                    //将最新消息显示在主界面
+                    int index = MenuContent.userContent.get(friendName);
+                    latestMessages[index].setTextDynamic(message);
+
+                    //清空输入栏
+                    chatText.setText("");
+
+                    //播放发送音效
+                    new Thread(){
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            PlaySound.play("sound/sendmsg.mp3");
+                        }
+                    }.start();
+
                 }
             }
         });
 
+        //发送图像加入点击监听
+        send.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //发送事件
+                String message=chatText.getText();
+                send(Type.RIGHT, message, mine);  //发送信息
+                EchoClient.send(message,friendName);  //发送信息给service
+                //将最新消息显示在主界面
+                int index = MenuContent.userContent.get(friendName);
+                latestMessages[index].setTextDynamic(message);
+
+                //清空输入栏
+                chatText.setText("");
+
+                //播放发送音效
+                new Thread(){
+                    @SneakyThrows
+                    @Override
+                    public void run() {
+                        PlaySound.play("sound/sendmsg.mp3");
+                    }
+                }.start();
+
+            }
+        });
+
+        emoji.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+
+            }
+        });
 
         /*   处理拖动事件   */
         //处理鼠标点击事件
@@ -210,24 +253,24 @@ public class InnerLabel extends RadioJLabel {
     /**
      * 发送信息
      */
-    private void send(int type, String message, BufferedImage image) {
+    public void send(int type, String message, BufferedImage image) {
         if (type == Type.RIGHT) {  //若我方发消息
-            messages.add(new messageLabel(KarChat.Chat.HomePage.Label.messageLabel.Type.RIGHT, mine, message));  //加入新消息
+            messages.add(new messageLabel(KarChat.Chat.HomePage.Label.messageLabel.Type.RIGHT, image, message));  //加入新消息
             messages.get(index).setColor(new Color(fameColor1,fameColor2,fameColor3));
             this.add(messages.get(index));  //加入消息
             //判断放置位置
-            messages.get(index).setLocation(this.getWidth()-messages.get(index).getWidth()-10,this.getHeight() - bottomBack.getHeight()-messages.get(index).myHeight-20);
+            messages.get(index).setLocation(700-messages.get(index).getWidth()-10,700 - bottomBack.getHeight()-messages.get(index).myHeight-20);
             for (int i = messages.size() - 2; i >=0; i--) {  //所有信息标签上移
                 messages.get(i).setLocation(messages.get(i).getX(),messages.get(i).getY()-messages.get(messages.size()-1).getHeight()-10);
             }
             this.repaint();
             index++;
         } else {  //对方消息
-            messages.add(new messageLabel(messageLabel.Type.LEFT, mine, message));  //加入新消息
+            messages.add(new messageLabel(messageLabel.Type.LEFT, image, message));  //加入新消息
             messages.get(index).setColor(new Color(fameColor1,fameColor2,fameColor3));
             this.add(messages.get(index));  //加入消息
             //判断放置位置
-            messages.get(index).setLocation(0,this.getHeight() - bottomBack.getHeight()-messages.get(index).myHeight-20);
+            messages.get(index).setLocation(0,700 - bottomBack.getHeight()-messages.get(index).myHeight-20);
             for (int i = messages.size() - 2; i >=0; i--) {  //所有信息标签上移
                 messages.get(i).setLocation(messages.get(i).getX(),messages.get(i).getY()-messages.get(messages.size()-1).getHeight()-10);
             }
@@ -314,8 +357,8 @@ public class InnerLabel extends RadioJLabel {
     }
 
 
-    static class Type {
-        static int LEFT = 0;  //对方消息
-        static int RIGHT = 1;  //我方消息
+    public static class Type {
+        public static int LEFT = 0;  //对方消息
+        public static int RIGHT = 1;  //我方消息
     }
 }

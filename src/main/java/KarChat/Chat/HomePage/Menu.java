@@ -32,7 +32,7 @@ public class Menu {
     static Color LeftColor = ChangeToColor.getColorFromHex("#B8FFF9");  //左边缘颜色
     private static boolean[] canDo;
     private static boolean[] isIn;
-    private static boolean[] isClick1_1;
+    public static boolean[] isClick1_1;
     private static boolean[] canDo2;
     private static boolean[] isIn2;
     private static boolean[] isClick2_1;
