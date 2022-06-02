@@ -19,9 +19,12 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.*;
 import java.util.List;
 
+import static KarChat.Chat.HomePage.Home.ServerCloseLoad;
+import static KarChat.Chat.HomePage.Home.serverClosedMessage;
 import static KarChat.Chat.HomePage.MenuContent.*;
 import static KarChat.Chat.Login.LoginHome.*;
 
@@ -59,11 +62,11 @@ public class EchoClient{
     public static HashMap<String, Boolean> isSomeBodyFinished=new HashMap<>();
 
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws InterruptedException {
         //指定连接主机及端口
         try {
             clien = new Socket("localhost", 8888);
-        }catch (ConnectException e) {
+        }catch (IOException e) {
             LoginHome.isAlive = false;
             new LoginHome();  //打开客户端登录窗口
             LoginHome.wrongMessage.setTextDynamic("服务器未连接");
@@ -106,7 +109,7 @@ public class EchoClient{
         ) {
             new LoginHome();  //打开客户端登录窗口
             {  //判断是否储存密码
-                try (Scanner sc=new Scanner(new FileReader("userMessage"))) {
+                try (Scanner sc = new Scanner(new FileReader("userMessage"))) {
                     while (sc.hasNextLine()) {
                         String user = sc.nextLine();
                         String pass = sc.nextLine();
@@ -121,7 +124,7 @@ public class EchoClient{
 
             }
 
-            boolean ifStartFlash=true;  //是否是第一次开始刷新
+            boolean ifStartFlash = true;  //是否是第一次开始刷新
             label:
             {
                 usernameAll = new String[1];  //账号
@@ -130,7 +133,7 @@ public class EchoClient{
                     Thread.sleep(100);  //加入多次点击延迟,防止卡服
                     if (login) {  //判断提交事件是否发生
                         loadIn.add(sign);  //加入加载条
-                        sign.setBounds(-10,10,155,155);
+                        sign.setBounds(-10, 10, 155, 155);
                         loadIn.setColor(new Color(115, 175, 197));
                         LoginHome.wrongMessage.setTextDynamic("登陆中");
                         wrongMessage.setForeground(new Color(115, 175, 197));
@@ -147,7 +150,7 @@ public class EchoClient{
                         String message = buf.readLine();
                         if ("true".equals(message)) {
                             System.out.println("登录成功");
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
@@ -165,12 +168,12 @@ public class EchoClient{
                             //进入新的界面
                             break label; //退出登录功能
                         } else if ("already".equals(message)) {
-                            loadIn.setColor(new Color(0,0,0,0));
+                            loadIn.setColor(new Color(0, 0, 0, 0));
                             wrongMessage.setForeground(new Color(215, 27, 71, 205));
                             LoginHome.loginLabel.shake();  //错误后让按钮抖动
                             LoginHome.wrongMessage.setTextDynamic("账号已经登录");
                             LoginHome.wrongMessage.shake();
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
@@ -179,12 +182,12 @@ public class EchoClient{
                             }.start();
                             login = false;  //登录失败标志位重置为false
                         } else {
-                            loadIn.setColor(new Color(0,0,0,0));
+                            loadIn.setColor(new Color(0, 0, 0, 0));
                             wrongMessage.setForeground(new Color(215, 27, 71, 205));
                             LoginHome.loginLabel.shake();  //错误后让按钮抖动
                             LoginHome.wrongMessage.setTextDynamic("账号不存在或密码错误");
                             LoginHome.wrongMessage.shake();
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
@@ -196,7 +199,7 @@ public class EchoClient{
                     }
                     if (check) {  //判断提交事件是否发生
                         loadIn.add(sign);  //加入加载条
-                        sign.setBounds(-10,10,155,155);
+                        sign.setBounds(-10, 10, 155, 155);
                         loadIn.setColor(new Color(115, 175, 197));
                         LoginHome.wrongMessage.setTextDynamic("注册中");
                         wrongMessage.setForeground(new Color(115, 175, 197));
@@ -210,11 +213,11 @@ public class EchoClient{
                             passwordAll[0] = message[1];
                         });
                         if ("true".equals(buf.readLine())) {
-                            loadIn.setColor(new Color(0,0,0,0));
+                            loadIn.setColor(new Color(0, 0, 0, 0));
                             wrongMessage.setForeground(new Color(215, 27, 71, 205));
 
                             LoginHome.registerAlready();
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
@@ -230,7 +233,7 @@ public class EchoClient{
                             if (Objects.equals(buf.readLine(), "true")) {
                                 Thread.sleep(1000);
                                 LoginHome.registerFinish(usernameAll[0], passwordAll[0]);  //做出注册完反馈
-                                new Thread(){
+                                new Thread() {
                                     @SneakyThrows
                                     @Override
                                     public void run() {
@@ -270,13 +273,13 @@ public class EchoClient{
                         for (int i = 0; i < length; i++) {
                             String post = buf.readLine();
                             String get = buf.readLine();
-                            System.out.println("post"+post);
-                            System.out.println("get"+get);
-                            posts[i] = new Post(post, get,null);  //获取每一个请求
+                            System.out.println("post" + post);
+                            System.out.println("get" + get);
+                            posts[i] = new Post(post, get, null);  //获取每一个请求
                         }
                         String flag = buf.readLine();
-                        System.out.println("接收到"+flag);
-                        if (flag.equals("true")){
+                        System.out.println("接收到" + flag);
+                        if (flag.equals("true")) {
                             isGetFinished = false;
                         }
                         MenuContent.getPosts(posts);  //发送所有请求
@@ -313,33 +316,33 @@ public class EchoClient{
                         out.println("addFriend");
                         out.println(MenuContent.friendName);
                         System.out.println(MenuContent.friendName);
-                        String bool=buf.readLine();
+                        String bool = buf.readLine();
                         System.out.println(bool);
 //
                         if ("true".equals(bool)) {
                             MenuContent.searchText.setText("已发送好友邀请");
                             MenuContent.searchText.setForeground(new Color(62, 171, 159));
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
                                     PlaySound.play("sound/loginsuccess.mp3");
                                 }
                             }.start();
-                        }else if ("false".equals(bool)){
+                        } else if ("false".equals(bool)) {
                             MenuContent.searchText.setText("用户名输入错误");
                             MenuContent.searchText.setForeground(new Color(161, 19, 19));
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
                                     PlaySound.play("sound/error.mp3");
                                 }
                             }.start();
-                        }else if ("already".equals(bool)){  //已经存在了邀请
+                        } else if ("already".equals(bool)) {  //已经存在了邀请
                             MenuContent.searchText.setText("已经发送过该邀请");
                             MenuContent.searchText.setForeground(new Color(161, 19, 19));
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
@@ -359,7 +362,7 @@ public class EchoClient{
                             String post = buf.readLine();
                             String get = buf.readLine();
                             String state = buf.readLine();
-                            posts[i] = new Post(post, get,state);  //获取每一个请求
+                            posts[i] = new Post(post, get, state);  //获取每一个请求
                         }
                         String flag = buf.readLine();
                         if (flag.equals("true")) {
@@ -370,17 +373,22 @@ public class EchoClient{
                     }
                     if (addState) {  //修改addFriend中的状态
                         new Thread() {
-                            @SneakyThrows
                             @Override
                             public void run() {
                                 out.println("addState");
                                 out.println(addStateName);
                                 addState = false;
-                                String BooleanFlag = buf.readLine();
+                                String BooleanFlag = null;
+                                try {
+                                    BooleanFlag = buf.readLine();
+                                } catch (IOException e) {
+                                    EchoClient.ServerClosed();  //服务器关闭方法
+                                    e.printStackTrace();
+                                }
                                 if ("true".equals(BooleanFlag)) {
                                     MenuContent.searchText.setText("已同意好友邀请");
                                     MenuContent.searchText.setForeground(new Color(62, 171, 159));
-                                    new Thread(){
+                                    new Thread() {
                                         @SneakyThrows
                                         @Override
                                         public void run() {
@@ -395,14 +403,14 @@ public class EchoClient{
 
                     }
                     if (deleteAddFriend) {
-                        new Thread(){
+                        new Thread() {
                             @Override
                             public void run() {
                                 out.println("deleteAddFriend");
                                 out.println(deleteAddFriendName);
                                 MenuContent.searchText.setText("已拒绝好友邀请");
                                 MenuContent.searchText.setForeground(new Color(102, 48, 180));
-                                new Thread(){
+                                new Thread() {
                                     @SneakyThrows
                                     @Override
                                     public void run() {
@@ -414,68 +422,81 @@ public class EchoClient{
                         }.start();
                     }
                     if (checkFriends) {
-                        new Thread(){
-                            @SneakyThrows
+                        new Thread() {
                             @Override
                             public void run() {
                                 out.println("checkFriends");
-                                int length = Integer.parseInt(buf.readLine());  //好友个数
-                                friends = new Friends[length];
-                                for (int i = 0; i < length; i++) {
-                                    String friend = buf.readLine();
-                                    String getChatLocation = buf.readLine();
-                                    friends[i] = new Friends(0,friend,getChatLocation);
+                                try {
+                                    int length = Integer.parseInt(buf.readLine());  //好友个数
+                                    friends = new Friends[length];
+                                    for (int i = 0; i < length; i++) {
+                                        String friend = buf.readLine();
+                                        String getChatLocation = buf.readLine();
+                                        friends[i] = new Friends(0, friend, getChatLocation);
+                                    }
+                                    System.out.println(friends.length);
+                                    MenuContent.getChat(friends, true);  //把得到的全部好友（姓名+聊天表位置）传给getChat
+                                    String flag = buf.readLine();
+                                } catch (IOException e) {
+                                    EchoClient.ServerClosed();  //服务器关闭方法
+                                    e.printStackTrace();
                                 }
-                                System.out.println(friends.length);
-                                MenuContent.getChat(friends,true);  //把得到的全部好友（姓名+聊天表位置）传给getChat
-                                String flag = buf.readLine();
 
                             }
                         }.start();
                         checkFriends = false;
                     }
                     if (checkFriendsNameOnly) {
-                        new Thread(){
-                            @SneakyThrows
+                        new Thread() {
                             @Override
                             public void run() {
                                 out.println("checkFriends");
-                                int length = Integer.parseInt(buf.readLine());  //好友个数
-                                friends = new Friends[length];
-                                for (int i = 0; i < length; i++) {
-                                    String friend = buf.readLine();
-                                    String getChatLocation = buf.readLine();
-                                    friends[i] = new Friends(0,friend,getChatLocation);
-                                }
-                                System.out.println(friends.length);
-                                String flag = buf.readLine();
-                                System.out.println("flag:"+flag);
-                                getChat(friends,false);  //把得到的全部好友（姓名+聊天表位置）传给getChat
-                                labelWhile:
-                                {
-                                    while (true) {
-                                        if (flag.equals("true")) {
-                                            isGetFriendAmount = false;
-                                            break labelWhile;
+                                try {
+                                    int length = Integer.parseInt(buf.readLine());  //好友个数
+                                    friends = new Friends[length];
+                                    for (int i = 0; i < length; i++) {
+                                        String friend = buf.readLine();
+                                        String getChatLocation = buf.readLine();
+                                        friends[i] = new Friends(0, friend, getChatLocation);
+                                    }
+                                    System.out.println(friends.length);
+                                    String flag = buf.readLine();
+                                    System.out.println("flag:" + flag);
+                                    getChat(friends, false);  //把得到的全部好友（姓名+聊天表位置）传给getChat
+                                    labelWhile:
+                                    {
+                                        while (true) {
+                                            if (flag.equals("true")) {
+                                                isGetFriendAmount = false;
+                                                break labelWhile;
+                                            }
                                         }
                                     }
+                                    System.out.println("isGetFriendAmount:" + isGetFriendAmount);
+                                } catch (IOException e) {
+                                    EchoClient.ServerClosed();  //服务器关闭方法
+                                    e.printStackTrace();
                                 }
-                                System.out.println("isGetFriendAmount:"+isGetFriendAmount);
                             }
                         }.start();
                         checkFriendsNameOnly = false;
                     }
                     if (getFriendIcon) {
                         new Thread() {
-                            @SneakyThrows
                             @Override
                             public void run() {
-                                BufferedImage[] icons=new BufferedImage[friends.length];
+                                BufferedImage[] icons = new BufferedImage[friends.length];
                                 out.println("getFriendIcon");
                                 out.println(friends.length);
                                 for (int i = 0; i < friends.length; i++) {
                                     out.println(friends[i].getFriends());
-                                    BufferedImage icon = GetPicture.stringToImage(buf.readLine());  //转成图片
+                                    BufferedImage icon = null;  //转成图片
+                                    try {
+                                        icon = GetPicture.stringToImage(buf.readLine());
+                                    } catch (IOException e) {
+                                        EchoClient.ServerClosed();  //服务器关闭方法
+                                        e.printStackTrace();
+                                    }
                                     icons[i] = icon;
                                 }
                                 MenuContent.setContextChat(icons);
@@ -486,7 +507,6 @@ public class EchoClient{
                     if (getUserState) {
                         System.out.println("运行到1");
                         new Thread() {
-                            @SneakyThrows
                             @Override
                             public void run() {
                                 System.out.println("运行到5");
@@ -494,7 +514,12 @@ public class EchoClient{
                                 int[] state = new int[friends.length];
                                 for (int i = 0; i < friends.length; i++) {
                                     out.println(friends[i].getFriends());
-                                    state[i] = Integer.parseInt(buf.readLine());
+                                    try {
+                                        state[i] = Integer.parseInt(buf.readLine());
+                                    } catch (IOException e) {
+                                        EchoClient.ServerClosed();  //服务器关闭方法
+                                        e.printStackTrace();
+                                    }
                                 }
                                 System.out.println(state[0]);
                                 System.out.println(Arrays.toString(state));
@@ -508,14 +533,13 @@ public class EchoClient{
                         if (ifStartFlash) {   //这个boolean值可以让两个线程只运行一次
                             //执行一次刷新好友列表以及获取历史记录
                             new Thread() {
-                                @SneakyThrows
                                 @Override
                                 public void run() {
-                                    Timer timer=new Timer();
+                                    Timer timer = new Timer();
                                     timer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {
-                                            if (!Menu.isClick1_1[0]&&!isCheckingHistory&&!isSending) {  //需要不在加好友界面，并且不在进行查找历史记录
+                                            if (!Menu.isClick1_1[0] && !isCheckingHistory && !isSending) {  //需要不在加好友界面，并且不在进行查找历史记录
                                                 isFlashing = true;
                                                 isGetFinished = true;
                                                 isPostFinished = true;
@@ -562,9 +586,7 @@ public class EchoClient{
                                                 }
                                             }
                                         }
-                                    },8000,8000);
-
-
+                                    }, 8000, 8000);
 
 
                                 }
@@ -574,15 +596,14 @@ public class EchoClient{
                             //*开启更新聊天线程:
                             // 先获取好友数量，分别看每个好友是否有新消息
                             // */
-                            new Thread(){
+                            new Thread() {
                                 @Override
                                 public void run() {
-                                    Timer timer=new Timer();
+                                    Timer timer = new Timer();
                                     timer.schedule(new TimerTask() {
-                                        @SneakyThrows
                                         @Override
                                         public void run() {
-                                            if (!isFlashing&&!isSending) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                                            if (!isFlashing && !isSending) {  //需要在不刷新加好友页面时执行,并不能进行发送
                                                 isCheckingHistory = true;  //正在查询记录
                                                 isGetFriendAmount = true;
                                                 System.out.println("检查聊天记录");
@@ -591,12 +612,21 @@ public class EchoClient{
                                                 labelWhile:
                                                 {
                                                     while (true) {
-                                                        Thread.sleep(1000);
+                                                        try {
+                                                            Thread.sleep(1000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
                                                         System.out.println("正在找记录的while循环");
                                                         if (!isGetFriendAmount) {
                                                             System.out.println("开始执行查记录");
                                                             for (int i = 0; i < iconLengthChat; i++) {
-                                                                EchoClient.getChatHistoryAmount(iconNameChat[i]);  //统计聊天记录内容
+                                                                try {
+                                                                    EchoClient.getChatHistoryAmount(iconNameChat[i]);  //统计聊天记录内容
+                                                                } catch (IOException e) {
+                                                                    EchoClient.ServerClosed();  //服务器关闭方法
+                                                                    e.printStackTrace();
+                                                                }
                                                                 System.out.println("我开始执行");
                                                             }
                                                             while (true) {
@@ -612,11 +642,11 @@ public class EchoClient{
                                                 }
                                             }
                                         }
-                                    },8000,5000);
+                                    }, 8000, 5000);
 
                                 }
                             }.start();
-                            ifStartFlash=false;
+                            ifStartFlash = false;
                         }
 
                     }
@@ -638,6 +668,9 @@ public class EchoClient{
 
                 }
             }
+
+        } catch (IOException e) {
+            EchoClient.ServerClosed();  //服务器关闭方法
 
         }
         }
@@ -833,4 +866,15 @@ public class EchoClient{
 
         }
 
+    /**
+     * 服务器关闭时调用的方法
+     */
+    public static void ServerClosed() {
+        log.info("服务器已经关闭!请重启客户端");
+        serverClosedMessage.setForeground(new Color(250, 38, 38));
+
+        ServerCloseLoad.show();
+
+
+    }
 }

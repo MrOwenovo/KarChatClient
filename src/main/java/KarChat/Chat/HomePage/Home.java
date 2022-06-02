@@ -1,10 +1,13 @@
 package KarChat.Chat.HomePage;
 
 import KarChat.Chat.Action.Minimize;
+import KarChat.Chat.Helper.ChangeToColor;
 import KarChat.Chat.Helper.RemoveBackground;
 import KarChat.Chat.Helper.ToBufferedImage;
 import KarChat.Chat.HomePage.Label.InnerLabel;
+import KarChat.Chat.HomePage.Label.ServerLoading;
 import KarChat.Chat.Login.Button.RoundButton;
+import KarChat.Chat.Login.DynamicJLabel;
 import KarChat.Chat.Login.Frameless;
 import KarChat.Chat.Login.RadioJLabel;
 import KarChat.Chat.Sound.PlaySound;
@@ -25,6 +28,8 @@ import static KarChat.Chat.HomePage.MenuContent.iconNameChat;
 
 public class Home extends Observable implements ActionListener , Minimize {
 
+    public static final DynamicJLabel serverClosedMessage = new DynamicJLabel("服务器断开连接", new Font("Serif", Font.BOLD, 10), 107);
+    public static  ServerLoading ServerCloseLoad;
     public static JLabel menu;
     public static ImageIcon menuIcon;
     public static JLabel iconLabel ; //头像标签
@@ -750,6 +755,15 @@ public class Home extends Observable implements ActionListener , Minimize {
             MAXTRANS += 0.02;
         }
 
+        //加入服务器断开时的加载条
+        //未连接时的提示
+        serverClosedMessage.setForeground(new Color(250, 38, 38,0));
+        serverClosedMessage.setCenter(90);
+        menu.add(serverClosedMessage);
+
+
+
+
         new Thread() {
             @SneakyThrows
             @Override
@@ -800,6 +814,8 @@ public class Home extends Observable implements ActionListener , Minimize {
                 Rbut2.setBounds(home.getWidth() - 50, 20, 25, 25);
 
 
+
+
                 back.setVisible(true);  //窗口可视化
                 float MAXTRANS2 = 0;  //透明度
                 while (MAXTRANS2 <= 1.0) {
@@ -834,8 +850,16 @@ public class Home extends Observable implements ActionListener , Minimize {
         //去除黑色背景
         transparencyIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(realIcon));
         iconLabel = new JLabel(defaultIcon);  //默认头像
+
+        ServerCloseLoad = new ServerLoading();
+        ServerCloseLoad.setBounds(3, 16, 73, 90);
+        ServerCloseLoad.setBackground(ChangeToColor.getColorFromHex("#448ACA"));
+        ServerCloseLoad.setLayout(null);
+
+
         menu.setLayout(null);
-        menu.add(iconLabel); //加入头像标签
+        menu.add(ServerCloseLoad);
+        ServerCloseLoad.add(iconLabel); //加入头像标签
 
         iconLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -941,7 +965,8 @@ public class Home extends Observable implements ActionListener , Minimize {
 
         };
         iconLabel.addMouseListener(menuOpen);
-        iconLabel.setBounds(-20, -10, icon.getWidth(), icon.getHeight());
+//        iconLabel.setBounds(-20, -10, icon.getWidth(), icon.getHeight());
+        iconLabel.setBounds(-24, -7, icon.getWidth(), icon.getHeight());
         iconLabel.setIcon(new ImageIcon(transparencyIcon));  //设置用户自己的头像
 
     }
