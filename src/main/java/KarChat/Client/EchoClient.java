@@ -35,7 +35,9 @@ public class EchoClient{
     public static boolean check =false;  //判断是否存在用户
     public static boolean getIcon =false;  //判断是否更换头像
     public static boolean get =false;  //获取所有请求
+    public static boolean isGetFinished =false;  //获取所有请求
     public static boolean post =false;  //获取所有发送
+    public static boolean isPostFinished =false;  //获取所有发送
     public static boolean getSbIcon =false;  //获取某人头像
     public static boolean getSbIconGet =false;  //获取某人头像
     public static boolean addFriend =false;  //加好友
@@ -54,6 +56,8 @@ public class EchoClient{
     public static String[] usernameAll=new String[1];
     public static String[] passwordAll=new String[1];
     static boolean historyIsFlash=true;  //是否开始刷新聊天记录
+    public static HashMap<String, Boolean> isSomeBodyFinished=new HashMap<>();
+
 
     public static void main(String[] args) throws Exception{
         //指定连接主机及端口
@@ -258,6 +262,7 @@ public class EchoClient{
                         getIcon = false;  //修改标签
                     }
                     if (get) {
+                        System.out.println("运行到get");
                         out.println("get");
                         out.println(usernameAll[0]);
                         int length = Integer.parseInt(buf.readLine());
@@ -265,9 +270,17 @@ public class EchoClient{
                         for (int i = 0; i < length; i++) {
                             String post = buf.readLine();
                             String get = buf.readLine();
+                            System.out.println("post"+post);
+                            System.out.println("get"+get);
                             posts[i] = new Post(post, get,null);  //获取每一个请求
                         }
+                        String flag = buf.readLine();
+                        System.out.println("接收到"+flag);
+                        if (flag.equals("true")){
+                            isGetFinished = false;
+                        }
                         MenuContent.getPosts(posts);  //发送所有请求
+
                         get = false;
                     }
                     if (getSbIcon) {
@@ -337,6 +350,7 @@ public class EchoClient{
                         addFriend = false;
                     }
                     if (post) {
+                        System.out.println("运行到post");
                         out.println("post");
                         out.println(usernameAll[0]);
                         int length = Integer.parseInt(buf.readLine());
@@ -346,6 +360,10 @@ public class EchoClient{
                             String get = buf.readLine();
                             String state = buf.readLine();
                             posts[i] = new Post(post, get,state);  //获取每一个请求
+                        }
+                        String flag = buf.readLine();
+                        if (flag.equals("true")) {
+                            isPostFinished = false;
                         }
                         MenuContent.getGets(posts);  //发送所有请求
                         post = false;
@@ -410,6 +428,7 @@ public class EchoClient{
                                 }
                                 System.out.println(friends.length);
                                 MenuContent.getChat(friends,true);  //把得到的全部好友（姓名+聊天表位置）传给getChat
+                                String flag = buf.readLine();
 
                             }
                         }.start();
@@ -429,8 +448,19 @@ public class EchoClient{
                                     friends[i] = new Friends(0,friend,getChatLocation);
                                 }
                                 System.out.println(friends.length);
-                                MenuContent.getChat(friends,false);  //把得到的全部好友（姓名+聊天表位置）传给getChat
-
+                                String flag = buf.readLine();
+                                System.out.println("flag:"+flag);
+                                getChat(friends,false);  //把得到的全部好友（姓名+聊天表位置）传给getChat
+                                labelWhile:
+                                {
+                                    while (true) {
+                                        if (flag.equals("true")) {
+                                            isGetFriendAmount = false;
+                                            break labelWhile;
+                                        }
+                                    }
+                                }
+                                System.out.println("isGetFriendAmount:"+isGetFriendAmount);
                             }
                         }.start();
                         checkFriendsNameOnly = false;
@@ -487,6 +517,8 @@ public class EchoClient{
                                         public void run() {
                                             if (!Menu.isClick1_1[0]&&!isCheckingHistory&&!isSending) {  //需要不在加好友界面，并且不在进行查找历史记录
                                                 isFlashing = true;
+                                                isGetFinished = true;
+                                                isPostFinished = true;
                                                 System.out.println("刷新了一次");
                                                 //刷新get画布
                                                 for (int i = 0; i < iconLength; i++) {  //清空画布,为下一次刷新做准备
@@ -519,7 +551,15 @@ public class EchoClient{
                                                 for (int i = 0; i < iconLengthGet; i++) {  //刷新画布
                                                     labelsGet[i].repaint();
                                                 }
-                                                isFlashing = false;  //执行完刷新
+                                                labelWhile:
+                                                {
+                                                    while (true) {
+                                                        if (!isGetFinished && !isPostFinished) {
+                                                            isFlashing = false;  //执行完刷新
+                                                            break labelWhile;
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     },8000,8000);
@@ -544,15 +584,32 @@ public class EchoClient{
                                         public void run() {
                                             if (!isFlashing&&!isSending) {  //需要在不刷新加好友页面时执行,并不能进行发送
                                                 isCheckingHistory = true;  //正在查询记录
+                                                isGetFriendAmount = true;
                                                 System.out.println("检查聊天记录");
 
                                                 EchoClient.checkFriendsNameOnly = true;  //获取请求
-                                                Thread.sleep(1000);
-                                                for (int i = 0; i < MenuContent.iconLengthChat; i++) {
-                                                    EchoClient.getChatHistoryAmount(iconNameChat[i]);  //统计聊天记录内容
-                                                }
+                                                labelWhile:
+                                                {
+                                                    while (true) {
+                                                        Thread.sleep(1000);
+                                                        System.out.println("正在找记录的while循环");
+                                                        if (!isGetFriendAmount) {
+                                                            System.out.println("开始执行查记录");
+                                                            for (int i = 0; i < iconLengthChat; i++) {
+                                                                EchoClient.getChatHistoryAmount(iconNameChat[i]);  //统计聊天记录内容
+                                                                System.out.println("我开始执行");
+                                                            }
+                                                            while (true) {
+                                                                if (isSomeBodyFinished.get(iconNameChat[iconLengthChat - 1])) {
+                                                                    isCheckingHistory = false;  //查询完成
+                                                                    System.out.println("isCheckingHistory:" + isCheckingHistory);
+                                                                    break labelWhile;
+                                                                }
+                                                            }
 
-                                                isCheckingHistory = false;  //查询完成
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     },8000,5000);
@@ -587,6 +644,7 @@ public class EchoClient{
 
     public static boolean isFlashing = false;  //是否正在执行刷新加好友画布
     public static boolean isCheckingHistory = false;  //是否正在执行查找历史记录
+    public static boolean isGetFriendAmount = false;  //是否获取全部好友数量
     public static boolean isSending = false;  //是否正在发送
 
 
@@ -604,18 +662,27 @@ public class EchoClient{
                 System.out.println("我发送了1");
                 PrintStream out = new PrintStream(
                         clien.getOutputStream());  //向服务器端输出信息
+                BufferedReader buf = new BufferedReader(new InputStreamReader(clien.getInputStream())); //接收服务器返回的信息
+
                 label:
                 {
                     while (true) {
                         if (!isFlashing && !isCheckingHistory) {  //找到其他刷新任务不在的间隙进行
+                            System.out.println("isFlashing"+isFlashing);
+                            System.out.println("isCheching"+isCheckingHistory);
                             isSending = true;  //正在发送
                             out.println("send");
                             out.println(message);
+                            System.out.println("message"+message);
                             out.println(geter);
+                            System.out.println("geter"+geter);
                             out.println(usernameAll[0]);
-                            Thread.sleep(1000);
-                            isSending = false;  //发送完成
-                            break label;  //退出while循环
+                            System.out.println("username"+usernameAll[0]);
+                            String flag = buf.readLine();
+                            if (flag.equals("true")) {
+                                isSending = false;  //发送完成
+                                break label;  //退出while循环
+                            }
                         }
                     }
                 }
@@ -697,6 +764,10 @@ public class EchoClient{
             historyAmount.put(friend, histroys.size());  //记录该用户的历史记录数量
             historysFactory.put(friend, histroys);  //将新历史记录保存
 
+        String flag = buf.readLine();
+        if (flag.equals("true")) {
+            isSomeBodyFinished.put(friend, true);
+        }
 
         }
 

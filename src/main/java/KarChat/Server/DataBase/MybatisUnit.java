@@ -69,6 +69,6 @@ public class MybatisUnit {
      * @param comsumer
      */
     public synchronized static void doChatWork(Consumer<Chat> comsumer) {  //加入线程锁，防止多个客户端争夺查询
-             comsumer.accept(getSession(true).getMapper(Chat.class));
+             comsumer.accept(session.getMapper(Chat.class));
     }
 }
