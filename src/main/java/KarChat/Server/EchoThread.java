@@ -1,9 +1,11 @@
 package KarChat.Server;
 
 import KarChat.Server.DataBase.Entry.*;
+import KarChat.Server.DataBase.Mapper.Login;
 import KarChat.Server.DataBase.MybatisUnit;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
+import org.apache.ibatis.session.SqlSession;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -138,6 +140,8 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                 }else {
                                     System.out.println("请求为空");
                                 }
+                                out.println("true");
+                                System.out.println("发送了true");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -158,6 +162,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                 }else {
                                     System.out.println("请求为空");
                                 }
+                                out.println("true");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -269,6 +274,8 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                         out.println(friends[i].getChatLocation());
                                     }
 
+                                    out.println("true");
+
                                 });
                             }
                         }.start();
@@ -300,37 +307,41 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                 break;
                     case "send":
 //
-                        new Thread(){
-                            @SneakyThrows
-                            @Override
-                            public void run() {
                                 System.out.println("我接受到了2");
+                                Thread.sleep(100);
                                 String sendMessage = buf.readLine();  //要发送的信息
                                 String sendToName = buf.readLine();  //发送给的人
                                 String myName = buf.readLine();  //发送的人
+                                System.out.println("sendMessage:"+sendMessage);
+                                System.out.println("发给了:"+sendToName);
+                                System.out.println("谁发的:"+myName);
+//                                System.out.println(buf.readLine());
+//                                System.out.println(buf.readLine());
+//                                System.out.println(buf.readLine());
+//                                System.out.println(buf.readLine());
                                    //先查聊天表名
-                                final String[] chatLocation = new String[1];  //聊天表位置
-                                final Friends[] friend = new Friends[1];
+                                final String[] mychatLocation = new String[1];  //聊天表位置
+                                final Friends[] myfriend = new Friends[1];
                                 MybatisUnit.doChatWork(mapper -> {
                                     if (myName.matches("^[0-9]*$")) {
-                                        friend[0] = mapper.getChatLocation("_" + myName, sendToName);
+                                        myfriend[0] = mapper.getChatLocation("_" + myName, sendToName);
                                     } else {
-                                        friend[0] = mapper.getChatLocation(myName, sendToName);
+                                        myfriend[0] = mapper.getChatLocation(myName, sendToName);
                                     }
-                                    chatLocation[0] = friend[0].getChatLocation();
+                                    mychatLocation[0] = myfriend[0].getChatLocation();
                                 });
-                                System.out.println("chatLocation:"+chatLocation[0]);
+                                System.out.println("chatLocation:"+mychatLocation[0]);
                                 final int[] q = new int[1];
                                 //存到聊天表里
                                 MybatisUnit.doChatWork(mapper->{
-                                    q[0] =mapper.insertMessage(chatLocation[0], myName, sendToName, sendMessage);  //添加信息
+                                    q[0] =mapper.insertMessage(mychatLocation[0], myName, sendToName, sendMessage);  //添加信息
                                 });
                                 System.out.println(q[0]);
 
-//                                EchoThreadServer.sendToClient(myName,sendToName,sendMessage);
+                                out.println("true");
 
-                            }
-                        }.start();
+
+
                          break;
                     case "getMessage":  //接收服务器发来的信息
                         new Thread(){
@@ -384,6 +395,8 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                     }
                                 }
                             });
+
+                            out.println("true");
                         } catch (Exception e) {
                             log.info("聊天表"+chatLocation[0]+"不存在");
                         }
@@ -400,10 +413,10 @@ public class EchoThread implements Runnable {  //实现Runnable接口
 
         }finally{
             String finalUsername1 = username;
-            MybatisUnit.doSqlWork(mapper->{
-                mapper.updateState(0, finalUsername1);
-                mapper.deleteIndex(username);  //移除客户端下标
-            });
+            SqlSession session = MybatisUnit.getSession(true);
+            Login mapper1 = session.getMapper(Login.class);
+            mapper1.updateState(0, finalUsername1);
+            mapper1.deleteIndex(username);  //移除客户端下标
             new Thread() {  //新建删除用户的线程
                 @Override
                 public void run() {

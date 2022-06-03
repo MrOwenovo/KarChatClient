@@ -10,6 +10,7 @@ import KarChat.Chat.Sound.PlaySound;
 import KarChat.Client.EchoClient;
 import KarChat.Server.DataBase.Entry.Friends;
 import KarChat.Server.DataBase.Entry.Post;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
 
