@@ -1,12 +1,14 @@
 package KarChat.Chat.Sound;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.Player;
+import javazoom.jl.player.*;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
-
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 
 /***
  - 音乐播放器类
@@ -20,8 +22,12 @@ public class PlaySound{
     @SneakyThrows
     public static void play(String filePath) throws FileNotFoundException, JavaLayerException {
 
-        BufferedInputStream buffer = new BufferedInputStream(Resources.getResourceAsStream(filePath));
+        FileInputStream buffer = new FileInputStream("src/main/resources/"+filePath);
         player = new Player(buffer);
         player.play();
+    }
+
+    public static void main(String[] args) throws FileNotFoundException, JavaLayerException {
+        PlaySound.play("sound/error.mp3");
     }
 }

@@ -23,6 +23,8 @@
           <element id="library" level="project" name="Maven: org.mybatis:mybatis:3.5.9" />
           <element id="library" level="project" name="Maven: mysql:mysql-connector-java:8.0.28" />
           <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.11.4" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-log4j12:2.0.0-alpha0" />
+          <element id="library" level="project" name="Maven: log4j:log4j:1.2.17" />
           <element id="library" level="project" name="Maven: commons-io:commons-io:2.6" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context:5.3.13" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aop:5.3.13" />
@@ -31,6 +33,10 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-jcl:5.3.13" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:5.3.13" />
           <element id="library" level="project" name="Maven: javazoom:jlayer:1.0.1" />
+          <element id="library" level="project" name="Maven: com.googlecode.soundlibs:mp3spi:1.9.5.4" />
+          <element id="library" level="project" name="Maven: com.googlecode.soundlibs:jlayer:1.0.1.4" />
+          <element id="library" level="project" name="Maven: junit:junit:3.8.2" />
+          <element id="library" level="project" name="Maven: com.googlecode.soundlibs:tritonus-share:0.3.7.4" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:1.7.25" />
           <element id="library" level="project" name="Maven: javax.mail:mail:1.4.7" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
