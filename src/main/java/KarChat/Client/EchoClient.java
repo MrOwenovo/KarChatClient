@@ -475,7 +475,8 @@ public class EchoClient{
                                     System.out.println("isGetFriendAmount:" + isGetFriendAmount);
                                 } catch (IOException e) {
                                     EchoClient.ServerClosed();  //服务器关闭方法
-                                    e.printStackTrace();
+                                } catch (NumberFormatException e) {
+                                    EchoClient.ClientError();  //客户端出错
                                 }
                             }
                         }.start();
@@ -875,6 +876,17 @@ public class EchoClient{
 
         ServerCloseLoad.show();
 
+    }
+
+    /**
+     * 客户端出问题时调用的方法
+     */
+    public static void ClientError() {
+        log.info("客户端出错!请重启客户端");
+        serverClosedMessage.setForeground(new Color(250, 38, 38));
+        serverClosedMessage.setTextDynamic("客户端出错");
+
+        ServerCloseLoad.show();
 
     }
 }
