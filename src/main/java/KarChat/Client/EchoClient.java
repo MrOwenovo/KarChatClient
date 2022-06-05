@@ -313,43 +313,63 @@ public class EchoClient{
 //                        break label2;
                     }
                     if (addFriend) {
-                        out.println("addFriend");
-                        out.println(MenuContent.friendName);
-                        System.out.println(MenuContent.friendName);
-                        String bool = buf.readLine();
-                        System.out.println(bool);
+                        new Thread(){
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                label:
+                                {
+                                    while (true) {
+                                        if (!isSending&&!isCheckingHistory&&!isFlashing&&!isGetFriendAmount) {
+                                            isAddingFriends = true;
+                                            out.println("addFriend");
+                                            out.println(MenuContent.friendName);
+                                            System.out.println(MenuContent.friendName);
+                                            String bool = buf.readLine();
+                                            System.out.println(bool);
 //
-                        if ("true".equals(bool)) {
-                            MenuContent.searchText.setText("已发送好友邀请");
-                            MenuContent.searchText.setForeground(new Color(62, 171, 159));
-                            new Thread() {
-                                @SneakyThrows
-                                @Override
-                                public void run() {
-                                    PlaySound.play("sound/loginsuccess.mp3");
+                                            if ("true".equals(bool)) {
+                                                MenuContent.searchText.setText("已发送好友邀请");
+                                                MenuContent.searchText.setForeground(new Color(62, 171, 159));
+                                                new Thread() {
+                                                    @SneakyThrows
+                                                    @Override
+                                                    public void run() {
+                                                        PlaySound.play("sound/loginsuccess.mp3");
+                                                    }
+                                                }.start();
+                                            } else if ("false".equals(bool)) {
+                                                MenuContent.searchText.setText("用户名输入错误");
+                                                MenuContent.searchText.setForeground(new Color(161, 19, 19));
+                                                new Thread() {
+                                                    @SneakyThrows
+                                                    @Override
+                                                    public void run() {
+                                                        PlaySound.play("sound/error.mp3");
+                                                    }
+                                                }.start();
+                                            } else if ("already".equals(bool)) {  //已经存在了邀请
+                                                MenuContent.searchText.setText("已经发送过该邀请");
+                                                MenuContent.searchText.setForeground(new Color(161, 19, 19));
+                                                new Thread() {
+                                                    @SneakyThrows
+                                                    @Override
+                                                    public void run() {
+                                                        PlaySound.play("sound/error.mp3");
+                                                    }
+                                                }.start();
+                                            }
+                                            String isFinish = buf.readLine();  //读取是否结束
+                                            if (isFinish.equals("finish")) {
+                                                isAddingFriends = false;
+                                                break label;
+                                            }
+                                        }
+                                    }
                                 }
-                            }.start();
-                        } else if ("false".equals(bool)) {
-                            MenuContent.searchText.setText("用户名输入错误");
-                            MenuContent.searchText.setForeground(new Color(161, 19, 19));
-                            new Thread() {
-                                @SneakyThrows
-                                @Override
-                                public void run() {
-                                    PlaySound.play("sound/error.mp3");
-                                }
-                            }.start();
-                        } else if ("already".equals(bool)) {  //已经存在了邀请
-                            MenuContent.searchText.setText("已经发送过该邀请");
-                            MenuContent.searchText.setForeground(new Color(161, 19, 19));
-                            new Thread() {
-                                @SneakyThrows
-                                @Override
-                                public void run() {
-                                    PlaySound.play("sound/error.mp3");
-                                }
-                            }.start();
-                        }
+                            }
+                        }.start();
+
                         addFriend = false;
                     }
                     if (post) {
@@ -540,7 +560,7 @@ public class EchoClient{
                                     timer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {
-                                            if (!Menu.isClick1_1[0] && !isCheckingHistory && !isSending) {  //需要不在加好友界面，并且不在进行查找历史记录
+                                            if (!Menu.isClick1_1[0] && !isCheckingHistory && !isSending&&!isAddingFriends) {  //需要不在加好友界面，并且不在进行查找历史记录
                                                 isFlashing = true;
                                                 isGetFinished = true;
                                                 isPostFinished = true;
@@ -604,7 +624,7 @@ public class EchoClient{
                                     timer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {
-                                            if (!isFlashing && !isSending) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                                            if (!isFlashing && !isSending&&!isAddingFriends) {  //需要在不刷新加好友页面时执行,并不能进行发送
                                                 isCheckingHistory = true;  //正在查询记录
                                                 isGetFriendAmount = true;
                                                 System.out.println("检查聊天记录");
@@ -680,6 +700,7 @@ public class EchoClient{
     public static boolean isCheckingHistory = false;  //是否正在执行查找历史记录
     public static boolean isGetFriendAmount = false;  //是否获取全部好友数量
     public static boolean isSending = false;  //是否正在发送
+    public static boolean isAddingFriends = false;  //是否正在加好友
 
 
     /**
@@ -701,7 +722,7 @@ public class EchoClient{
                 label:
                 {
                     while (true) {
-                        if (!isFlashing && !isCheckingHistory) {  //找到其他刷新任务不在的间隙进行
+                        if (!isFlashing && !isCheckingHistory&&!isAddingFriends) {  //找到其他刷新任务不在的间隙进行
                             System.out.println("isFlashing"+isFlashing);
                             System.out.println("isCheching"+isCheckingHistory);
                             isSending = true;  //正在发送

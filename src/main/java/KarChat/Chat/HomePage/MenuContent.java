@@ -201,14 +201,7 @@ public class MenuContent extends Observable {
                     if (friendName.length() >= 6) {
                         EchoClient.addFriend = true;
 
-                        //播放发送音效
-                        new Thread() {
-                            @SneakyThrows
-                            @Override
-                            public void run() {
-                                PlaySound.play("sound/sendmsg.mp3");
-                            }
-                        }.start();
+
                     } else {
                         searchText.setText("用户名不能为空");
                         searchText.setForeground(new Color(161, 19, 19));

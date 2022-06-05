@@ -27,7 +27,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
     public static String username = null;  //我的姓名
     private Post[] posts;//好友列表
     private Friends[] friends;
-    public  int index;  //判断是服务器的第几个客户端
+    public int index;  //判断是服务器的第几个客户端
 
     public EchoThread(Socket client) {  //通过构造方法设置Socket
         this.client = client;
@@ -57,7 +57,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                             if (user != null) {
                                 //判断该用户是否已经登录
                                 if (user.getState() != 1) {  //若未登录
-                                    System.out.println(client.getInetAddress()+": "+client.getPort()+" 登录成功");
+                                    System.out.println(client.getInetAddress() + ": " + client.getPort() + " 登录成功");
                                     out.println("true");
                                     MybatisUnit.doSqlWork(mapper2 -> {
                                         mapper2.updateState(1, finalUsername);
@@ -73,8 +73,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                     }.start();
 
 
-
-                                }else{
+                                } else {
                                     out.println("already");
                                 }
                             } else {
@@ -87,28 +86,28 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         String password2 = buf.readLine();  //读取密码
                         String iconString = buf.readLine();  //读取用户头像
 
-                        MybatisUnit.doSqlWork(mapper->{
-                            int i=mapper.register(username2, password2,iconString);
+                        MybatisUnit.doSqlWork(mapper -> {
+                            int i = mapper.register(username2, password2, iconString);
                             if (i == 1) {
                                 out.println("true");
                             }
                         });
                         break;
                     case "getIcon":
-                        MybatisUnit.doSqlWork(mapper->{
-                            Icon icon=mapper.getIcon(username);
+                        MybatisUnit.doSqlWork(mapper -> {
+                            Icon icon = mapper.getIcon(username);
                             out.println(icon.getIconString());
                         });
                         break;
-                        //识别要加谁为好友,判断是否已经发送
+                    //识别要加谁为好友,判断是否已经发送
                     case "addFriend":
                         String friendName = buf.readLine();
                         final Post[] post = new Post[1];
                         //先查询一下加好友列表里是否已经存在了这一对组合
-                        MybatisUnit.doAddFriendWork(mapper->{
+                        MybatisUnit.doAddFriendWork(mapper -> {
                             post[0] = mapper.checkPostIsExist(username, friendName);
                         });
-                        if (post[0]==null) {  //加好友列表中不存在该邀请
+                        if (post[0] == null) {  //加好友列表中不存在该邀请
                             //加好友
                             MybatisUnit.doAddFriendWork(mapper -> {
                                 int i = mapper.addFriend(username, friendName);
@@ -119,15 +118,19 @@ public class EchoThread implements Runnable {  //实现Runnable接口
 
                                 }
                             });
+                            out.println("finish");
                             break;
-                        }{  //加好友列表中已经存在了该邀请
-                            out.println("already");
-                    }
-                        break;
+                        }
+                    {  //加好友列表中已经存在了该邀请
+                        out.println("already");
+                        out.println("finish");
 
-                        //获取所有好友请求
+                    }
+                    break;
+
+                    //获取所有好友请求
                     case "get":
-                        MybatisUnit.doAddFriendWork(mapper->{
+                        MybatisUnit.doAddFriendWork(mapper -> {
                             try {
                                 posts = mapper.checkGet(buf.readLine());
                                 if (posts != null) {
@@ -137,7 +140,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                         out.println(posts[i].getGeter());
                                     }
                                     System.out.println("获得请求");
-                                }else {
+                                } else {
                                     System.out.println("请求为空");
                                 }
                                 out.println("true");
@@ -148,7 +151,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         });
                         break;
                     case "post":
-                        MybatisUnit.doAddFriendWork(mapper->{
+                        MybatisUnit.doAddFriendWork(mapper -> {
                             try {
                                 Post[] posts = mapper.checkPost(buf.readLine());
                                 if (posts != null) {
@@ -159,7 +162,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                                         out.println(posts[i].getState());
                                     }
                                     System.out.println("获得请求");
-                                }else {
+                                } else {
                                     System.out.println("请求为空");
                                 }
                                 out.println("true");
@@ -172,8 +175,8 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         int length = Integer.parseInt(buf.readLine());  //读取用户的数量
                         for (int i = 0; i < length; i++) {
                             String iconName = buf.readLine();
-                            MybatisUnit.doSqlWork(mapper->{
-                                Icon icon=mapper.getIcon(iconName);
+                            MybatisUnit.doSqlWork(mapper -> {
+                                Icon icon = mapper.getIcon(iconName);
                                 out.println(icon.getIconString());
                             });
                         }
@@ -182,51 +185,51 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         int lengthGet = Integer.parseInt(buf.readLine());  //读取已发送用户的数量
                         for (int j = 0; j < lengthGet; j++) {
                             String iconNameGet = buf.readLine();
-                            MybatisUnit.doSqlWork(mapper->{
-                                Icon icon=mapper.getIcon(iconNameGet);
+                            MybatisUnit.doSqlWork(mapper -> {
+                                Icon icon = mapper.getIcon(iconNameGet);
                                 out.println(icon.getIconString());
                             });
                         }
                         break;
                     case "createFriendsTable":
-                        MybatisUnit.doAddFriendWork(mapper->{
+                        MybatisUnit.doAddFriendWork(mapper -> {
                             //这里由于使用${},所以账号不能是纯数字，加入判断，如果是纯数字就加个D在前面
-                            if (username.matches("^[0-9]*$")){  //如果账号是纯数字
-                                mapper.createFriendsTable("_"+username);  //创建以自己为表名的好友表，用来存放好友
-                            }else {
+                            if (username.matches("^[0-9]*$")) {  //如果账号是纯数字
+                                mapper.createFriendsTable("_" + username);  //创建以自己为表名的好友表，用来存放好友
+                            } else {
                                 mapper.createFriendsTable(username);  //创建以自己为表名的好友表，用来存放好友
                             }
                         });
                         break;
                     case "addState":
-                        new Thread(){
+                        new Thread() {
                             @SneakyThrows
                             @Override
                             public void run() {
                                 String addStateName = buf.readLine();
-                                MybatisUnit.doAddFriendWork(mapper->{
-                                    int i=mapper.updateAddState(addStateName, username);
+                                MybatisUnit.doAddFriendWork(mapper -> {
+                                    int i = mapper.updateAddState(addStateName, username);
                                     if (i == 1) {
                                         out.println("true");
                                     }
                                 });
 
                                 //在两个人的好友表中添加对方
-                                MybatisUnit.doAddFriendWork(mapper->{
+                                MybatisUnit.doAddFriendWork(mapper -> {
                                     if (username.matches("^[0-9]*$")) {  //如果自己账号是纯数字
-                                        mapper.addFriendName("_"+username, addStateName);  //给自己的好友表中添加人名
+                                        mapper.addFriendName("_" + username, addStateName);  //给自己的好友表中添加人名
                                     } else {
                                         mapper.addFriendName(username, addStateName);  //给自己的好友表中添加人名
                                     }
                                     if (addStateName.matches("^[0-9]*$")) {  //如果对方账号是纯数字
-                                        mapper.addFriendName("_"+addStateName, username);  //给对方的好友表中添加自己
+                                        mapper.addFriendName("_" + addStateName, username);  //给对方的好友表中添加自己
                                     } else {
                                         mapper.addFriendName(addStateName, username);  //给对方的好友表中添加自己
                                     }
                                 });
 
                                 //创建聊天表，并把表名存储到两个人的好友表中
-                                MybatisUnit.doAddFriendWork(mapper->{
+                                MybatisUnit.doAddFriendWork(mapper -> {
                                     String chatLocation = username + "_" + addStateName;  //聊天表名
                                     mapper.createChatTable(chatLocation);
                                     //加入两个人的表
@@ -247,26 +250,26 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         }.start();
                         break;
                     case "deleteAddFriend":
-                        new Thread(){
+                        new Thread() {
                             @SneakyThrows
                             @Override
                             public void run() {
-                                String deleteAddFriendName=buf.readLine();
-                                MybatisUnit.doAddFriendWork(mapper->{
+                                String deleteAddFriendName = buf.readLine();
+                                MybatisUnit.doAddFriendWork(mapper -> {
                                     mapper.deleteFriendName(deleteAddFriendName, username);
                                 });
                             }
                         }.start();
                         break;
                     case "checkFriends":
-                        new Thread(){
+                        new Thread() {
                             @Override
                             public void run() {
-                                MybatisUnit.doAddFriendWork(mapper->{
+                                MybatisUnit.doAddFriendWork(mapper -> {
                                     if (username.matches("^[0-9]*$")) {  //如果好友账号是纯数字
-                                        friends =mapper.checkFriends("_" + username);
+                                        friends = mapper.checkFriends("_" + username);
                                     } else {
-                                        friends =mapper.checkFriends(username);
+                                        friends = mapper.checkFriends(username);
                                     }
                                     out.println(friends.length);  //发送长度
                                     for (int i = 0; i < friends.length; i++) {
@@ -284,67 +287,66 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         int ChatLength = Integer.parseInt(buf.readLine());  //读取用户的数量
                         for (int i = 0; i < ChatLength; i++) {
                             String iconName = buf.readLine();
-                            MybatisUnit.doSqlWork(mapper->{
-                                Icon icon=mapper.getIcon(iconName);
+                            MybatisUnit.doSqlWork(mapper -> {
+                                Icon icon = mapper.getIcon(iconName);
                                 out.println(icon.getIconString());
                             });
                         }
                         break;
                     case "getUserState":
-                        MybatisUnit.doAddFriendWork(mapper->{
+                        MybatisUnit.doAddFriendWork(mapper -> {
                             for (int i = 0; i < friends.length; i++) {
-                                String friendsName= null;
+                                String friendsName = null;
                                 try {
                                     friendsName = buf.readLine();
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                                 User user = mapper.getUserState(friendsName);
-                                            out.println(user.getState());
+                                out.println(user.getState());
                             }
-                });
+                        });
 
-                break;
+                        break;
                     case "send":
 //
-                                System.out.println("我接受到了2");
-                                Thread.sleep(100);
-                                String sendMessage = buf.readLine();  //要发送的信息
-                                String sendToName = buf.readLine();  //发送给的人
-                                String myName = buf.readLine();  //发送的人
-                                System.out.println("sendMessage:"+sendMessage);
-                                System.out.println("发给了:"+sendToName);
-                                System.out.println("谁发的:"+myName);
+                        System.out.println("我接受到了2");
+                        Thread.sleep(100);
+                        String sendMessage = buf.readLine();  //要发送的信息
+                        String sendToName = buf.readLine();  //发送给的人
+                        String myName = buf.readLine();  //发送的人
+                        System.out.println("sendMessage:" + sendMessage);
+                        System.out.println("发给了:" + sendToName);
+                        System.out.println("谁发的:" + myName);
 //                                System.out.println(buf.readLine());
 //                                System.out.println(buf.readLine());
 //                                System.out.println(buf.readLine());
 //                                System.out.println(buf.readLine());
-                                   //先查聊天表名
-                                final String[] mychatLocation = new String[1];  //聊天表位置
-                                final Friends[] myfriend = new Friends[1];
-                                MybatisUnit.doChatWork(mapper -> {
-                                    if (myName.matches("^[0-9]*$")) {
-                                        myfriend[0] = mapper.getChatLocation("_" + myName, sendToName);
-                                    } else {
-                                        myfriend[0] = mapper.getChatLocation(myName, sendToName);
-                                    }
-                                    mychatLocation[0] = myfriend[0].getChatLocation();
-                                });
-                                System.out.println("chatLocation:"+mychatLocation[0]);
-                                final int[] q = new int[1];
-                                //存到聊天表里
-                                MybatisUnit.doChatWork(mapper->{
-                                    q[0] =mapper.insertMessage(mychatLocation[0], myName, sendToName, sendMessage);  //添加信息
-                                });
-                                System.out.println(q[0]);
+                        //先查聊天表名
+                        final String[] mychatLocation = new String[1];  //聊天表位置
+                        final Friends[] myfriend = new Friends[1];
+                        MybatisUnit.doChatWork(mapper -> {
+                            if (myName.matches("^[0-9]*$")) {
+                                myfriend[0] = mapper.getChatLocation("_" + myName, sendToName);
+                            } else {
+                                myfriend[0] = mapper.getChatLocation(myName, sendToName);
+                            }
+                            mychatLocation[0] = myfriend[0].getChatLocation();
+                        });
+                        System.out.println("chatLocation:" + mychatLocation[0]);
+                        final int[] q = new int[1];
+                        //存到聊天表里
+                        MybatisUnit.doChatWork(mapper -> {
+                            q[0] = mapper.insertMessage(mychatLocation[0], myName, sendToName, sendMessage);  //添加信息
+                        });
+                        System.out.println(q[0]);
 
-                                out.println("true");
+                        out.println("true");
 
 
-
-                         break;
+                        break;
                     case "getMessage":  //接收服务器发来的信息
-                        new Thread(){
+                        new Thread() {
                             @SneakyThrows
                             @Override
                             public void run() {
@@ -359,20 +361,20 @@ public class EchoThread implements Runnable {  //实现Runnable接口
                         break;
                     case "getChatHistory":  //获取聊天历史内容
                         System.out.println("获取历史记录2");
-                                //先查聊天表名
-                                final String[] chatLocation = new String[1];  //聊天表的位置
-                                String me = buf.readLine();  //我的姓名
-                                String friend = buf.readLine();  //好友的姓名
-                                MybatisUnit.doChatWork(mapper -> {
-                                    if (me.matches("^[0-9]*$")) {
-                                        chatLocation[0] = mapper.getChatLocation("_" + me, friend).getChatLocation();
-                                    } else {
-                                        chatLocation[0] = mapper.getChatLocation(me, friend).getChatLocation();
-                                    }
-                                });
-                        System.out.println("聊天表位置"+chatLocation[0]);
+                        //先查聊天表名
+                        final String[] chatLocation = new String[1];  //聊天表的位置
+                        String me = buf.readLine();  //我的姓名
+                        String friend = buf.readLine();  //好友的姓名
+                        MybatisUnit.doChatWork(mapper -> {
+                            if (me.matches("^[0-9]*$")) {
+                                chatLocation[0] = mapper.getChatLocation("_" + me, friend).getChatLocation();
+                            } else {
+                                chatLocation[0] = mapper.getChatLocation(me, friend).getChatLocation();
+                            }
+                        });
+                        System.out.println("聊天表位置" + chatLocation[0]);
 
-                                //获取聊天表中的全部内容
+                        //获取聊天表中的全部内容
                         try {
                             MybatisUnit.doChatWork(mapper -> {
                                 Message[] chatHistory = mapper.getChatHistory(chatLocation[0]);//获取全部聊天内容
@@ -398,7 +400,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
 
                             out.println("true");
                         } catch (Exception e) {
-                            log.info("聊天表"+chatLocation[0]+"不存在");
+                            log.info("聊天表" + chatLocation[0] + "不存在");
                         }
 
                         break;
@@ -411,7 +413,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
         } catch (SocketException | NullPointerException e) {
             System.out.println(this.client.getInetAddress() + "连接异常");
 
-        }finally{
+        } finally {
             String finalUsername1 = username;
             SqlSession session = MybatisUnit.getSession(true);
             Login mapper1 = session.getMapper(Login.class);
@@ -435,7 +437,7 @@ public class EchoThread implements Runnable {  //实现Runnable接口
     public void getMessage(String message) {
         PrintStream out = new PrintStream(
                 client.getOutputStream());  //实例化客户端的输出流
-            out.println(message);
+        out.println(message);
     }
 
 }
