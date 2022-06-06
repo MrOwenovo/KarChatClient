@@ -19,7 +19,7 @@ import static KarChat.Chat.HomePage.MenuContent.*;
  */
 public class Menu {
 
-    private static ImageIcon newMenuIcon;
+    public static ImageIcon newMenuIcon;
     public static int homeColor1 = 166;  //主页颜色
     public static int homeColor2 = 163;  //主页颜色
     public static int homeColor3 = 163;  //主页颜色
@@ -91,10 +91,10 @@ public class Menu {
     private static RadioJLabel officialLabel;
     private static RadioJLabel marketLabel;
     private static RadioJLabel settingLabel;
-    private static boolean[] isInAll;
-    private static int[] WIDTHNOW;
-    private static boolean[] isOpen;
-    private static boolean[] keepFlag;
+    public static boolean[] isInAll;
+    public static int[] WIDTHNOW;
+    public static boolean[] isOpen;
+    public  static boolean[] keepFlag;
     private static RadioJLabel menuHomeUser3Back;
     private static int menuHomeUserBackIndex=0;
     private static int menuHomeUser1BackIndex=0;
@@ -103,6 +103,8 @@ public class Menu {
     private static int menuHomeUser4BackIndex=0;
     private static int menuHomeUser5BackIndex=0;
     private static int menuHomeUser6BackIndex=0;
+    public static boolean isOut = false;  //当进行展开动画时为true
+    public static boolean isShrink = false;  //当进行收缩动画时为true
 
 
     @SneakyThrows
@@ -122,7 +124,7 @@ public class Menu {
             @Override
             public void mouseEntered(MouseEvent e) {
                 isInAll[0] = true;
-                if (!isMenuChild) {
+                if (!isMenuChild&&!isOut&&!isShrink) {
                     isMenuChild = false;
                     //
                     menuHomeBack.setBackground(new Color(0, 0, 0, 0));
@@ -144,6 +146,7 @@ public class Menu {
                             menuBack.setBounds(110, 20, newMenuIcon.getIconWidth(), newMenuIcon.getIconHeight());
                             label:
                             {
+                                isOut = true;  //正在展开
                                 while (WIDTH < -40) {
                                     Thread.sleep(1);
                                     menuTop.setBounds(WIDTH, 0, newMenuIcon.getIconWidth(), menuIcon.getIconHeight());
@@ -154,6 +157,7 @@ public class Menu {
 //                                        break label;
 //                                    }
                                 }
+                                isOut = false;  //展开完毕
                                 isOpen[0] = true;
                                 WIDTHNOW[0] = 0;  //清零
                             }
@@ -167,56 +171,62 @@ public class Menu {
         };
         menu.addMouseListener(mouseAd);
 
+
+
         //菜单收缩
         menuBack.addMouseListener(new MouseAdapter() {  //菜单收缩
             @Override
             public void mouseExited(MouseEvent e) {
                 isInAll[0] = false;
                 isMenuChild = false;
-                new Thread() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        int WIDTH = WIDTHNOW[0];
-                        int MENUWIDTH = 140;
-                        keepFlag[0] = false;
-                        menuBack.setBounds(110, 20, newMenuIcon.getIconWidth(), newMenuIcon.getIconHeight());
+                if (!isOut&&!isShrink) {
+                    new Thread() {
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            int WIDTH = WIDTHNOW[0];
+                            int MENUWIDTH = 140;
+                            keepFlag[0] = false;
+                            menuBack.setBounds(110, 20, newMenuIcon.getIconWidth(), newMenuIcon.getIconHeight());
 
-                        label2:
-                        {
-                            while (WIDTH > -20 - 180 - (newMenuIcon.getIconWidth() - menuIcon.getIconWidth())) {
-                                Thread.sleep(1);
-                                menuTop.setBounds(WIDTH, 0, newMenuIcon.getIconWidth(), menuIcon.getIconHeight());
-                                if (menuFlag[0] && MENUWIDTH > 12)
-                                    menuHomeUser.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
-                                if (menuFlag1[0] && MENUWIDTH > 12)
-                                    menuHomeUser1.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
-                                if (menuFlag2[0] && MENUWIDTH > 12)
-                                    menuHomeUser2.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
-                                if (menuFlag3[0] && MENUWIDTH > 12)
-                                    menuHomeUser3.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 300, menuIcon.getIconHeight());
-                                if (menuFlag4[0] && MENUWIDTH > 12)
-                                    menuHomeUser4.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
-                                if (menuFlag5[0] && MENUWIDTH > 12)
-                                    menuHomeUser5.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
-                                if (menuFlag6[0] && MENUWIDTH > 12)
-                                    menuHomeUser6.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                            label2:
+                            {
+                                isShrink = true;  //正在收缩
+                                while (WIDTH > -20 - 180 - (newMenuIcon.getIconWidth() - menuIcon.getIconWidth())) {
+                                    Thread.sleep(1);
+                                    menuTop.setBounds(WIDTH, 0, newMenuIcon.getIconWidth(), menuIcon.getIconHeight());
+                                    if (menuFlag[0] && MENUWIDTH > 12)
+                                        menuHomeUser.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                                    if (menuFlag1[0] && MENUWIDTH > 12)
+                                        menuHomeUser1.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                                    if (menuFlag2[0] && MENUWIDTH > 12)
+                                        menuHomeUser2.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                                    if (menuFlag3[0] && MENUWIDTH > 12)
+                                        menuHomeUser3.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 300, menuIcon.getIconHeight());
+                                    if (menuFlag4[0] && MENUWIDTH > 12)
+                                        menuHomeUser4.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                                    if (menuFlag5[0] && MENUWIDTH > 12)
+                                        menuHomeUser5.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                                    if (menuFlag6[0] && MENUWIDTH > 12)
+                                        menuHomeUser6.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
 
-                                WIDTH -= 3;
-                                if (menuFlag[0] || menuFlag1[0] || menuFlag2[0] || menuFlag3[0] || menuFlag4[0] || menuFlag5[0] || menuFlag6[0])
-                                    MENUWIDTH -= 3;
+                                    WIDTH -= 3;
+                                    if (menuFlag[0] || menuFlag1[0] || menuFlag2[0] || menuFlag3[0] || menuFlag4[0] || menuFlag5[0] || menuFlag6[0])
+                                        MENUWIDTH -= 3;
 
-                                if (keepFlag[0]) {
-                                    WIDTHNOW[0] = WIDTH;
-                                    break label2;
+                                    if (keepFlag[0]) {
+                                        WIDTHNOW[0] = WIDTH;
+                                        break label2;
+                                    }
                                 }
+                                isShrink = false;  //收缩完成
+                                menuBack.setBounds(110, 20, 0, 0);
+                                isOpen[0] = false;
+                                WIDTHNOW[0] = -(newMenuIcon.getIconWidth() - menuIcon.getIconWidth());  //清零
                             }
-                            menuBack.setBounds(110, 20,0, 0);
-                            isOpen[0] = false;
-                            WIDTHNOW[0] = -(newMenuIcon.getIconWidth() - menuIcon.getIconWidth());  //清零
                         }
-                    }
-                }.start();
+                    }.start();
+                }
             }
         });
 

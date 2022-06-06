@@ -23,8 +23,8 @@ import java.net.SocketException;
 import java.util.*;
 import java.util.List;
 
-import static KarChat.Chat.HomePage.Home.ServerCloseLoad;
-import static KarChat.Chat.HomePage.Home.serverClosedMessage;
+import static KarChat.Chat.HomePage.Home.*;
+import static KarChat.Chat.HomePage.Menu.*;
 import static KarChat.Chat.HomePage.MenuContent.*;
 import static KarChat.Chat.Login.LoginHome.*;
 
@@ -125,6 +125,7 @@ public class EchoClient{
             }
 
             boolean ifStartFlash = true;  //是否是第一次开始刷新
+            boolean ifStartingCheckMenuAnimation = true;  //是否开启后台线程检查菜单动画
             label:
             {
                 usernameAll = new String[1];  //账号
@@ -671,6 +672,7 @@ public class EchoClient{
                         }
 
                     }
+
 //                    i  f (Objects.equals(buf.readLine(), "getMessage")) {  //若接收到getMessage,则是有人发消息
 //                        String message = buf.readLine();  //获取发送内容
 //                        String sendName = buf.readLine();  //获取发送人姓名
@@ -701,6 +703,7 @@ public class EchoClient{
     public static boolean isGetFriendAmount = false;  //是否获取全部好友数量
     public static boolean isSending = false;  //是否正在发送
     public static boolean isAddingFriends = false;  //是否正在加好友
+    public static int[] mouseXY = new int[2];  //存储当前鼠标的xy
 
 
     /**
@@ -909,5 +912,54 @@ public class EchoClient{
 
         ServerCloseLoad.show();
 
+    }
+
+    public static void MenuShrink() {
+        new Thread() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                int WIDTH = WIDTHNOW[0];
+                int MENUWIDTH = 140;
+                keepFlag[0] = false;
+                menuBack.setBounds(110, 20, newMenuIcon.getIconWidth(), newMenuIcon.getIconHeight());
+
+                label2:
+                {
+                    isShrink = true;  //正在收缩
+                    while (WIDTH > -20 - 180 - (newMenuIcon.getIconWidth() - menuIcon.getIconWidth())) {
+                        Thread.sleep(1);
+                        menuTop.setBounds(WIDTH, 0, newMenuIcon.getIconWidth(), menuIcon.getIconHeight());
+                        if (menuFlag[0] && MENUWIDTH > 12)
+                            menuHomeUser.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                        if (menuFlag1[0] && MENUWIDTH > 12)
+                            menuHomeUser1.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                        if (menuFlag2[0] && MENUWIDTH > 12)
+                            menuHomeUser2.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                        if (menuFlag3[0] && MENUWIDTH > 12)
+                            menuHomeUser3.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 300, menuIcon.getIconHeight());
+                        if (menuFlag4[0] && MENUWIDTH > 12)
+                            menuHomeUser4.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                        if (menuFlag5[0] && MENUWIDTH > 12)
+                            menuHomeUser5.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+                        if (menuFlag6[0] && MENUWIDTH > 12)
+                            menuHomeUser6.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+
+                        WIDTH -= 3;
+                        if (menuFlag[0] || menuFlag1[0] || menuFlag2[0] || menuFlag3[0] || menuFlag4[0] || menuFlag5[0] || menuFlag6[0])
+                            MENUWIDTH -= 3;
+
+                        if (keepFlag[0]) {
+                            WIDTHNOW[0] = WIDTH;
+                            break label2;
+                        }
+                    }
+                    isShrink = false;  //收缩完成
+                    menuBack.setBounds(110, 20, 0, 0);
+                    isOpen[0] = false;
+                    WIDTHNOW[0] = -(newMenuIcon.getIconWidth() - menuIcon.getIconWidth());  //清零
+                }
+            }
+        }.start();
     }
 }

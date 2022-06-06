@@ -23,8 +23,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Observable;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import static KarChat.Chat.HomePage.Menu.*;
 import static KarChat.Chat.HomePage.MenuContent.iconNameChat;
+import static KarChat.Client.EchoClient.MenuShrink;
+import static KarChat.Client.EchoClient.mouseXY;
 
 public class Home extends Observable implements ActionListener , Minimize {
 
@@ -148,6 +153,7 @@ public class Home extends Observable implements ActionListener , Minimize {
         menuHomeUser6.setColor(new Color(239, 238, 238));
 
 
+        final Timer[] timer = {new Timer()};
 
         //处理鼠标点击事件
         home.addMouseListener(new MouseAdapter() {
@@ -156,6 +162,19 @@ public class Home extends Observable implements ActionListener , Minimize {
                 xOld = e.getX();  //存储点击时的坐标
                 yOld = e.getY();
             }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                timer[0].schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        mouseXY[0] = e.getX();
+                        mouseXY[1] = e.getY();
+                    }
+                },0,500);
+
+            }
+
         });
         //处理鼠标拖拽事件
         home.addMouseMotionListener(new MouseMotionAdapter() {
@@ -170,6 +189,18 @@ public class Home extends Observable implements ActionListener , Minimize {
         });
 
 
+        homeBack.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                timer[0].schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        mouseXY[0] = e.getX();
+                        mouseXY[1] = e.getY();
+                    }
+                },0,500);
+            }
+        });
 
 
 
@@ -827,6 +858,40 @@ public class Home extends Observable implements ActionListener , Minimize {
 
             }
         }.start();
+
+
+        //开启后台线程，用于检测菜单展开情况
+        Timer timer2 = new Timer();
+        timer2.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new Thread() {
+                    @SneakyThrows
+                    @Override
+                    public void run() {
+                        if (menuTop.getX()>-118&& (mouseXY[0] >= 0 && mouseXY[0] <= 46) && (mouseXY[1] >= 0 && mouseXY[1] <= 740)) {  //在左半部分退出
+                            Thread.sleep(500);
+                            if (menuTop.getX()>-117) {
+                                MenuShrink();  //开始收缩
+                                Thread.sleep(2000);
+                                isShrink = false;
+                                isOut = false;
+                            }
+
+                        } else if (menuTop.getX()>-117&&(mouseXY[0] >= 267) && (mouseXY[1] >= 0 && mouseXY[1] <= 740)) { //最右半部分退出
+                            Thread.sleep(500);
+                            if (menuTop.getX()>-118) {
+                                MenuShrink();  //开始收缩
+                                Thread.sleep(2000);
+                                isShrink = false;
+                                isOut = false;
+                            }
+                        }
+                    }
+                }.start();
+            }
+        },1000,500);
+
 
 
 
