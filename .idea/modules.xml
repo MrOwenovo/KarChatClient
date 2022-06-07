@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/KarChatWeb.iml" filepath="$PROJECT_DIR$/KarChatWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KarChatSpringBoot.iml" filepath="$PROJECT_DIR$/KarChatSpringBoot.iml" />
     </modules>
   </component>
 </project>
