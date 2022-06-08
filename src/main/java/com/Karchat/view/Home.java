@@ -1,9 +1,9 @@
 package com.Karchat.view;
 
 import com.Karchat.service.Minimize;
+import com.Karchat.service.ViewServer;
 import com.Karchat.util.ColorUtil.ChangeToColor;
 import com.Karchat.util.ComponentUtil.Button.RoundButton;
-import com.Karchat.util.ComponentUtil.CompositeComponent.Controller;
 import com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent;
 import com.Karchat.util.ComponentUtil.Frame.Frameless;
 import com.Karchat.util.ComponentUtil.Label.DynamicJLabel;
@@ -12,6 +12,8 @@ import com.Karchat.util.ComponentUtil.Label.RadioJLabel;
 import com.Karchat.util.ComponentUtil.Label.RadioJLabelNew;
 import com.Karchat.util.ComponentUtil.Loading.LoadingHome;
 import com.Karchat.util.ComponentUtil.Loading.ServerLoading;
+import com.Karchat.util.Constant;
+import com.Karchat.util.Controller.Controller;
 import com.Karchat.util.PictureUtil.RemoveBackground;
 import com.Karchat.util.PictureUtil.ToBufferedImage;
 import com.Karchat.util.SoundUtil.PlaySound;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -33,9 +36,10 @@ import com.Karchat.util.ComponentUtil.CompositeComponent.Menu;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import static com.Karchat.util.ComponentUtil.CompositeComponent.Controller.MenuShrink;
-import static com.Karchat.util.ComponentUtil.CompositeComponent.Controller.mouseXY;
+import static com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent.iconLengthChat;
 import static com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent.iconNameChat;
+import static com.Karchat.util.Constant.*;
+import static com.Karchat.util.Constant.isCheckingHistory;
 
 @Slf4j
 @Component
@@ -102,6 +106,9 @@ public class Home extends Observable implements ActionListener , Minimize {
     public void init() {  //构造后置方法
         log.info("主页面启动中.....");
     }
+
+
+    ViewServer viewServer=context.getBean(Controller.class).viewService;
 
 
     @SneakyThrows
@@ -283,36 +290,47 @@ public class Home extends Observable implements ActionListener , Minimize {
                 @SneakyThrows
                 @Override
                 public void run() {
-                    Thread.sleep(2000);
-                    chatContent = new InnerLabel[MenuContent.iconLengthChat];
-                    for (int i = 0; i < MenuContent.iconLengthChat; i++) {
-                        chatContent[i] = new InnerLabel();
-                        chatContent[i].setSize(0, 0);
-                        back.add(chatContent[i]);
+                    label:
+                    while (true) {  //如果还没有加载出好友列表就先等待
+                        if (MenuContent.iconLengthChat > 0&&getFriendIconsSuccess) {
+                            chatContent = new InnerLabel[MenuContent.iconLengthChat];
+                            for (int i = 0; i < MenuContent.iconLengthChat; i++) {
+                                chatContent[i] = new InnerLabel();
+                                chatContent[i].setSize(0, 0);
+                                back.add(chatContent[i]);
 
 
-                        //初始化用户聊天界面的存储信息
-                        //修改一下图像大小
-                        BufferedImage chatIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
-                        //去除黑色背景
-                        BufferedImage newChatIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(chatIcon));
-                        chatContent[i].mine = newChatIcon;  //我的头像
+                                //初始化用户聊天界面的存储信息
+                                //修改一下图像大小
+                                BufferedImage chatIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
+                                //去除黑色背景
+                                BufferedImage newChatIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(chatIcon));
+                                chatContent[i].mine = newChatIcon;  //我的头像
 
-                        //修改一下图像大小
-                        BufferedImage friendIcon = ToBufferedImage.toBufferedImage(MenuContent.Chaticons[i].getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
-                        //去除黑色背景
-                        BufferedImage newFriendIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(friendIcon));
+                                //修改一下图像大小
+                                BufferedImage friendIcon = ToBufferedImage.toBufferedImage(MenuContent.Chaticons[i].getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
+                                //去除黑色背景
+                                BufferedImage newFriendIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(friendIcon));
 
-                        chatContent[i].friend = newFriendIcon;  //好友头像
-                        chatContent[i].friendName = iconNameChat[i];  //储存好友姓名
+                                chatContent[i].friend = newFriendIcon;  //好友头像
+                                chatContent[i].friendName = iconNameChat[i];  //储存好友姓名
 
-                        MenuContent.initMessage(iconNameChat[i]);  //初始化聊天内容
+                                MenuContent.initMessage(iconNameChat[i]);  //初始化聊天内容
+                            }
+                            while (true) {
+                                if (isSomeBodyFinishedFirstTime.get(iconNameChat[iconLengthChat - 1])) {
+                                    initFinishAndCanFlashChatHistory = true;  //查询完成
+                                    log.info("--所有聊天记录初始化成功!--");
+                                    break label;
+                                }
+                            }
+                        }
                     }
                 }
             }.start();
         }
         {  //加入头像
-            Controller.getIcon = true;  //修改标志位
+           Constant.getMyIcon = true;  //修改标志位
         }
         {  //三个游戏标签加入图像和动效
             final int[] GAME = {1};  //默认从第一个开始
@@ -886,7 +904,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                         if (menuTop.getX()>-118&& (mouseXY[0] >= 0 && mouseXY[0] <= 46) && (mouseXY[1] >= 0 && mouseXY[1] <= 740)) {  //在左半部分退出
                             Thread.sleep(500);
                             if (menuTop.getX()>-117) {
-                                MenuShrink();  //开始收缩
+                                viewServer.MenuShrink();  //开始收缩
                                 Thread.sleep(2000);
                                 Menu.isShrink = false;
                                 Menu.isOut = false;
@@ -895,7 +913,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                         } else if (menuTop.getX()>-117&&(mouseXY[0] >= 267) && (mouseXY[1] >= 0 && mouseXY[1] <= 740)) { //最右半部分退出
                             Thread.sleep(500);
                             if (menuTop.getX()>-118) {
-                                MenuShrink();  //开始收缩
+                                viewServer.MenuShrink();  //开始收缩
                                 Thread.sleep(2000);
                                 Menu.isShrink = false;
                                 Menu.isOut = false;

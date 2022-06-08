@@ -1,5 +1,6 @@
 package com.Karchat.util.ComponentUtil.CompositeComponent;
 
+import com.Karchat.util.Controller.Controller;
 import com.Karchat.entity.Friends;
 import com.Karchat.entity.Post;
 import com.Karchat.util.ColorUtil.ChangeToColor;
@@ -8,6 +9,7 @@ import com.Karchat.util.ComponentUtil.Label.RadioJLabel;
 import com.Karchat.util.ComponentUtil.Label.RadioJLabelNew;
 import com.Karchat.util.ComponentUtil.Label.RadioTextJLabel;
 import com.Karchat.util.ComponentUtil.Loading.LoadingSmall;
+import com.Karchat.util.Constant;
 import com.Karchat.util.PictureUtil.RemoveBackground;
 import com.Karchat.util.PictureUtil.ToBufferedImage;
 import com.Karchat.util.SoundUtil.PlaySound;
@@ -198,7 +200,7 @@ public class MenuContent extends Observable {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //搜索
                     friendName = searchText.getText();  //储存用户名
                     if (friendName.length() >= 6) {
-                        Controller.addFriend = true;
+                        Constant.addFriend = true;
 
 
                     } else {
@@ -222,7 +224,7 @@ public class MenuContent extends Observable {
             public void mouseClicked(MouseEvent e) {
                 friendName = searchText.getText();  //储存用户名
                 if (friendName.length() >= 6) {
-                    Controller.addFriend = true;
+                    Constant.addFriend = true;
                     //播放发送音效
                     new Thread() {
                         @SneakyThrows
@@ -298,7 +300,7 @@ public class MenuContent extends Observable {
                         }
                         height = 0;  //刷新高度
                         contextGet.repaint();  //刷新面板
-                        Controller.get = true;  //获取请求
+                        Constant.get = true;  //获取请求
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException f) {
@@ -314,7 +316,7 @@ public class MenuContent extends Observable {
                         }
                         heightGet = 0;  //刷新高度
                         contextPost.repaint();  //刷新面板
-                        Controller.post = true;  //获取发送
+                        Constant.post = true;  //获取发送
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException f) {
@@ -394,8 +396,8 @@ public class MenuContent extends Observable {
         contextPost.setBounds(background1.getWidth(), blackBack.getY() + blackBack.getHeight() + 10, background1.getWidth(), background1.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
 
 
-        Controller.get = true;  //获取请求
-        Controller.post = true;  //获取已发送
+        Constant.get = true;  //获取请求
+        Constant.post = true;  //获取已发送
 
         JScrollPane scr = new JScrollPane(contextGet);  //加入滚轮
         JScrollPane scrPost = new JScrollPane(contextPost);  //加入滚轮
@@ -576,7 +578,7 @@ public class MenuContent extends Observable {
             iconName[i] = posts[i].getPost();
         }
 
-        Controller.getSbIcon = true;
+        Constant.getSbIcon = true;
     }
 
     static boolean setContextLabelsFlag = true;//setContext中的每个标签是否第一次声明
@@ -651,8 +653,8 @@ public class MenuContent extends Observable {
                         @Override
                         public void run() {
                             //修改addFriend中state为1,并加到两个人的好友列表中
-                            Controller.addStateName = iconName[finalI];
-                            Controller.addState = true;
+                            Constant.addStateName = iconName[finalI];
+                            Constant.addState = true;
                             contextGet.remove(labels[finalI]);
                             contextGet.repaint();
                             background1.repaint();
@@ -686,8 +688,8 @@ public class MenuContent extends Observable {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     //从addFriend中删除该条指令，并让所有标签上移
-                    Controller.deleteAddFriendName = iconName[finalI1];
-                    Controller.deleteAddFriend = true;
+                    Constant.deleteAddFriendName = iconName[finalI1];
+                    Constant.deleteAddFriend = true;
 
                     contextGet.remove(labels[finalI]);
                     contextGet.repaint();
@@ -801,7 +803,7 @@ public class MenuContent extends Observable {
             iconNameGet[i] = posts[i].getGeter();
         }
 
-        Controller.getSbIconGet = true;
+        Constant.postSbIcon = true;
     }
 
     static boolean setContextGetLabelsFlag = true;  //是否是第一次声明标签
@@ -996,7 +998,7 @@ public class MenuContent extends Observable {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //搜索
                     friendName = searchTextChat.getText();  //储存用户名
                     if (friendName.length() >= 6) {
-                        Controller.addFriend = true;
+                        Constant.addFriend = true;
                     } else {
                         searchTextChat.setText("用户名不能为空");
                         searchTextChat.setForeground(new Color(161, 19, 19));
@@ -1043,7 +1045,7 @@ public class MenuContent extends Observable {
         contextChat.setBounds(0, 150 + 20, background2.getWidth(), background2.getHeight() - (blackBack.getY() + blackBack.getHeight() + 10));
 
 
-        Controller.checkFriends = true;  //获取请求
+        Constant.checkFriends = true;  //获取请求
 
         background2.add(contextChat);
 
@@ -1072,7 +1074,7 @@ public class MenuContent extends Observable {
         }
 
         if(flag) {
-            Controller.getFriendIcon = true;
+            Constant.getFriendIcon = true;
         }
     }
 
@@ -1083,6 +1085,7 @@ public class MenuContent extends Observable {
     public static void setContextChat(BufferedImage[] icons) {
 
         Chaticons = icons;  //储存全部好友头像
+        Constant.getFriendIconsSuccess=true;
         {  //初始化状态图像
             stateIcon = new RadioJLabel[iconLengthChat];
             messageIcon = new RadioJLabel[iconLengthChat];
@@ -1178,9 +1181,11 @@ public class MenuContent extends Observable {
             latestMessages[i].setCenter(230);
             labelsChar[i].add(latestMessages[i]);
 
-            Controller.getUserState = true;
+            Constant.getUserState = true;
 
             heightChat += 90;
+            Constant.whetherFriendsToTableIndex = true;
+
         }
 
         //上升下降添加点击事件
@@ -1270,7 +1275,7 @@ public class MenuContent extends Observable {
      * 初始化信息，即登录时就获得与所有好友的聊天记录
      */
     public static void initMessage(String friendName) {
-        Controller.getChatHistory(friendName);
+        Constant.context.getBean(Controller.class).getChatHistory(friendName);
     }
 
 

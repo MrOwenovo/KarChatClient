@@ -8,15 +8,30 @@ public interface ViewServer {
     /**
      * 展示未连接的客户端登录画面
      */
-    public void DisplayNotConnectedLogin();
+    void DisplayNotConnectedLogin();
 
     /**
      * 打开连接好的客户端登录界面
      */
-    public void DisplayConnectedLogin();
+    void DisplayConnectedLogin();
 
     /**
      * 打开连接好的客户端主界面
      */
-    public void DisplayNotConnectedClient();
+    void DisplayConnectedClient();
+
+    /**
+     * 显示服务器关闭，以及加载条，更新错误信息
+     */
+    void ServerClosed();
+
+    /**
+     * 客户端出问题时调用的方法
+     */
+    void ClientError();
+
+    /**
+     * 让主界面左菜单收缩的功能，用于后台检测情况后主动收缩
+     */
+    void MenuShrink();
 }

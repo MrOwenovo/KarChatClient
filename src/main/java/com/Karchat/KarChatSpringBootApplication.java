@@ -1,6 +1,7 @@
 package com.Karchat;
 
-import com.Karchat.util.ComponentUtil.CompositeComponent.Controller;
+import com.Karchat.util.Constant;
+import com.Karchat.util.Controller.Controller;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -12,7 +13,7 @@ public class KarChatSpringBootApplication {
         SpringApplication.run(KarChatSpringBootApplication.class, args);
 //        SpringApplicationBuilder builder = new SpringApplicationBuilder(KarChatSpringBootApplication.class);
 //        builder.headless(false).run(args);
-        Controller.start();
+        Constant.context.getBean(Controller.class).start();
     }
 
 }

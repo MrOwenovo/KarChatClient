@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
+import java.util.Timer;
 
 
 /**
@@ -19,7 +20,9 @@ import javax.sql.DataSource;
         @ComponentScan(value = "com.Karchat.entity"),
         @ComponentScan(value = "com.Karchat.service"),
         @ComponentScan(value = "com.Karchat.util"),
-        @ComponentScan(value = "com.Karchat.view")
+        @ComponentScan(value = "com.Karchat.util.Controller"),
+        @ComponentScan(value = "com.Karchat.view"),
+        @ComponentScan(value = "com.Karchat.dao")
         })
 @MapperScan("com.Karchat.dao.mapper")
 public class KarConfiguration {
@@ -44,6 +47,13 @@ public class KarConfiguration {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
         return bean;
+    }
+
+    @Bean
+    @Scope("prototype")
+    public Timer timer() {
+        Timer timer = new Timer();
+        return timer;
     }
 
 

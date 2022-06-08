@@ -4,12 +4,12 @@ import com.Karchat.service.Minimize;
 import com.Karchat.util.ColorUtil.ChangeToColor;
 import com.Karchat.util.ComponentUtil.Button.ChooseBackButton;
 import com.Karchat.util.ComponentUtil.Button.RoundButton;
-import com.Karchat.util.ComponentUtil.CompositeComponent.Controller;
 import com.Karchat.util.ComponentUtil.Frame.Frameless;
 import com.Karchat.util.ComponentUtil.Label.DynamicJLabel;
 import com.Karchat.util.ComponentUtil.Label.RadioJLabel;
 import com.Karchat.util.ComponentUtil.Label.ShakeLabel;
 import com.Karchat.util.ComponentUtil.Loading.Loading;
+import com.Karchat.util.Constant;
 import com.Karchat.util.EmailUtil.sendEmail;
 import com.Karchat.util.PictureUtil.ToBufferedImage;
 import com.Karchat.util.PictureUtil.ToPicture;
@@ -117,6 +117,8 @@ public class LoginHome implements ActionListener, Minimize {
         log.info("登录界面启动中.....");
     }
 
+
+
     @SneakyThrows
     public LoginHome() {
         System.setProperty("sun.java2d.noddraw", "true");  //防止输入法输入时白屏，禁用DirectDraw
@@ -152,7 +154,7 @@ public class LoginHome implements ActionListener, Minimize {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 remember.isClick(c->{
-                    Controller.remember=c;
+                    Constant.remember=c;
                 }); //获取按钮是否点击
             }
         };  //单选按钮，是否记住密码
@@ -347,7 +349,7 @@ public class LoginHome implements ActionListener, Minimize {
                         usernameMessage = username.getText();  //获取账号密码
                         passwordMessage1 = password.getText();
 
-                        Controller.login = true;  //修改标志位
+                        Constant.login = true;  //登录
                     }
                 }
             });
@@ -397,7 +399,7 @@ public class LoginHome implements ActionListener, Minimize {
                         usernameMessage = username.getText();  //获取账号密码
                         passwordMessage1 = password.getText();
 
-                        Controller.login = true;  //修改标志位
+                        Constant.login = true;//登录
                     }
                 }
             });
@@ -891,7 +893,7 @@ public class LoginHome implements ActionListener, Minimize {
                                     usernameMessage = registerText2.getText();  //获取账号
                                     passwordMessage1 = registerPassword3.getText(); //获取密码
 
-                                    Controller.check = true;  //查看数据库中是否存在该账户
+                                   Constant.register=true;  //查看数据库中是否存在该账户
 
                                 } else {
                                     emailText.setText("验证码输入错误");
@@ -1014,7 +1016,7 @@ public class LoginHome implements ActionListener, Minimize {
                                     usernameMessage = registerText2.getText();  //获取账号
                                     passwordMessage1 = registerPassword3.getText(); //获取密码
 
-                                    Controller.check = true;  //查看数据库中是否存在该账户
+                                    Constant.register = true;  //查看数据库中是否存在该账户
                                 } else {
                                     emailText.setText("验证码输入错误");
                                     emailText.setFont(new Font("Serif", Font.BOLD, 20));
@@ -1268,7 +1270,7 @@ public class LoginHome implements ActionListener, Minimize {
             usernameMessage = username.getText();  //获取账号密码
             passwordMessage1 = password.getText();
 
-            Controller.login = true;  //修改标志位
+            Constant.login = true;  //登录
         } else if (e.getSource() == signButton) {  //若点击的是换头像按钮
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setApproveButtonText("选择");
@@ -1437,7 +1439,7 @@ public class LoginHome implements ActionListener, Minimize {
                         usernameMessage = registerText2.getText();  //获取账号
                         passwordMessage1 = registerPassword3.getText(); //获取密码
 
-                        Controller.check = true;  //查看数据库中是否存在该账户
+                        Constant.register = true;  //查看数据库中是否存在该账户
 
                     } else {
                         emailText.setText("验证码输入错误");

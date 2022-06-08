@@ -1,8 +1,9 @@
 package com.Karchat.util.ComponentUtil.Label;
 
 import com.Karchat.util.ComponentUtil.Button.RoundButton;
-import com.Karchat.util.ComponentUtil.CompositeComponent.Controller;
+import com.Karchat.util.Controller.Controller;
 import com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent;
+import com.Karchat.util.Constant;
 import com.Karchat.util.SoundUtil.PlaySound;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
@@ -140,7 +141,7 @@ public class InnerLabel extends RadioJLabel {
                     //发送事件
                     String message=chatText.getText();
                     send(Type.RIGHT, message, mine);  //发送信息
-                    Controller.send(message,friendName);  //发送信息给service
+                    Constant.context.getBean(Controller.class).send(message,friendName);  //发送信息给service
                     //将最新消息显示在主界面
                     int index = MenuContent.userContent.get(friendName);
                     latestMessages[index].setTextDynamic(message);
@@ -168,7 +169,7 @@ public class InnerLabel extends RadioJLabel {
                 //发送事件
                 String message=chatText.getText();
                 send(Type.RIGHT, message, mine);  //发送信息
-                Controller.send(message,friendName);  //发送信息给service
+                Constant.context.getBean(Controller.class).send(message,friendName);  //发送信息给service
                 //将最新消息显示在主界面
                 int index = MenuContent.userContent.get(friendName);
                 latestMessages[index].setTextDynamic(message);
