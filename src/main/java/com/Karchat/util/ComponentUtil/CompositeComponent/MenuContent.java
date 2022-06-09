@@ -1,5 +1,6 @@
 package com.Karchat.util.ComponentUtil.CompositeComponent;
 
+import com.Karchat.service.MusicService;
 import com.Karchat.util.Controller.Controller;
 import com.Karchat.entity.Friends;
 import com.Karchat.entity.Post;
@@ -15,7 +16,9 @@ import com.Karchat.util.PictureUtil.ToBufferedImage;
 import com.Karchat.util.SoundUtil.PlaySound;
 import lombok.SneakyThrows;
 import org.apache.ibatis.io.Resources;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +29,7 @@ import java.util.Observable;
 
 import static com.Karchat.view.Home.*;
 
+@Component
 public class MenuContent extends Observable {
 
     public static RadioJLabel background3;
@@ -121,6 +125,12 @@ public class MenuContent extends Observable {
     private RadioJLabel blackBackLeft;
     public static BufferedImage[] Chaticons;
 
+    public static final int[] OPENINDEX = {-1};  //记录上一次是谁在发消息
+
+
+
+    @Resource
+    MusicService musicService;
 
     /**
      * 初始化用户信息
@@ -206,13 +216,7 @@ public class MenuContent extends Observable {
                     } else {
                         searchText.setText("用户名不能为空");
                         searchText.setForeground(new Color(161, 19, 19));
-                        new Thread() {
-                            @SneakyThrows
-                            @Override
-                            public void run() {
-                                PlaySound.play("sound/error.mp3");
-                            }
-                        }.start();
+                        musicService.playErrorMP3();
                     }
                 }
             }
@@ -226,23 +230,11 @@ public class MenuContent extends Observable {
                 if (friendName.length() >= 6) {
                     Constant.addFriend = true;
                     //播放发送音效
-                    new Thread() {
-                        @SneakyThrows
-                        @Override
-                        public void run() {
-                            PlaySound.play("sound/sendmsg.mp3");
-                        }
-                    }.start();
+                    musicService.playSendMessageMP3();
                 } else {
                     searchText.setText("用户名不能为空");
                     searchText.setForeground(new Color(161, 19, 19));
-                    new Thread() {
-                        @SneakyThrows
-                        @Override
-                        public void run() {
-                            PlaySound.play("sound/error.mp3");
-                        }
-                    }.start();
+                    musicService.playErrorMP3();
                 }
             }
         });
@@ -1147,7 +1139,6 @@ public class MenuContent extends Observable {
             userContent.put(iconNameChat[i], i);
 
 
-            final int[] OPENINDEX = {-1};  //记录上一次是谁在发消息
 
             //聊天标签添加点击事件
             int finalI = i;

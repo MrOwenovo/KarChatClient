@@ -21,21 +21,45 @@ public class MusicServiceImpl implements MusicService {
 
     @Override
     public void playSuccessMP3() {
-
+        new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                PlaySound.play("sound/loginsuccess.mp3");
+            }
+        }.start();
     }
 
     @Override
     public void playSendMessageMP3() {
-
+        new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                PlaySound.play("sound/sendmsg.mp3");
+            }
+        }.start();
     }
 
     @Override
     public void playAcceptMessageMP3() {
-
+        new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                PlaySound.play("sound/msgsound.mp3");
+            }
+        }.start();
     }
 
     @Override
     public void playNoticeMP3() {
-
+        new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                PlaySound.play("sound/notice.mp3");
+            }
+        }.start();
     }
 }

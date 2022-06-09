@@ -5,6 +5,7 @@ import com.Karchat.entity.Friends;
 import com.Karchat.entity.History;
 import com.Karchat.entity.Post;
 import com.Karchat.service.InitHomePageService;
+import com.Karchat.service.MusicService;
 import com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent;
 import com.Karchat.util.ComponentUtil.Label.InnerLabel;
 import com.Karchat.util.Constant;
@@ -32,6 +33,8 @@ public class InitHomePageServiceImpl implements InitHomePageService {
 
     @Resource
     InitHomePage initHomePage;
+    @Resource
+    MusicService musicService;
 
     @Override
     public boolean GetMyIcon(PrintStream out, BufferedReader buf) {
@@ -169,6 +172,11 @@ public class InitHomePageServiceImpl implements InitHomePageService {
                     message = histories.get(j).message;  //获取别人发送的信息
 
                     friendContext.send(InnerLabel.Type.LEFT, message, friendContext.friend);
+                    if (index == OPENINDEX[0]) {  //如果当前在聊天界面
+                        musicService.playAcceptMessageMP3();
+                    } else {
+                        musicService.playNoticeMP3();
+                    }
                 }
             }
 

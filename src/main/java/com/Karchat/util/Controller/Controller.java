@@ -111,7 +111,7 @@ public class Controller {
                     public void run() {
                         if (Constant.getMyIcon) {  //获得我的头像
                             Constant.getMyIcon = false;  //修改标签
-                            boolean flag=initHomePageService.GetMyIcon(out, buf);
+                            boolean flag = initHomePageService.GetMyIcon(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -120,7 +120,7 @@ public class Controller {
                         }
                         if (Constant.get) {  //获取待同意的好友邀请
                             Constant.get = false;
-                            boolean flag=initHomePageService.GetFriendInvitationDidNotAgree(out, buf);
+                            boolean flag = initHomePageService.GetFriendInvitationDidNotAgree(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -129,7 +129,7 @@ public class Controller {
                         }
                         if (Constant.getSbIcon) {  //获得待同意邀请的好友头像
                             Constant.getSbIcon = false;
-                            boolean flag=initHomePageService.GetFriendIconDidNotAgree(out, buf);
+                            boolean flag = initHomePageService.GetFriendIconDidNotAgree(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -138,7 +138,7 @@ public class Controller {
                         }
                         if (Constant.post) { //获取已发送的好友邀请记录
                             post = false;
-                            boolean flag=initHomePageService.GetFriendInvitationHadSent(out, buf);
+                            boolean flag = initHomePageService.GetFriendInvitationHadSent(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -147,7 +147,7 @@ public class Controller {
                         }
                         if (Constant.postSbIcon) { //获得已发送邀请的好友头像
                             Constant.postSbIcon = false;
-                            boolean flag=initHomePageService.GetFriendIconHadSent(out, buf);
+                            boolean flag = initHomePageService.GetFriendIconHadSent(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -157,7 +157,7 @@ public class Controller {
                         whetherBackgroundCanEnabled = true;  //可以开启后台线程
                         if (Constant.addFriend) {  //多线程加好友，会进入线程队列（后续优化：正在加好友时直接拒绝，不进入队列）
                             Constant.addFriend = false;
-                            boolean flag=chatService.AddFriend(out, buf);
+                            boolean flag = chatService.AddFriend(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -166,7 +166,7 @@ public class Controller {
                         }
                         if (Constant.addState) {  //修改addFriend中的状态
                             Constant.addState = false;
-                           boolean flag= chatService.AcceptFriendInvitation(out, buf);
+                            boolean flag = chatService.AcceptFriendInvitation(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -175,7 +175,7 @@ public class Controller {
                         }
                         if (deleteAddFriend) {
                             deleteAddFriend = false;
-                            boolean flag=chatService.RefuseFriendInvitation(out, buf);
+                            boolean flag = chatService.RefuseFriendInvitation(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -184,7 +184,7 @@ public class Controller {
                         }
                         if (checkFriends) {
                             checkFriends = false;
-                            boolean flag=initHomePageService.GetListOfFriends(out, buf);
+                            boolean flag = initHomePageService.GetListOfFriends(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -193,7 +193,7 @@ public class Controller {
                         }
                         if (checkFriendsNameOnly) {
                             checkFriendsNameOnly = false;
-                            boolean flag=initHomePageService.GetListOfFriendsAmountOnly(out, buf);
+                            boolean flag = initHomePageService.GetListOfFriendsAmountOnly(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -202,7 +202,7 @@ public class Controller {
                         }
                         if (getFriendIcon) {
                             getFriendIcon = false;
-                            boolean flag=initHomePageService.GetFriendsIcon(out, buf);
+                            boolean flag = initHomePageService.GetFriendsIcon(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -211,7 +211,7 @@ public class Controller {
                         }
                         if (getUserState) {
                             getUserState = false;
-                            boolean flag=initHomePageService.GetFriendsState(out, buf);
+                            boolean flag = initHomePageService.GetFriendsState(out, buf);
                             while (!canGoOn[0]) {
                                 if (flag)
                                     canGoOn[0] = true;
@@ -240,6 +240,8 @@ public class Controller {
         } catch (IOException ex) {
             viewService.ServerClosed();  //服务器关闭方法
             log.info("服务器已经关闭！");
+        } catch (NullPointerException ex) {
+            log.info("服务器未连接，无法开打主界面");
         }
 //            i  f (Objects.equals(buf.readLine(), "getMessage")) {  //若接收到getMessage,则是有人发消息
 //                        String message = buf.readLine();  //获取发送内容

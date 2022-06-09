@@ -1,12 +1,8 @@
 package com.Karchat.server;
 
 
-import com.Karchat.util.DataBaseUnit.MybatisUnit;
-import lombok.SneakyThrows;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -79,21 +75,21 @@ public class EchoThreadServer {
         }
     }
 
-    @SneakyThrows
-    public static synchronized void sendToClient(String myName,String sendToFriend,String message) {
-        //找到这个用户
-        MybatisUnit.doSqlWork(mapper->{
-            try {
-                int index = mapper.getIndex(sendToFriend);  //获取用户客户端下标  ,该用户不存在则报错
-                Socket friendClient = clients[index];  //获取到对应的客户端
-                PrintStream out = new PrintStream(friendClient.getOutputStream());
-                    out.println("getMessage");
-                    out.println(message);  //发送信息
-                    out.println(myName); //发送发送人姓名
-            } catch (Exception e) {
-                log.info("该用户不在线");
-            }
-        });
-
-        }
+//    @SneakyThrows
+//    public static synchronized void sendToClient(String myName,String sendToFriend,String message) {
+//        //找到这个用户
+//        MybatisUnit.doSqlWork(mapper->{
+//            try {
+//                int index = mapper.getIndex(sendToFriend);  //获取用户客户端下标  ,该用户不存在则报错
+//                Socket friendClient = clients[index];  //获取到对应的客户端
+//                PrintStream out = new PrintStream(friendClient.getOutputStream());
+//                    out.println("getMessage");
+//                    out.println(message);  //发送信息
+//                    out.println(myName); //发送发送人姓名
+//            } catch (Exception e) {
+//                log.info("该用户不在线");
+//            }
+//        });
+//
+//        }
     }

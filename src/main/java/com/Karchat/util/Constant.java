@@ -71,7 +71,7 @@ public class Constant {
     public static boolean whetherBackgroundCanEnabled = false;  //后台线程是否可以开启，需要完成加好友界面初始化
     public static boolean whetherFriendsToTableIndex = false;  //是否用户名对应聊天表下标
     public static boolean initFinishAndCanFlashChatHistory = false;  //聊天记录初始化成功，可以进行聊天记录的刷新
-    public static boolean getFriendIconsSuccess = false;  //聊天记录初始化成功，可以进行聊天记录的刷新
+    public static boolean getFriendIconsSuccess = false;  //是否获取好友头像成功
     public static int[] mouseXY = new int[2];  //存储当前鼠标的xy
 
 

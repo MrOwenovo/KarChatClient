@@ -11,8 +11,9 @@ public interface LoginService {
 
     /**
      * 检查本地是否记录了账号密码
+     * @return
      */
-    void CheckAccountRecords();
+    boolean CheckAccountRecords();
 
     /**
      * 进行登录

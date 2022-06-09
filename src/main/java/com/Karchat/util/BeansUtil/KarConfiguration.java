@@ -21,6 +21,7 @@ import java.util.Timer;
         @ComponentScan(value = "com.Karchat.service"),
         @ComponentScan(value = "com.Karchat.util"),
         @ComponentScan(value = "com.Karchat.util.Controller"),
+        @ComponentScan(value = "com.Karchat.util.ComponentUtil.CompositeComponent"),
         @ComponentScan(value = "com.Karchat.view"),
         @ComponentScan(value = "com.Karchat.dao")
         })

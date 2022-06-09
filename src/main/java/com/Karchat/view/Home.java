@@ -1,6 +1,7 @@
 package com.Karchat.view;
 
 import com.Karchat.service.Minimize;
+import com.Karchat.service.MusicService;
 import com.Karchat.service.ViewServer;
 import com.Karchat.util.ColorUtil.ChangeToColor;
 import com.Karchat.util.ComponentUtil.Button.RoundButton;
@@ -107,6 +108,9 @@ public class Home extends Observable implements ActionListener , Minimize {
         log.info("主页面启动中.....");
     }
 
+
+    @Resource
+    MusicService musicService;
 
     ViewServer viewServer=context.getBean(Controller.class).viewService;
 
@@ -639,13 +643,7 @@ public class Home extends Observable implements ActionListener , Minimize {
             game3Top.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    new Thread(){
-                        @SneakyThrows
-                        @Override
-                        public void run() {
-                            PlaySound.play("sound/loginsuccess.mp3");
-                        }
-                    }.start();
+                    musicService.playSuccessMP3();
                     JFrame btn = new JFrame();
 
 //                    btn.add(MainPanel.getInstance());

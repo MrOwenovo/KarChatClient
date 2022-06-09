@@ -5,11 +5,9 @@ import com.Karchat.dao.mapper.LoginMapper;
 import com.Karchat.service.LoginService;
 import com.Karchat.service.MusicService;
 import com.Karchat.util.Constant;
-import com.Karchat.util.SoundUtil.PlaySound;
 import com.Karchat.view.LoginHome;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,7 +30,7 @@ public class LoginServiceImpl implements LoginService {
     Login login;
 
     @Override
-    public void CheckAccountRecords() {
+    public boolean CheckAccountRecords() {
             try (Scanner sc = new Scanner(new FileReader("userMessage"))) {
                 while (sc.hasNextLine()) {
                     String user = sc.nextLine();
@@ -42,9 +40,10 @@ public class LoginServiceImpl implements LoginService {
                     passwordMessage.setText("");
                     log.info("读取了保存的账号密码");
                 }
-
+                return true;
             } catch (FileNotFoundException e) {
                 log.info("EchoClient:没有保存的账号密码文件");
+                return false;
             }
     }
 
@@ -97,7 +96,7 @@ public class LoginServiceImpl implements LoginService {
     @SneakyThrows
     @Override
     public void Register(PrintStream out, BufferedReader buf) {
-        log.info("注册中");
+        log.info("注册中....");
         loadIn.add(sign);  //加入加载条
         sign.setBounds(-10, 10, 155, 155);
         loadIn.setColor(new Color(115, 175, 197));
