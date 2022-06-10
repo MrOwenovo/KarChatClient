@@ -330,7 +330,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 @SneakyThrows
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "http://localhost:8080/KarCharWeb/home/select");
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "https://f01-1309918226.file.myqcloud.com/42/2022/05/10/home/home/select5.html?x-cos-traffic-limit=819200");
                     Home.back.setExtendedState(JFrame.ICONIFIED);
                 }
             });
