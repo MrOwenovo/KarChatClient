@@ -46,13 +46,13 @@ public class LoginHome implements ActionListener, Minimize {
     static boolean iconified;
     private final ChooseBackButton remember;
     private final ChooseBackButton switchMode;
-    private static  JTextField emailText;
+    private static JTextField emailText;
     private final JLabel registerLabel1;
     private final ImageIcon registerIcon1;
     private final MouseAdapter leftAdapter;
-    private  ImageIcon leftOpenIcon;
+    private ImageIcon leftOpenIcon;
     private RadioJLabel sendEmailLabel;
-    private  RadioJLabel leftContent;
+    private RadioJLabel leftContent;
     private RadioJLabel leftBack;
     private JLabel leftOpen;
     private Boolean Switch;
@@ -67,7 +67,7 @@ public class LoginHome implements ActionListener, Minimize {
 
     public static Frameless background;
     private final JLabel left;
-    public static   JPanel right;
+    public static JPanel right;
     private final ImageIcon login;
     private final JLabel rightLabel;
     private final JLabel usernameLabel;
@@ -85,14 +85,14 @@ public class LoginHome implements ActionListener, Minimize {
     private final ImageIcon registerIcon;
     private final ImageIcon registerbgIcon;
     private final JButton registerButton;
-    private static  JTextField registerText2;
-    private static  ShakeLabel registerLabel2;
+    private static JTextField registerText2;
+    private static ShakeLabel registerLabel2;
     public static ShakeLabel registerLabel5;
-    private static  JPasswordField registerPassword3;
+    private static JPasswordField registerPassword3;
     private final JTextField registerMessage4;
-    private static  ShakeLabel registerLabel3;
-    private static  ShakeLabel registerLabel4;
-    private static  JPasswordField registerPassword4;
+    private static ShakeLabel registerLabel3;
+    private static ShakeLabel registerLabel4;
+    private static JPasswordField registerPassword4;
     private static JLabel registerMessage;
     private static JLabel registerLabelMessage1;
     private final JButton signButton;
@@ -113,10 +113,9 @@ public class LoginHome implements ActionListener, Minimize {
     @SneakyThrows
     @PostConstruct
     public void init() {
-        iconString = ToPicture.imageToString(ImageIO.read(Resources.getResourceAsStream("login/sign.png")),"png");
+        iconString = ToPicture.imageToString(ImageIO.read(Resources.getResourceAsStream("login/sign.png")), "png");
         log.info("登录界面启动中.....");
     }
-
 
 
     @SneakyThrows
@@ -135,36 +134,36 @@ public class LoginHome implements ActionListener, Minimize {
         right = new JPanel();  //右半部分容器
 
         RadioJLabel toolMenu = new RadioJLabel("");  //菜单栏
-        toolMenu.setColor(new Color(162, 159, 159,0));
+        toolMenu.setColor(new Color(162, 159, 159, 0));
 
         RadioJLabel toolMenuItem1 = new RadioJLabel("");
         RadioJLabel toolMenuItem2 = new RadioJLabel("");
-        toolMenuItem1.setColor(new Color(162, 159, 159,0));
-        toolMenuItem2.setColor(new Color(162, 159, 159,0));
-        toolMenuItem1.setArc(15,15);
-        toolMenuItem2.setArc(15,15);
+        toolMenuItem1.setColor(new Color(162, 159, 159, 0));
+        toolMenuItem2.setColor(new Color(162, 159, 159, 0));
+        toolMenuItem1.setArc(15, 15);
+        toolMenuItem2.setArc(15, 15);
         DynamicJLabel toolMenuMessage1 = new DynamicJLabel("记住密码", new Font("Serif", Font.BOLD, 16), 101);
-        toolMenuMessage1.setForeground(new Color(79, 78, 78,0));
+        toolMenuMessage1.setForeground(new Color(79, 78, 78, 0));
         DynamicJLabel toolMenuMessage2 = new DynamicJLabel("切换动画", new Font("Serif", Font.BOLD, 16), 141);
-        toolMenuMessage2.setForeground(new Color(79, 78, 78,0));
+        toolMenuMessage2.setForeground(new Color(79, 78, 78, 0));
 
 
-        remember = new ChooseBackButton("main/save.png","main/saveOn.png","main/saveOn.png",toolMenuItem1,new DynamicJLabel("",null,0),ChooseBackButton.Location.EAST){
+        remember = new ChooseBackButton("main/save.png", "main/saveOn.png", "main/saveOn.png", toolMenuItem1, new DynamicJLabel("", null, 0), ChooseBackButton.Location.EAST) {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                remember.isClick(c->{
-                    Constant.remember=c;
+                remember.isClick(c -> {
+                    Constant.remember = c;
                 }); //获取按钮是否点击
             }
         };  //单选按钮，是否记住密码
-        switchMode = new ChooseBackButton("main/switch.png","main/switchOn.png","main/switchOn.png",toolMenuItem2,new DynamicJLabel("",null,0),ChooseBackButton.Location.EAST){
+        switchMode = new ChooseBackButton("main/switch.png", "main/switchOn.png", "main/switchOn.png", toolMenuItem2, new DynamicJLabel("", null, 0), ChooseBackButton.Location.EAST) {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                remember.isClick(c->{
+                remember.isClick(c -> {
                     switchFlag = !switchFlag;
-                    new Thread(){
+                    new Thread() {
                         @Override
                         public void run() {
                             setPicture(left);
@@ -175,8 +174,8 @@ public class LoginHome implements ActionListener, Minimize {
             }
         };  //单选按钮,切换播放动画
 
-        remember.setColor(new Color(162, 159, 159,0));
-        switchMode.setColor(new Color(162, 159, 159,0));
+        remember.setColor(new Color(162, 159, 159, 0));
+        switchMode.setColor(new Color(162, 159, 159, 0));
 
         final boolean[] toolMenuFlag = {false};
         //开启菜单
@@ -186,41 +185,41 @@ public class LoginHome implements ActionListener, Minimize {
             public void mouseClicked(MouseEvent e) {
                 if (toolMenuFlag[0]) {
                     toolMenuFlag[0] = false;
-                        toolMenuItem1.setColor(new Color(162, 159, 159, 0));
-                        toolMenuItem2.setColor(new Color(162, 159, 159, 0));
-                        toolMenuMessage1.setForeground(new Color(79, 78, 78, 0));
-                        toolMenuMessage2.setForeground(new Color(79, 78, 78, 0));
-                        remember.setBounds(left.getWidth() - 260, 98, 0,0);
-                        switchMode.setBounds(left.getWidth() - 260, 138, 0,0);
-                        toolMenu.setColor(new Color(162, 159, 159,0));
+                    toolMenuItem1.setColor(new Color(162, 159, 159, 0));
+                    toolMenuItem2.setColor(new Color(162, 159, 159, 0));
+                    toolMenuMessage1.setForeground(new Color(79, 78, 78, 0));
+                    toolMenuMessage2.setForeground(new Color(79, 78, 78, 0));
+                    remember.setBounds(left.getWidth() - 260, 98, 0, 0);
+                    switchMode.setBounds(left.getWidth() - 260, 138, 0, 0);
+                    toolMenu.setColor(new Color(162, 159, 159, 0));
 
 
-                        toolMenuItem1.repaint();
-                        toolMenuItem2.repaint();
-                        toolMenuMessage1.repaint();
-                        toolMenuMessage2.repaint();
-                        remember.repaint();
-                        switchMode.repaint();
-                        toolMenu.repaint();
+                    toolMenuItem1.repaint();
+                    toolMenuItem2.repaint();
+                    toolMenuMessage1.repaint();
+                    toolMenuMessage2.repaint();
+                    remember.repaint();
+                    switchMode.repaint();
+                    toolMenu.repaint();
                     toolMenuFlag[0] = false;
 
-                }else{
+                } else {
                     toolMenuFlag[0] = true;
-                        toolMenuItem1.setColor(new Color(162, 159, 159, 255));
-                        toolMenuItem2.setColor(new Color(162, 159, 159, 255));
-                        toolMenuMessage1.setForeground(new Color(79, 78, 78, 255));
-                        toolMenuMessage2.setForeground(new Color(79, 78, 78, 255));
-                        remember.setBounds(left.getWidth() - 260, 98, 35,35);
-                        switchMode.setBounds(left.getWidth() - 260, 138, 35,35);
-                        toolMenu.setColor(new Color(162, 159, 159,255));
+                    toolMenuItem1.setColor(new Color(162, 159, 159, 255));
+                    toolMenuItem2.setColor(new Color(162, 159, 159, 255));
+                    toolMenuMessage1.setForeground(new Color(79, 78, 78, 255));
+                    toolMenuMessage2.setForeground(new Color(79, 78, 78, 255));
+                    remember.setBounds(left.getWidth() - 260, 98, 35, 35);
+                    switchMode.setBounds(left.getWidth() - 260, 138, 35, 35);
+                    toolMenu.setColor(new Color(162, 159, 159, 255));
 
-                        toolMenuItem1.repaint();
-                        toolMenuItem2.repaint();
-                        toolMenuMessage1.repaint();
-                        toolMenuMessage2.repaint();
-                        remember.repaint();
-                        switchMode.repaint();
-                        toolMenu.repaint();
+                    toolMenuItem1.repaint();
+                    toolMenuItem2.repaint();
+                    toolMenuMessage1.repaint();
+                    toolMenuMessage2.repaint();
+                    remember.repaint();
+                    switchMode.repaint();
+                    toolMenu.repaint();
                     toolMenuFlag[0] = true;
 
                 }
@@ -233,9 +232,9 @@ public class LoginHome implements ActionListener, Minimize {
             @SneakyThrows
             @Override
             public void run() {
-                float MAXTRANS=0;  //透明度
+                float MAXTRANS = 0;  //透明度
                 while (MAXTRANS <= 1.0) {
-                    Thread.sleep(2);
+                    Thread.sleep(10);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
                     MAXTRANS += 0.01;
                 }
@@ -276,7 +275,7 @@ public class LoginHome implements ActionListener, Minimize {
             @SneakyThrows
             @Override
             public void mouseClicked(MouseEvent e) {
-                float MAXTRANS=1;  //透明度
+                float MAXTRANS = 1;  //透明度
                 while (MAXTRANS >= 0) {
                     Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
@@ -537,6 +536,8 @@ public class LoginHome implements ActionListener, Minimize {
             leftBack = new RadioJLabel();
             leftBack.setColor(ChangeToColor.getColorFromHex("#AD8B73"));
 
+            System.setProperty("sun.java2d.noddraw", "true");  //防止输入法输入时白屏，禁用DirectDraw
+
             emailText = new JTextField();
             emailText.setForeground(ChangeToColor.getColorFromHex("#E3CAA5"));
 
@@ -547,10 +548,10 @@ public class LoginHome implements ActionListener, Minimize {
             registerbgLabel.add(leftContent);
             registerbgLabel.add(sendEmailLabel);
             registerbgLabel.add(leftOpen);
-            leftOpen.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+676, 350, leftOpenIcon.getIconWidth(), leftOpenIcon.getIconHeight());
+            leftOpen.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244 + 676, 350, leftOpenIcon.getIconWidth(), leftOpenIcon.getIconHeight());
 
             registerbgLabel.add(leftBack);
-            leftBack.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+160+registerIcon1.getIconWidth()+80+40, 330, registerIcon1.getIconWidth()+80, registerIcon1.getIconHeight());
+            leftBack.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244 + 160 + registerIcon1.getIconWidth() + 80 + 40, 330, registerIcon1.getIconWidth() + 80, registerIcon1.getIconHeight());
 
             boolean[] LEFTISFINISH = {true};  //判断展开栏是否加载完动画
             //展开栏加入点击事件
@@ -893,7 +894,7 @@ public class LoginHome implements ActionListener, Minimize {
                                     usernameMessage = registerText2.getText();  //获取账号
                                     passwordMessage1 = registerPassword3.getText(); //获取密码
 
-                                   Constant.register=true;  //查看数据库中是否存在该账户
+                                    Constant.register = true;  //查看数据库中是否存在该账户
 
                                 } else {
                                     emailText.setText("验证码输入错误");
@@ -913,11 +914,10 @@ public class LoginHome implements ActionListener, Minimize {
             });
 
 
-
             //换头像按钮
             ImageIcon signIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("register/defaultIcon.png")));
             signButton = new JButton();
-            signMessage = new DynamicJLabel("选择头像",new Font("Serif", Font.BOLD, 16),320);
+            signMessage = new DynamicJLabel("选择头像", new Font("Serif", Font.BOLD, 16), 320);
             signButton.addActionListener(this);  //按钮加入监听
 
             signLabel = new ShakeLabel(signIcon);
@@ -926,10 +926,10 @@ public class LoginHome implements ActionListener, Minimize {
             registerbgLabel.add(signMessage);
             signLabel.add(signButton);  //加入按钮
 
-            signLabel.setBounds(80,215, signIcon.getIconWidth(), signIcon.getIconHeight());
+            signLabel.setBounds(80, 215, signIcon.getIconWidth(), signIcon.getIconHeight());
             signMessage.setCenter(269);
 
-            signButton.setBounds(0, 0, signIcon.getIconWidth() , signIcon.getIconHeight() );
+            signButton.setBounds(0, 0, signIcon.getIconWidth(), signIcon.getIconHeight());
             signButton.setContentAreaFilled(false);
             signButton.setBorder(null);  //无边框
 
@@ -937,14 +937,14 @@ public class LoginHome implements ActionListener, Minimize {
 
         {  //注册邮箱验证码
 
-            leftContent.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+180+registerIcon1.getIconWidth()+80+40, 340, registerIcon1.getIconWidth()-110, registerIcon1.getIconHeight()-20);
+            leftContent.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244 + 180 + registerIcon1.getIconWidth() + 80 + 40, 340, registerIcon1.getIconWidth() - 110, registerIcon1.getIconHeight() - 20);
 //            leftContent.setColor(new Color(0, 0, 0));
 
-            sendEmailLabel.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+250+registerIcon1.getIconWidth()-165+registerIcon1.getIconWidth()+80+40, 340, registerIcon1.getIconWidth()-300, registerIcon1.getIconHeight()-20);
+            sendEmailLabel.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244 + 250 + registerIcon1.getIconWidth() - 165 + registerIcon1.getIconWidth() + 80 + 40, 340, registerIcon1.getIconWidth() - 300, registerIcon1.getIconHeight() - 20);
 //            sendEmailLabel.setColor(new Color(0, 0, 0));
 
 
-            emailText.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244+200+registerIcon1.getIconWidth()+80+40, 345, registerIcon1.getIconWidth()-150, registerIcon1.getIconHeight()-30);
+            emailText.setBounds(registerbgLabel.getWidth() / 2 - registerLabel1.getWidth() / 2 + 244 + 200 + registerIcon1.getIconWidth() + 80 + 40, 345, registerIcon1.getIconWidth() - 150, registerIcon1.getIconHeight() - 30);
             emailText.setFont(new Font("Serif", Font.BOLD, 20));
             emailText.setText("输入邮箱");
             emailText.setOpaque(false);
@@ -953,7 +953,7 @@ public class LoginHome implements ActionListener, Minimize {
             emailText.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if (emailText.getText().contains("输入邮箱") || emailText.getText().contains("验证码发送成功,清在此输入验证码")|| emailText.getText().contains("验证码发送失败")|| emailText.getText().contains("邮箱格式错误")|| emailText.getText().equals("验证码发送成功,清在此输入验证码")|| emailText.getText().equals("验证码发送失败")|| emailText.getText().equals("邮箱格式错误")||emailText.getText().equals("验证码应为6位")||emailText.getText().equals("验证码输入错误")) {  //若要输入账号则取消提示
+                    if (emailText.getText().contains("输入邮箱") || emailText.getText().contains("验证码发送成功,清在此输入验证码") || emailText.getText().contains("验证码发送失败") || emailText.getText().contains("邮箱格式错误") || emailText.getText().equals("验证码发送成功,清在此输入验证码") || emailText.getText().equals("验证码发送失败") || emailText.getText().equals("邮箱格式错误") || emailText.getText().equals("验证码应为6位") || emailText.getText().equals("验证码输入错误")) {  //若要输入账号则取消提示
                         emailText.setFont(new Font("Serif", Font.BOLD, 20));
                         emailText.setForeground(ChangeToColor.getColorFromHex("#E3CAA5"));
                         emailText.setText("");
@@ -963,7 +963,7 @@ public class LoginHome implements ActionListener, Minimize {
             emailText.addFocusListener(new FocusAdapter() {
                 @Override
                 public void focusGained(FocusEvent e) {
-                    if (emailText.getText().equals("输入邮箱") || emailText.getText().equals("验证码发送成功,清在此输入验证码")|| emailText.getText().equals("验证码发送失败")|| emailText.getText().equals("邮箱格式错误")||emailText.getText().equals("验证码应为6位")||emailText.getText().equals("验证码输入错误")) {  //若要输入账号则取消提示
+                    if (emailText.getText().equals("输入邮箱") || emailText.getText().equals("验证码发送成功,清在此输入验证码") || emailText.getText().equals("验证码发送失败") || emailText.getText().equals("邮箱格式错误") || emailText.getText().equals("验证码应为6位") || emailText.getText().equals("验证码输入错误")) {  //若要输入账号则取消提示
                         emailText.setFont(new Font("Serif", Font.BOLD, 20));
                         emailText.setForeground(ChangeToColor.getColorFromHex("#E3CAA5"));
                         emailText.setText("");
@@ -989,18 +989,18 @@ public class LoginHome implements ActionListener, Minimize {
                         String email = emailText.getText();  //储存邮箱
                         if (email.matches("[A-Za-z\\d]+([-_.][A-Za-z\\d]+)*@([A-Za-z\\d]+[-.])+[A-Za-z\\d]{2,4}")) {  //用正则表达式判断邮箱格式是否正确
                             try {
-                                sendEmail sendEmail=new sendEmail();
+                                sendEmail sendEmail = new sendEmail();
                                 //设置要发送的邮箱
                                 sendEmail.setReceiveMailAccount(email);
                                 verrify = sendEmail.Send();
                                 emailText.setText("验证码发送成功,清在此输入验证码");
                                 emailText.setFont(new Font("Serif", Font.BOLD, 17));
                                 emailText.setForeground(new Color(62, 171, 159));
-                            }catch(Exception a){
+                            } catch (Exception a) {
                                 emailText.setText("验证码发送失败");
                                 emailText.setFont(new Font("Serif", Font.BOLD, 20));
                                 emailText.setForeground(new Color(161, 19, 19));
-                                new Thread(){
+                                new Thread() {
                                     @SneakyThrows
                                     @Override
                                     public void run() {
@@ -1010,7 +1010,7 @@ public class LoginHome implements ActionListener, Minimize {
                             }
 
 
-                        }else {
+                        } else {
                             if (email.matches("^\\S{6}$")) {  //若是六位随机数
                                 if (email.equals(verrify)) {  //验证码验证成功
                                     usernameMessage = registerText2.getText();  //获取账号
@@ -1021,7 +1021,7 @@ public class LoginHome implements ActionListener, Minimize {
                                     emailText.setText("验证码输入错误");
                                     emailText.setFont(new Font("Serif", Font.BOLD, 20));
                                     emailText.setForeground(new Color(161, 19, 19));
-                                    new Thread(){
+                                    new Thread() {
                                         @SneakyThrows
                                         @Override
                                         public void run() {
@@ -1029,11 +1029,11 @@ public class LoginHome implements ActionListener, Minimize {
                                         }
                                     }.start();
                                 }
-                            }else {
+                            } else {
                                 emailText.setText("邮箱格式错误");
                                 emailText.setFont(new Font("Serif", Font.BOLD, 20));
                                 emailText.setForeground(new Color(161, 19, 19));
-                                new Thread(){
+                                new Thread() {
                                     @SneakyThrows
                                     @Override
                                     public void run() {
@@ -1052,7 +1052,7 @@ public class LoginHome implements ActionListener, Minimize {
                     String email = emailText.getText();  //储存邮箱
                     if (email.matches("[A-Za-z\\d]+([-_.][A-Za-z\\d]+)*@([A-Za-z\\d]+[-.])+[A-Za-z\\d]{2,4}")) {  //用正则表达式判断邮箱格式是否正确
                         try {
-                            sendEmail sendEmail=new sendEmail();
+                            sendEmail sendEmail = new sendEmail();
                             //设置要发送的邮箱
                             sendEmail.setReceiveMailAccount(email);
                             verrify = sendEmail.Send();
@@ -1063,7 +1063,7 @@ public class LoginHome implements ActionListener, Minimize {
                             emailText.setText("验证码发送失败");
                             emailText.setFont(new Font("Serif", Font.BOLD, 20));
                             emailText.setForeground(new Color(161, 19, 19));
-                            new Thread(){
+                            new Thread() {
                                 @SneakyThrows
                                 @Override
                                 public void run() {
@@ -1077,7 +1077,7 @@ public class LoginHome implements ActionListener, Minimize {
                         emailText.setText("邮箱格式错误");
                         emailText.setFont(new Font("Serif", Font.BOLD, 20));
                         emailText.setForeground(new Color(161, 19, 19));
-                        new Thread(){
+                        new Thread() {
                             @SneakyThrows
                             @Override
                             public void run() {
@@ -1093,9 +1093,9 @@ public class LoginHome implements ActionListener, Minimize {
         background.add(Rbut1);  //加入最小化按钮
         background.add(Rbut2);
         if (isAlive)
-        background.add(sign);  //加入标志图片
+            background.add(sign);  //加入标志图片
         if (!isAlive)
-        background.add(load);  //加入标志图片
+            background.add(load);  //加入标志图片
         background.add(loadIn);  //加入标志图片
         background.add(loginLabel);  //加入登录按钮
         background.add(usernameLabel);  //加入账号框
@@ -1103,7 +1103,7 @@ public class LoginHome implements ActionListener, Minimize {
         background.add(registerLabel); //加入注册按钮
         background.add(wrongMessage);  //加入错误信息
         background.add(plate);  //加入品牌名
-        plate.setCenter(left.getWidth()+1600);
+        plate.setCenter(left.getWidth() + 1600);
         background.add(remember);   //加入按钮
         background.add(switchMode);   //加入按钮
         background.add(toolMenuItem1);   //加入图像1
@@ -1129,10 +1129,10 @@ public class LoginHome implements ActionListener, Minimize {
         Rbut2.setBounds(right.getWidth() + 450, 60, 25, 25);
         wrongMessage.setCenter(2039);
         if (isAlive)
-        sign.setBounds(right.getX() + right.getWidth() / 2 - 73, 122, icon.getIconWidth(), icon.getIconHeight());
+            sign.setBounds(right.getX() + right.getWidth() / 2 - 73, 122, icon.getIconWidth(), icon.getIconHeight());
         if (!isAlive)
-        load.setBounds(right.getX() + right.getWidth() / 2 - 79, 95, icon.getIconWidth()+35, icon.getIconHeight()+35);
-        loadIn.setBounds(right.getX() + right.getWidth() / 2 - 81, 95, icon.getIconWidth()+35, icon.getIconHeight()+35);
+            load.setBounds(right.getX() + right.getWidth() / 2 - 79, 95, icon.getIconWidth() + 35, icon.getIconHeight() + 35);
+        loadIn.setBounds(right.getX() + right.getWidth() / 2 - 81, 95, icon.getIconWidth() + 35, icon.getIconHeight() + 35);
 //        load.setBounds(0 ,0, load.getWidth()+230, load.getHeight()+230);
         loginLabel.setBounds(right.getWidth() - 25, 490, loginButtonIcon.getIconWidth() + 30, loginButtonIcon.getIconHeight());
         usernameLabel.setBounds(right.getWidth() - 2, 290, text.getIconWidth(), text.getIconHeight());
@@ -1140,13 +1140,12 @@ public class LoginHome implements ActionListener, Minimize {
         registerLabel.setBounds(right.getWidth() + 172, 620, registerIcon.getIconWidth(), registerIcon.getIconHeight());
         toolBar.setBounds(left.getWidth() - 216, 60, toolBarIcon.getIconWidth(), toolBarIcon.getIconHeight());
         toolMenu.setBounds(left.getWidth() - 266, 93, 128, 90);
-        remember.setBounds(left.getWidth() - 260, 98, 0,0);
-        switchMode.setBounds(left.getWidth() - 260, 138, 0,0);
+        remember.setBounds(left.getWidth() - 260, 98, 0, 0);
+        switchMode.setBounds(left.getWidth() - 260, 138, 0, 0);
         toolMenuMessage1.setCenter(2400);
         toolMenuMessage2.setCenter(2400);
 //        leftBack.setBounds(50, 50, 150, 60);
 //        leftOpen.setBounds(50, 50, leftOpenIcon.getIconWidth()+150, leftOpenIcon.getIconHeight()+150);
-
 
 
         background.setVisible(true);  //窗口可视化
@@ -1170,20 +1169,35 @@ public class LoginHome implements ActionListener, Minimize {
      */
     @SneakyThrows
     public void setPicture(JLabel left) {
-        ImageIcon Icon1;  //四张背景图片
+        ImageIcon Icon1;  //九张背景图片
         ImageIcon Icon2;
         ImageIcon Icon3;
         ImageIcon Icon4;
+        ImageIcon Icon5;
+        ImageIcon Icon6;
+        ImageIcon Icon7;
+        ImageIcon Icon8;
+        ImageIcon Icon9;
         ImageIcon[] icons;//图片集
-        try (InputStream icon1 = Resources.getResourceAsStream("picture/picture1.png");
-             InputStream icon2 = Resources.getResourceAsStream("picture/picture2.png");
-             InputStream icon3 = Resources.getResourceAsStream("picture/picture3.png");
-             InputStream icon4 = Resources.getResourceAsStream("picture/picture4.png")) {
+        try (InputStream icon1 = Resources.getResourceAsStream("newPicture/picture1.png");
+             InputStream icon2 = Resources.getResourceAsStream("newPicture/picture2.png");
+             InputStream icon3 = Resources.getResourceAsStream("newPicture/picture3.png");
+             InputStream icon4 = Resources.getResourceAsStream("newPicture/picture4.png");
+             InputStream icon5 = Resources.getResourceAsStream("newPicture/picture5.png");
+             InputStream icon6 = Resources.getResourceAsStream("newPicture/picture6.png");
+             InputStream icon7 = Resources.getResourceAsStream("newPicture/picture7.png");
+             InputStream icon8 = Resources.getResourceAsStream("newPicture/picture8.png");
+             InputStream icon9 = Resources.getResourceAsStream("newPicture/picture9.png")) {
             Icon1 = new ImageIcon(ImageIO.read(icon1));
             Icon2 = new ImageIcon(ImageIO.read(icon2));
             Icon3 = new ImageIcon(ImageIO.read(icon3));
             Icon4 = new ImageIcon(ImageIO.read(icon4));
-            icons = new ImageIcon[]{Icon1, Icon2, Icon3, Icon4}; //放入集合
+            Icon5 = new ImageIcon(ImageIO.read(icon5));
+            Icon6 = new ImageIcon(ImageIO.read(icon6));
+            Icon7 = new ImageIcon(ImageIO.read(icon7));
+            Icon8 = new ImageIcon(ImageIO.read(icon8));
+            Icon9 = new ImageIcon(ImageIO.read(icon9));
+            icons = new ImageIcon[]{Icon1, Icon2, Icon3, Icon4,Icon5,Icon6,Icon7,Icon8,Icon9}; //放入集合
         }
         JLabel background = new JLabel(Icon1);  //背景标签
         JLabel topBack = new JLabel();  //上半部分
@@ -1204,6 +1218,7 @@ public class LoginHome implements ActionListener, Minimize {
             timerOn = new TimerTask() {  //实现计时器类
                 int Top;
                 int index = 0;
+
                 @SneakyThrows
                 @Override
                 public void run() {
@@ -1212,7 +1227,7 @@ public class LoginHome implements ActionListener, Minimize {
                         @Override
                         public void run() {
                             Top = 0;
-                            top.setIcon(icons[index++ % 4]);
+                            top.setIcon(icons[index++ % 9]);
                             while (Top < Icon1.getIconHeight()) {
                                 Thread.sleep(1);
                                 Top += 1;
@@ -1225,9 +1240,10 @@ public class LoginHome implements ActionListener, Minimize {
 //            Thread.sleep(1000);  //1秒后开始
             new Timer().scheduleAtFixedRate(timerOn, new Date(), 10000);  //16秒一换
 
-        }else {
+        } else {
             timer = new TimerTask() {  //实现计时器类
                 int index = 0;
+
                 @SneakyThrows
                 @Override
                 public void run() {
@@ -1243,8 +1259,8 @@ public class LoginHome implements ActionListener, Minimize {
                     bottom.setBounds(0, Bottom11, Icon1.getIconWidth(), Icon1.getIconHeight());
                     bottomBack.setBounds(0, Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
 
-                    top.setIcon(icons[index % 4]);  //设置新图片
-                    bottom.setIcon(icons[index % 4]);
+                    top.setIcon(icons[index % 9]);  //设置新图片
+                    bottom.setIcon(icons[index % 9]);
                     while ((All--) > 0) {  //每个卡片移动一半
                         Thread.sleep(6);  //动画间隔
                         //每次移动1
@@ -1253,15 +1269,15 @@ public class LoginHome implements ActionListener, Minimize {
                         bottom.setBounds(0, ++Bottom11, Icon1.getIconWidth(), Icon1.getIconHeight());
                         bottomBack.setBounds(0, --Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
                     }
-                    background.setIcon(icons[(index) % 4]);  //设置背景图片
+                    background.setIcon(icons[(index) % 9]);  //设置背景图片
 
                 }
             };
-            Thread.sleep(10000);  //10秒后开始
-            new Timer().scheduleAtFixedRate(timer, new Date(), 10000);  //16秒一换
+            Thread.sleep(4000);  //10秒后开始
+            new Timer().scheduleAtFixedRate(timer, new Date(), 9000);  //16秒一换
 
         }
-        }
+    }
 
     @SneakyThrows
     @Override
@@ -1277,22 +1293,22 @@ public class LoginHome implements ActionListener, Minimize {
             fileChooser.setDialogTitle("选择头像图片");
             int result = fileChooser.showOpenDialog(background);
             if (result == JFileChooser.APPROVE_OPTION) {  //当点击确定按钮
-                File file =fileChooser.getSelectedFile();  //获取文件路径
+                File file = fileChooser.getSelectedFile();  //获取文件路径
                 if (file.getPath().contains(".png") || file.getPath().contains(".jpg")) {
                     BufferedImage newIcon = ImageIO.read(file);
-                    BufferedImage realIcon= ToBufferedImage.toBufferedImage(newIcon.getScaledInstance(signLabel.getWidth(),signLabel.getHeight(),0));  //将图片改为合适的大小，并转化为BufferedImage
+                    BufferedImage realIcon = ToBufferedImage.toBufferedImage(newIcon.getScaledInstance(signLabel.getWidth(), signLabel.getHeight(), 0));  //将图片改为合适的大小，并转化为BufferedImage
                     signLabel.setIcon(new ImageIcon(realIcon));  //更换图片
                     if (file.getPath().contains(".png"))
-                        iconString = ToPicture.imageToString(realIcon,"png");
+                        iconString = ToPicture.imageToString(realIcon, "png");
                     if (file.getPath().contains(".jpg"))
-                        iconString = ToPicture.imageToString(realIcon,"jpg");
+                        iconString = ToPicture.imageToString(realIcon, "jpg");
                 } else {
                     signLabel.shake();
-                    signMessage.setTextDynamic("只能为JPG或PNG文件",new Font("Serif", Font.BOLD, 14));
+                    signMessage.setTextDynamic("只能为JPG或PNG文件", new Font("Serif", Font.BOLD, 14));
                     signMessage.setForeground(new Color(215, 27, 71, 205));
                     signMessage.setCenter(270);
                     signMessage.shake();
-                    new Thread(){
+                    new Thread() {
                         @SneakyThrows
                         @Override
                         public void run() {
@@ -1303,7 +1319,7 @@ public class LoginHome implements ActionListener, Minimize {
                 }
             } else if (result == JFileChooser.CANCEL_OPTION) {
                 signLabel.shake();  //按钮抖动
-                new Thread(){
+                new Thread() {
                     @SneakyThrows
                     @Override
                     public void run() {
@@ -1312,7 +1328,7 @@ public class LoginHome implements ActionListener, Minimize {
                 }.start();
             } else {
                 signLabel.shake();
-                new Thread(){
+                new Thread() {
                     @SneakyThrows
                     @Override
                     public void run() {
@@ -1327,10 +1343,10 @@ public class LoginHome implements ActionListener, Minimize {
     /**
      * 注册完成后的第一个反馈
      */
-    public static void registerFinish(String Username,String Password) {
+    public static void registerFinish(String Username, String Password) {
         wrongMessage.setTextDynamic("注册成功√");
-        registerLabelMessage1.setText("您的用户名为"+Username);
-        loadIn.setColor(new Color(0,0,0,0));
+        registerLabelMessage1.setText("您的用户名为" + Username);
+        loadIn.setColor(new Color(0, 0, 0, 0));
         username.setText(Username); //设置账号
         password.setText(Password);  //设置密码
         passwordMessage.setText("");  //清空提示
@@ -1355,7 +1371,7 @@ public class LoginHome implements ActionListener, Minimize {
             @SneakyThrows
             @Override
             public void run() {
-                float MAXTRANS=1;  //透明度
+                float MAXTRANS = 1;  //透明度
                 while (MAXTRANS >= 0) {
                     Thread.sleep(4);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
@@ -1376,7 +1392,7 @@ public class LoginHome implements ActionListener, Minimize {
             @SneakyThrows
             @Override
             public void run() {
-                float MAXTRANS=0;  //透明度
+                float MAXTRANS = 0;  //透明度
                 while (MAXTRANS <= 1.0) {
                     if (iconified) {
                         AWTUtilities.setWindowOpacity(background, 0);  //半透明
