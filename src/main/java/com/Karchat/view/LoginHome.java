@@ -43,6 +43,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class LoginHome implements ActionListener, Minimize {
 
+    public static boolean ANIMATION_KEEP_ON = false;
     static boolean iconified;
     private final ChooseBackButton remember;
     private final ChooseBackButton switchMode;
@@ -60,6 +61,8 @@ public class LoginHome implements ActionListener, Minimize {
     private static boolean leftOpening = false;
     private TimerTask timer;
     private TimerTask timerOn;
+    private Timer timer2;
+    private Timer timerFather=new Timer();;
 
     public static void main(String[] args) {
         new LoginHome();
@@ -144,7 +147,7 @@ public class LoginHome implements ActionListener, Minimize {
         toolMenuItem2.setArc(15, 15);
         DynamicJLabel toolMenuMessage1 = new DynamicJLabel("记住密码", new Font("Serif", Font.BOLD, 16), 101);
         toolMenuMessage1.setForeground(new Color(79, 78, 78, 0));
-        DynamicJLabel toolMenuMessage2 = new DynamicJLabel("切换动画", new Font("Serif", Font.BOLD, 16), 141);
+        DynamicJLabel toolMenuMessage2 = new DynamicJLabel("暂停动画", new Font("Serif", Font.BOLD, 16), 141);
         toolMenuMessage2.setForeground(new Color(79, 78, 78, 0));
 
 
@@ -227,20 +230,6 @@ public class LoginHome implements ActionListener, Minimize {
         });
 
 
-        //透明开启效果
-        new Thread() {  //开启窗口动画
-            @SneakyThrows
-            @Override
-            public void run() {
-                float MAXTRANS = 0;  //透明度
-                while (MAXTRANS <= 1.0) {
-                    Thread.sleep(10);
-                    AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
-                    MAXTRANS += 0.01;
-                }
-                AWTUtilities.setWindowOpacity(background, 1);  //半透明
-            }
-        }.start();
 
         //最大化最小化动画
         background.addWindowListener(new WindowAdapter() {
@@ -1147,8 +1136,24 @@ public class LoginHome implements ActionListener, Minimize {
 //        leftBack.setBounds(50, 50, 150, 60);
 //        leftOpen.setBounds(50, 50, leftOpenIcon.getIconWidth()+150, leftOpenIcon.getIconHeight()+150);
 
+        Thread.sleep(500); //给加载图片的时间
 
         background.setVisible(true);  //窗口可视化
+
+        //透明开启效果
+        new Thread() {  //开启窗口动画
+            @SneakyThrows
+            @Override
+            public void run() {
+                float MAXTRANS = 0;  //透明度
+                while (MAXTRANS <= 1.0) {
+                    Thread.sleep(3);
+                    AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
+                    MAXTRANS += 0.01;
+                }
+                AWTUtilities.setWindowOpacity(background, 1);  //半透明
+            }
+        }.start();
 
 
     }
@@ -1215,45 +1220,34 @@ public class LoginHome implements ActionListener, Minimize {
         bottomBack.setBounds(0, Icon1.getIconHeight(), Icon1.getIconWidth(), Icon1.getIconHeight());  //背景容器
         bottom.setBounds(0, -Icon1.getIconHeight(), Icon1.getIconWidth(), Icon1.getIconHeight());
         if (switchFlag) {
-            timerOn = new TimerTask() {  //实现计时器类
-                int Top;
-                int index = 0;
-
-                @SneakyThrows
-                @Override
-                public void run() {
-                    new Thread() {  //上半部分启动 风格2
-                        @SneakyThrows
-                        @Override
-                        public void run() {
-                            Top = 0;
-                            top.setIcon(icons[index++ % 9]);
-                            while (Top < Icon1.getIconHeight()) {
-                                Thread.sleep(1);
-                                Top += 1;
-                                top.setBounds(0, 0, Icon1.getIconWidth(), Top);
-                            }
-                        }
-                    }.start();
-                }
-            };
-//            Thread.sleep(1000);  //1秒后开始
-            new Timer().scheduleAtFixedRate(timerOn, new Date(), 10000);  //16秒一换
+            System.out.println("上面");
+            ANIMATION_KEEP_ON = !ANIMATION_KEEP_ON;
 
         } else {
+            System.out.println("下边");
+            ANIMATION_KEEP_ON = !ANIMATION_KEEP_ON;
+            Thread.sleep(1000);
             timer = new TimerTask() {  //实现计时器类
                 int index = 0;
 
                 @SneakyThrows
                 @Override
                 public void run() {
+                    if (!ANIMATION_KEEP_ON) {
+                        while (true) {
+                            Thread.sleep(1000);   //??
+                            //如果不能走就卡住
+                            if (ANIMATION_KEEP_ON)
+                                break;
+                        }
+                    }
                     index++;
                     int All = Icon1.getIconHeight() / 2;
                     int Top11 = Icon1.getIconHeight();
                     int Top22 = -Icon1.getIconHeight();
                     int Bottom11 = -Icon1.getIconHeight();
                     int Bottom22 = Icon1.getIconHeight();
-                    //每次先重置位置放置闪屏
+                    //每次先重置位置防止闪屏
                     top.setBounds(0, Top11, Icon1.getIconWidth(), Icon1.getIconHeight());
                     topBack.setBounds(0, Top22, Icon1.getIconWidth(), Icon1.getIconHeight());
                     bottom.setBounds(0, Bottom11, Icon1.getIconWidth(), Icon1.getIconHeight());
@@ -1270,11 +1264,11 @@ public class LoginHome implements ActionListener, Minimize {
                         bottomBack.setBounds(0, --Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
                     }
                     background.setIcon(icons[(index) % 9]);  //设置背景图片
-
+                    System.out.println("运行到这");
                 }
             };
             Thread.sleep(4000);  //10秒后开始
-            new Timer().scheduleAtFixedRate(timer, new Date(), 9000);  //16秒一换
+            timerFather.schedule(this.timer, new Date(), 9000);  //16秒一换
 
         }
     }

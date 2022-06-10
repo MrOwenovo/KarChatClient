@@ -36,11 +36,17 @@ public class KarConfiguration {
 ////                "jdbc:mysql://geoffyli.mysql.rds.aliyuncs.com:3306/user", "k_administrator", "Kk123456"
 //                );
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/user");
+        dataSource.setJdbcUrl("jdbc:mysql://geoffyli.mysql.rds.aliyuncs.com:3306/user");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUsername("root");
-        dataSource.setPassword("lmq1226lmq");
+        dataSource.setUsername("k_administrator");
+        dataSource.setPassword("Kk123456");
         return dataSource;
+//        HikariDataSource dataSource = new HikariDataSource();
+//        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/user");
+//        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("lmq1226lmq");
+//        return dataSource;
     }
 
     @Bean
