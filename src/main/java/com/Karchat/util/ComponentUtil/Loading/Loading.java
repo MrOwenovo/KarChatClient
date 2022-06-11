@@ -48,6 +48,10 @@ public class Loading extends JPanel {
         this.timer.start();
     }
 
+    public void stopShow() {
+        this.timer.stop();
+    }
+
     /**
      * @param orientation	set the direction of rotation
      *

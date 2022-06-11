@@ -51,12 +51,22 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public void Login(PrintStream out, BufferedReader buf) {
         log.info("正在登陆中.....");
-        loadIn.add(sign);  //加入加载条
-        sign.setBounds(-10, 10, 155, 155);
-        loadIn.setColor(new Color(115, 175, 197));
-        LoginHome.wrongMessage.setTextDynamic("登陆中");
-        wrongMessage.setForeground(new Color(115, 175, 197));
-        loadIn.show();
+        if (!Constant.isStart) {
+            loadIn.add(sign);  //加入加载条
+            sign.setBounds(-10, 10, 155, 155);
+            loadIn.setColor(new Color(115, 175, 197));
+            LoginHome.wrongMessage.setTextDynamic("登陆中");
+            wrongMessage.setForeground(new Color(115, 175, 197));
+            loadIn.show();
+        } else {
+            loadIn.show();
+            loadIn.setColor(new Color(115, 175, 197));
+            load.show();
+            load.setColor(new Color(115, 175, 197));
+            LoginHome.wrongMessage.setTextDynamic("登陆中");
+            wrongMessage.setForeground(new Color(115, 175, 197));
+
+        }
         Thread.sleep(1000);  //让登录效果转一下
 
         String message = login.LoginFromDataSource(out, buf);

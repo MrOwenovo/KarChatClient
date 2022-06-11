@@ -13,6 +13,11 @@ import java.util.HashMap;
  * 程序用到的常量
  */
 public class Constant {
+    //客户端判断
+    public static boolean isStart = false;  //是否已经启动了程序
+    public static boolean isOpenMainClient = true;  //是否可以直接打开主客户端（重新连接后会经过主客户端）
+
+
     //Spring上下文
     public static ApplicationContext context = new AnnotationConfigApplicationContext(KarConfiguration.class);
 
@@ -72,6 +77,7 @@ public class Constant {
     public static boolean whetherFriendsToTableIndex = false;  //是否用户名对应聊天表下标
     public static boolean initFinishAndCanFlashChatHistory = false;  //聊天记录初始化成功，可以进行聊天记录的刷新
     public static boolean getFriendIconsSuccess = false;  //是否获取好友头像成功
+    public static boolean getFriendStatesSuccess = false;  //是否获取好友状态成功
     public static int[] mouseXY = new int[2];  //存储当前鼠标的xy
 
 

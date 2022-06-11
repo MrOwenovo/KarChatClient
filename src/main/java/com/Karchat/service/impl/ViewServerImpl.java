@@ -1,24 +1,23 @@
 package com.Karchat.service.impl;
 
 import com.Karchat.service.ViewServer;
-import com.Karchat.util.Constant;
-import com.Karchat.util.SoundUtil.PlaySound;
 import com.Karchat.view.Home;
 import com.Karchat.view.LoginHome;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.IOException;
+import java.net.Socket;
 
 import static com.Karchat.util.ComponentUtil.CompositeComponent.Menu.*;
 import static com.Karchat.util.ComponentUtil.CompositeComponent.Menu.newMenuIcon;
+import static com.Karchat.util.Constant.isStart;
+import static com.Karchat.util.Controller.Controller.firstTimer;
 import static com.Karchat.view.Home.*;
-import static com.Karchat.view.LoginHome.load;
-import static com.Karchat.view.LoginHome.sign;
+import static com.Karchat.view.LoginHome.*;
+import static org.springframework.test.context.transaction.TestTransaction.start;
 
 @Slf4j
 @Service
@@ -46,6 +45,8 @@ public class ViewServerImpl implements ViewServer {
         //打开客户端登录窗口
         new Home();
     }
+
+
 
     @Override
     public void ServerClosed() {

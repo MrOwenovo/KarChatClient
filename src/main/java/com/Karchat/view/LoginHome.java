@@ -1220,11 +1220,9 @@ public class LoginHome implements ActionListener, Minimize {
         bottomBack.setBounds(0, Icon1.getIconHeight(), Icon1.getIconWidth(), Icon1.getIconHeight());  //背景容器
         bottom.setBounds(0, -Icon1.getIconHeight(), Icon1.getIconWidth(), Icon1.getIconHeight());
         if (switchFlag) {
-            System.out.println("上面");
             ANIMATION_KEEP_ON = !ANIMATION_KEEP_ON;
 
         } else {
-            System.out.println("下边");
             ANIMATION_KEEP_ON = !ANIMATION_KEEP_ON;
             Thread.sleep(1000);
             timer = new TimerTask() {  //实现计时器类
@@ -1264,7 +1262,6 @@ public class LoginHome implements ActionListener, Minimize {
                         bottomBack.setBounds(0, --Bottom22, Icon1.getIconWidth(), Icon1.getIconHeight());
                     }
                     background.setIcon(icons[(index) % 9]);  //设置背景图片
-                    System.out.println("运行到这");
                 }
             };
             Thread.sleep(4000);  //10秒后开始

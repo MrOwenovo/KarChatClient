@@ -271,7 +271,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 public void run() {
                     label:
                     while (true) {  //如果还没有加载出好友列表就先等待
-                        if (MenuContent.iconLengthChat > 0 && getFriendIconsSuccess) {
+                        if (MenuContent.iconLengthChat > 0 && getFriendIconsSuccess&&getFriendStatesSuccess) {
                             chatContent = new InnerLabel[MenuContent.iconLengthChat];
                             for (int i = 0; i < MenuContent.iconLengthChat; i++) {
                                 chatContent[i] = new InnerLabel();

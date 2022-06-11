@@ -1,10 +1,8 @@
 package com.Karchat.util.Controller;
 
-import com.Karchat.entity.History;
 import com.Karchat.service.*;
-import com.Karchat.util.ComponentUtil.Label.InnerLabel;
 import com.Karchat.util.Constant;
-import com.Karchat.view.Home;
+import com.Karchat.view.LoginHome;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,13 +14,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent.*;
 import static com.Karchat.util.Constant.*;
+import static com.Karchat.view.LoginHome.*;
 
 
 /**
@@ -47,16 +43,20 @@ public class Controller {
     ChatService chatService;
     @Resource
     BackgroundService backgroundService;
+    public static Timer firstTimer;
 
     public void start() throws InterruptedException {
 
         //指定连接主机及端口
         try {
             clien = new Socket("localhost", 8888);
+//            clien = new Socket("103.46.128.46", 59614);
         } catch (IOException e) {
+            e.printStackTrace();
             viewService.DisplayNotConnectedLogin();  //打开错误客户端
-            Timer timer = Constant.context.getBean(Timer.class);  //获取定时调度
-            timer.schedule(new TimerTask() {
+            //获取定时调度
+            firstTimer = Constant.context.getBean(Timer.class);
+            firstTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     if (Constant.login) {
@@ -73,26 +73,79 @@ public class Controller {
                         clien.getOutputStream());  //向服务器端输出信息
                 BufferedReader buf = new BufferedReader(new InputStreamReader(clien.getInputStream())); //接收服务器返回的信息
         ) {
-            viewService.DisplayConnectedLogin();  //打开客户端登录窗口
+            if (!isStart) {  //未打开再打开
+                viewService.DisplayConnectedLogin();  //打开客户端登录窗口
+            }
             loginService.CheckAccountRecords();  //查看本地是否有保存的账号密码
 
             Timer timer = Constant.context.getBean(Timer.class);
             final boolean[] endLogin = {false}; //是否结束登录阶段
             timer.schedule(new TimerTask() {  //加入多次点击延迟,防止卡服
+                @SneakyThrows
                 @Override
                 public void run() {
-                    if (Constant.login) {  //判断提交事件是否发生
-                        loginService.Login(out, buf);  //登录
-                        if (Constant.loginSuccess) {
-                            endLogin[0] = true; //
-                            timer.cancel();
+                    try {
+                        if (Constant.login) {  //判断提交事件是否发生
+                            loginService.Login(out, buf);  //登录
+                            if (Constant.loginSuccess) {
+                                endLogin[0] = true; //
+                                timer.cancel();
+                            }
+                            Constant.login = false;
                         }
-                        Constant.login = false;
-                    }
-                    if (Constant.register) {  //判断提交事件是否发生
-                        loginService.Register(out, buf);
-                        Constant.register = false;
+                        if (Constant.register) {  //判断提交事件是否发生
+                            loginService.Register(out, buf);
+                            Constant.register = false;
 
+                        }
+                    } catch (Exception e) {
+//                            viewService.ServerClosed();  //服务器关闭方法
+                        log.info("服务器已经关闭！");
+                        loadIn.show();
+                        loadIn.setColor(Color.red);
+                        wrongMessage.setForeground(Color.RED);
+                        LoginHome.loginLabel.shake();  //错误后让按钮抖动
+                        LoginHome.wrongMessage.setTextDynamic("服务器未连接");
+                        sign.setBounds(-10, 10, 155, 155);
+                        login = false;
+                        label3:
+                        {
+                            while (true) {
+                                Thread.sleep(2000);
+                                try {
+                                    clien = new Socket("localhost", 8888);
+                                    if (clien != null) {
+                                        LoginHome.isAlive = true;
+                                        isStart = true;
+//                                        firstTimer.cancel();
+                                        log.info("服务器已重新连接");
+                                        new Thread() {
+                                            @SneakyThrows
+                                            @Override
+                                            public void run() {
+                                                wrongMessage.setForeground(new Color(115, 175, 197));
+
+                                                LoginHome.wrongMessage.setTextDynamic("服务器已经正在重新连接.");
+                                                Thread.sleep(500);
+                                                LoginHome.wrongMessage.setTextDynamic("服务器已经正在重新连接..");
+                                                Thread.sleep(500);
+                                                LoginHome.wrongMessage.setTextDynamic("服务器已经正在重新连接...");
+                                                Thread.sleep(1000);
+                                                LoginHome.wrongMessage.setTextDynamic("服务器已经重新连接√");
+                                                Thread.sleep(2000);
+                                                LoginHome.wrongMessage.setTextDynamic("");
+                                            }
+                                        }.start();
+                                        loadIn.setColor(new Color(115, 175, 197,0));
+                                        loadIn.stopShow();
+                                        start();
+                                        break label3;
+                                    }
+                                } catch (IOException q) {
+                                    //
+                                }
+                            }
+                        }
                     }
                 }
             }, 0, 100);
@@ -164,7 +217,7 @@ public class Controller {
                             }
                             canGoOn[0] = false;
                         }
-                        if (Constant.addState) {  //修改addFriend中的状态
+                        if (Constant.addState) {  //同意加好友
                             Constant.addState = false;
                             boolean flag = chatService.AcceptFriendInvitation(out, buf);
                             while (!canGoOn[0]) {
@@ -173,7 +226,7 @@ public class Controller {
                             }
                             canGoOn[0] = false;
                         }
-                        if (deleteAddFriend) {
+                        if (deleteAddFriend) {   //拒绝加好友
                             deleteAddFriend = false;
                             boolean flag = chatService.RefuseFriendInvitation(out, buf);
                             while (!canGoOn[0]) {
@@ -182,7 +235,7 @@ public class Controller {
                             }
                             canGoOn[0] = false;
                         }
-                        if (checkFriends) {
+                        if (checkFriends) {    //获取好友列表
                             checkFriends = false;
                             boolean flag = initHomePageService.GetListOfFriends(out, buf);
                             while (!canGoOn[0]) {
@@ -191,7 +244,7 @@ public class Controller {
                             }
                             canGoOn[0] = false;
                         }
-                        if (checkFriendsNameOnly) {
+                        if (checkFriendsNameOnly) {  //只获取好友数量
                             checkFriendsNameOnly = false;
                             boolean flag = initHomePageService.GetListOfFriendsAmountOnly(out, buf);
                             while (!canGoOn[0]) {
@@ -200,7 +253,7 @@ public class Controller {
                             }
                             canGoOn[0] = false;
                         }
-                        if (getFriendIcon) {
+                        if (getFriendIcon) {  //获取所有好友的头像
                             getFriendIcon = false;
                             boolean flag = initHomePageService.GetFriendsIcon(out, buf);
                             while (!canGoOn[0]) {
@@ -209,7 +262,7 @@ public class Controller {
                             }
                             canGoOn[0] = false;
                         }
-                        if (getUserState) {
+                        if (getUserState) {  //获取好友的状态
                             getUserState = false;
                             boolean flag = initHomePageService.GetFriendsState(out, buf);
                             while (!canGoOn[0]) {
@@ -242,6 +295,45 @@ public class Controller {
             log.info("服务器已经关闭！");
         } catch (NullPointerException ex) {
             log.info("服务器未连接，无法开打主界面");
+            label2:
+            {
+                while (true) {
+                    Thread.sleep(2000);
+                    try {
+                        clien = new Socket("localhost", 8888);
+                        if (clien != null) {
+
+                            LoginHome.isAlive = true;
+                            isStart = true;
+                            firstTimer.cancel();
+                            log.info("服务器已重新连接");
+                            new Thread() {
+                                @SneakyThrows
+                                @Override
+                                public void run() {
+                                    wrongMessage.setForeground(new Color(115, 175, 197));
+
+                                    LoginHome.wrongMessage.setTextDynamic("服务器已经正在重新连接.");
+                                    Thread.sleep(500);
+                                    LoginHome.wrongMessage.setTextDynamic("服务器已经正在重新连接..");
+                                    Thread.sleep(500);
+                                    LoginHome.wrongMessage.setTextDynamic("服务器已经正在重新连接...");
+                                    Thread.sleep(1000);
+                                    LoginHome.wrongMessage.setTextDynamic("服务器已经重新连接√");
+                                    Thread.sleep(2000);
+                                    LoginHome.wrongMessage.setTextDynamic("");
+                                }
+                            }.start();
+                            load.stopShow();
+                            load.setColor(new Color(255, 255, 255, 0));
+                            start();
+                            break label2;
+                        }
+                    } catch (IOException e) {
+                        //
+                    }
+                }
+            }
         }
 //            i  f (Objects.equals(buf.readLine(), "getMessage")) {  //若接收到getMessage,则是有人发消息
 //                        String message = buf.readLine();  //获取发送内容
@@ -260,16 +352,15 @@ public class Controller {
 //                    }
     }
 
-
     /**
      * 向服务器发送信息
      *
      * @param message 发送的信息
-     * @param geter 接收的人
+     * @param geter   接收的人
      */
     @SneakyThrows
     public void send(String message, String geter) {
-        chatService.Send(message, geter,clien);
+        chatService.Send(message, geter, clien);
 
     }
 
@@ -280,16 +371,17 @@ public class Controller {
      * @param friend 要查询的好友
      */
     public void getChatHistoryAmount(String friend) throws IOException {
-       initHomePageService.GetChatHistoryAndHistoryAmount(friend,clien);
+        initHomePageService.GetChatHistoryAndHistoryAmount(friend, clien);
     }
 
     /**
      * 查询聊天历史记录
+     *
      * @param friend 要查询的好友
      */
     @SneakyThrows
     public void getChatHistory(String friend) {
-        initHomePageService.GetChatHistory(friend,clien);
+        initHomePageService.GetChatHistory(friend, clien);
 
     }
 
