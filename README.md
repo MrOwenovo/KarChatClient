@@ -4,6 +4,7 @@
 >- 接口部分: 内含与数据库进行交互的方法，注册为bean
 >- impl:  接口的实现类，通过ioc获取
 >- mapper: 与数据库完成映射的映射类，注册为mapper
+>- operation: 博客部分的数据库交互（未整合）
 
 <br>
 
@@ -82,6 +83,7 @@
 ##视图层:view
 >- LoadingHome:登录界面
 >- Home: 主界面
+>- BlogWindow：博客窗口界面
 
    <br>
 
