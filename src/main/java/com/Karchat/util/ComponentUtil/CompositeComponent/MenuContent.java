@@ -1240,6 +1240,7 @@ public class MenuContent extends Observable {
      * 添加是否在线的绿点点
      */
     public static void setStateIcon(int[] states) {
+        Constant.getFriendStatesSuccess=true;
         for (int i = 0; i < iconLengthChat; i++) {
             if (states[i] == 0) {  //账号不在线
                 stateIcon[i].setColor(new Color(110, 108, 108));
@@ -1404,6 +1405,13 @@ public class MenuContent extends Observable {
      * 初始化设置界面
      */
     public static void InitSetting(RadioJLabel home) {
+
+        background6 = new RadioJLabel("");
+        background6.setColor(new Color(252, 249, 249));
+        background6.setArc(25, 25);
+        background6.setBounds(0, 0, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
+
+        home.add(background6);
 
     }
 

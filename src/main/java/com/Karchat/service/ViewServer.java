@@ -1,6 +1,9 @@
 package com.Karchat.service;
 
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+
+import java.net.Socket;
 
 @Component
 public interface ViewServer {
@@ -19,6 +22,7 @@ public interface ViewServer {
      * 打开连接好的客户端主界面
      */
     void DisplayConnectedClient();
+
 
     /**
      * 显示服务器关闭，以及加载条，更新错误信息

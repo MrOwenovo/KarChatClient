@@ -5,8 +5,16 @@
 >- impl:  接口的实现类，通过ioc获取
 >- mapper: 与数据库完成映射的映射类，注册为mapper
 
+<br>
+
+---
+
 ## 实体层:entity
 >从数据库中获取的实体类
+
+<br>
+
+---
 
 ## 服务层:service
 >- 接口部分: 
@@ -18,6 +26,11 @@
 >    - Shakeable:用于实现组件的可抖动
 >    - ViewServer:视图层服务，展示登录与主界面/客户端出问题时进行加载/服务器断开时进行加载
 >- impl:  接口的实现类，通过ioc获取
+
+
+<br>
+
+---
 
 ## 工具类:util
 >- BeansUtil: 配置spring的IOC容器的配置类，内涵mybatis配置
@@ -62,13 +75,23 @@
 
 >****Constant****:<br>常量类，包括spring上下文的context,Controller用到的是否进行操作的boolean标志，存储的用户名密码，存储的好友列表等等，以及后台线程是否执行完的记录
 
+<br>
+
+---
 
 ##视图层:view
 >- LoadingHome:登录界面
 >- Home: 主界面
 
+   <br>
+
+---
 ##主程序:KarChatSpringBootApplication
 >通过Controller的***start***方法开始
+
+<br>
+
+---
 
 #注意事项:
 >1.Email发送失败解决办法: <br>

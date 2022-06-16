@@ -173,6 +173,7 @@ public class InitHomePageImpl implements InitHomePage {
                 e.printStackTrace();
             }
         }
+        log.info("获取好友的在线状态成功!");
         return state;
     }
 

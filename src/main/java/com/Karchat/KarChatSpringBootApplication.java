@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class KarChatSpringBootApplication {
-
     public static void main(String[] args) throws InterruptedException {
+        System.setProperty("sun.java2d.noddraw", "true");  //防止输入法输入时白屏，禁用DirectDraw
         SpringApplication.run(KarChatSpringBootApplication.class, args);
 //        SpringApplicationBuilder builder = new SpringApplicationBuilder(KarChatSpringBootApplication.class);
 //        builder.headless(false).run(args);

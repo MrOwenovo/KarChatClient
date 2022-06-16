@@ -5,6 +5,7 @@ import com.Karchat.service.MusicService;
 import com.Karchat.service.ViewServer;
 import com.Karchat.util.ColorUtil.ChangeToColor;
 import com.Karchat.util.ComponentUtil.Button.RoundButton;
+import com.Karchat.util.ComponentUtil.CompositeComponent.Menu;
 import com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent;
 import com.Karchat.util.ComponentUtil.Frame.Frameless;
 import com.Karchat.util.ComponentUtil.Label.DynamicJLabel;
@@ -17,11 +18,12 @@ import com.Karchat.util.Constant;
 import com.Karchat.util.Controller.Controller;
 import com.Karchat.util.PictureUtil.RemoveBackground;
 import com.Karchat.util.PictureUtil.ToBufferedImage;
-import com.Karchat.util.SoundUtil.PlaySound;
 import com.sun.awt.AWTUtilities;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -30,28 +32,26 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
-import com.Karchat.util.ComponentUtil.CompositeComponent.Menu;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import static com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent.iconLengthChat;
 import static com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent.iconNameChat;
 import static com.Karchat.util.Constant.*;
-import static com.Karchat.util.Constant.isCheckingHistory;
 
 @Slf4j
 @Component
 @Scope("prototype")
-public class Home extends Observable implements ActionListener , Minimize {
+public class Home extends Observable implements ActionListener, Minimize {
 
     public static final DynamicJLabel serverClosedMessage = new DynamicJLabel("服务器断开连接", new Font("Serif", Font.BOLD, 10), 107);
+    public static Point POINT ;
     public static ServerLoading ServerCloseLoad;
     public static JLabel menu;
     public static ImageIcon menuIcon;
-    public static JLabel iconLabel ; //头像标签
+    public static JLabel iconLabel; //头像标签
     public static BufferedImage icon;  //头像图片
     public static MouseAdapter menuOpen;  //打开菜单鼠标点击事件
     public static BlogWindow blogWindow;
@@ -84,8 +84,8 @@ public class Home extends Observable implements ActionListener , Minimize {
     public static JLabel game2Top;
     private ImageIcon game1IconOn;
     private ImageIcon newMenuIcon;
-    public static JLabel menuBack=new JLabel();
-    public static JLabel menuTop=new JLabel();
+    public static JLabel menuBack = new JLabel();
+    public static JLabel menuTop = new JLabel();
     public static boolean[] menuFlag = {false}; //是否打开菜单栏0
     public static boolean[] menuFlag1 = {false}; //是否打开菜单栏1
     public static boolean[] menuFlag2 = {false}; //是否打开菜单栏2
@@ -98,7 +98,7 @@ public class Home extends Observable implements ActionListener , Minimize {
     public static JLabel game1;  //三个游戏标签
     public static JLabel game2;  //三个游戏标签
     public static JLabel game3;  //三个游戏标签
-    public static  boolean inHome;
+    public static boolean inHome;
     private boolean iconified;
     private int xOld;
     private int yOld;
@@ -113,19 +113,19 @@ public class Home extends Observable implements ActionListener , Minimize {
     @Resource
     MusicService musicService;
 
-    ViewServer viewServer=context.getBean(Controller.class).viewService;
+    ViewServer viewServer = context.getBean(Controller.class).viewService;
 
 
     @SneakyThrows
     public Home() {
 //        System.setProperty("sun.java2d.noddraw", "true");  //防止输入法输入时白屏，禁用DirectDraw
-        back = new Frameless(1300,843,false);
+        back = new Frameless(1300, 843, false);
         back.setUndecorated(true);  //不要边框
         back.setIconImage(ImageIO.read(Resources.getResourceAsStream("login/sign.png")));
         //背景阴影
         homeBack = new RadioJLabel("");
         homeBack.setColor(new Color(239, 238, 238));
-        homeBack.setArc(40,40);
+        homeBack.setArc(40, 40);
 
         //最大化最小化动画
         back.addWindowListener(new WindowAdapter() {
@@ -179,7 +179,7 @@ public class Home extends Observable implements ActionListener , Minimize {
         menuHomeUser6.setColor(new Color(239, 238, 238));
 
 
-        final Timer[] timer = {new Timer()};
+        final Timer[] timer = {new Timer(), new Timer()};
 
         //处理鼠标点击事件
         home.addMouseListener(new MouseAdapter() {
@@ -188,19 +188,6 @@ public class Home extends Observable implements ActionListener , Minimize {
                 xOld = e.getX();  //存储点击时的坐标
                 yOld = e.getY();
             }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                timer[0].schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mouseXY[0] = e.getX();
-                        mouseXY[1] = e.getY();
-                    }
-                },0,500);
-
-            }
-
         });
         //处理鼠标拖拽事件
         home.addMouseMotionListener(new MouseMotionAdapter() {
@@ -210,23 +197,11 @@ public class Home extends Observable implements ActionListener , Minimize {
                 int yOnScreen = e.getYOnScreen(); //获取当前鼠标拖拽时y坐标
                 int xx = xOnScreen - xOld;  //移动差值
                 int yy = yOnScreen - yOld;
-                back.setLocation(xx,yy-50);  //移动窗口
+                back.setLocation(xx, yy - 50);  //移动窗口
             }
         });
 
 
-        homeBack.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                timer[0].schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mouseXY[0] = e.getX();
-                        mouseXY[1] = e.getY();
-                    }
-                },0,500);
-            }
-        });
 
 
 
@@ -242,7 +217,7 @@ public class Home extends Observable implements ActionListener , Minimize {
             @SneakyThrows
             @Override
             public void mouseClicked(MouseEvent e) {
-                float MAXTRANS=1;  //透明度
+                float MAXTRANS = 1;  //透明度
                 while (MAXTRANS >= 0) {
                     Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
@@ -253,15 +228,15 @@ public class Home extends Observable implements ActionListener , Minimize {
 
         };
 
-        home.setArc(30,30);
+        home.setArc(30, 30);
 
-        menuHomeUser.setArc(30,30);
-        menuHomeUser1.setArc(30,30);
-        menuHomeUser2.setArc(30,30);
-        menuHomeUser3.setArc(30,30);
-        menuHomeUser4.setArc(30,30);
-        menuHomeUser5.setArc(30,30);
-        menuHomeUser6.setArc(30,30);
+        menuHomeUser.setArc(30, 30);
+        menuHomeUser1.setArc(30, 30);
+        menuHomeUser2.setArc(30, 30);
+        menuHomeUser3.setArc(30, 30);
+        menuHomeUser4.setArc(30, 30);
+        menuHomeUser5.setArc(30, 30);
+        menuHomeUser6.setArc(30, 30);
         home.setColor(new Color(166, 163, 163));
         home.addMouseListener(new MouseAdapter() {
             @Override
@@ -291,13 +266,13 @@ public class Home extends Observable implements ActionListener , Minimize {
             MenuContent.InitColor(menuHomeUser3);
             MenuContent.InitChat(menuHomeUser2);
 
-            new Thread(){
+            new Thread() {
                 @SneakyThrows
                 @Override
                 public void run() {
                     label:
                     while (true) {  //如果还没有加载出好友列表就先等待
-                        if (MenuContent.iconLengthChat > 0&&getFriendIconsSuccess) {
+                        if (MenuContent.iconLengthChat > 0 && getFriendIconsSuccess&&getFriendStatesSuccess) {
                             chatContent = new InnerLabel[MenuContent.iconLengthChat];
                             for (int i = 0; i < MenuContent.iconLengthChat; i++) {
                                 chatContent[i] = new InnerLabel();
@@ -335,7 +310,7 @@ public class Home extends Observable implements ActionListener , Minimize {
             }.start();
         }
         {  //加入头像
-           Constant.getMyIcon = true;  //修改标志位
+            Constant.getMyIcon = true;  //修改标志位
         }
         {  //三个游戏标签加入图像和动效
             final int[] GAME = {1};  //默认从第一个开始
@@ -356,7 +331,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                 @SneakyThrows
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler "+"http://localhost:8080/KarCharWeb/home/select");
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "https://f01-1309918226.file.myqcloud.com/42/2022/05/10/home/home/select5.html?x-cos-traffic-limit=819200");
                     Home.back.setExtendedState(JFrame.ICONIFIED);
                 }
             });
@@ -453,9 +428,9 @@ public class Home extends Observable implements ActionListener , Minimize {
                                                 }.start();
                                                 GAME[0] = 1;
                                                 break;
-                                                default:
-                                                    canGo[0] = true;
-                                                    break All;
+                                            default:
+                                                canGo[0] = true;
+                                                break All;
                                         }
 
                                         Thread.sleep(900);
@@ -503,7 +478,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                 @SneakyThrows
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler "+"https://f01-1309918226.file.myqcloud.com/13/2022/04/22/KarGoBang2/loading2.html?x-cos-traffic-limit=819200");
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "https://f01-1309918226.file.myqcloud.com/13/2022/04/22/KarGoBang2/loading2.html?x-cos-traffic-limit=819200");
                     Home.back.setExtendedState(JFrame.ICONIFIED);
                 }
             });
@@ -599,9 +574,9 @@ public class Home extends Observable implements ActionListener , Minimize {
                                                 }.start();
                                                 GAME[0] = 2;
                                                 break;
-                                                default:
-                                                    canGo[0] = true;
-                                                    break All;
+                                            default:
+                                                canGo[0] = true;
+                                                break All;
                                         }
 
                                         Thread.sleep(700);
@@ -655,9 +630,9 @@ public class Home extends Observable implements ActionListener , Minimize {
                     Home.back.dispose();  //关闭页面
                 }
             });
-             game3.addMouseListener(new MouseAdapter() {
+            game3.addMouseListener(new MouseAdapter() {
 
-                 @SneakyThrows
+                @SneakyThrows
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     if (canGo[0]) {
@@ -788,7 +763,7 @@ public class Home extends Observable implements ActionListener , Minimize {
 
         }
 
-        back.setLocation(310,120);
+        back.setLocation(310, 120);
         Rbut1.setArc(25, 25);   //修改小按钮的圆角弧度
         Rbut2.setArc(25, 25);
         {  //开始让game1展开
@@ -799,11 +774,10 @@ public class Home extends Observable implements ActionListener , Minimize {
             game2.setBounds(GAME2WIDTH, 100, game2Icon.getIconWidth(), game2IconOn.getIconHeight());
             game3.setBounds(GAME3WIDTH, 100, game3Icon.getIconWidth(), game3IconOn.getIconHeight());
             game1Back.setBounds(296, 100, game1IconOn.getIconWidth(), game1IconOn.getIconHeight());
-            game1Top.setBounds(WIDTH-12, 3, game1IconOn.getIconWidth(), game1Icon.getIconHeight());
+            game1Top.setBounds(WIDTH - 12, 3, game1IconOn.getIconWidth(), game1Icon.getIconHeight());
             game1Top.setIcon(game1IconOn);
 
         }
-
 
 
         LoadingHome loadingHome = new LoadingHome();//加入加载界面
@@ -819,11 +793,9 @@ public class Home extends Observable implements ActionListener , Minimize {
 
         //加入服务器断开时的加载条
         //未连接时的提示
-        serverClosedMessage.setForeground(new Color(250, 38, 38,0));
+        serverClosedMessage.setForeground(new Color(250, 38, 38, 0));
         serverClosedMessage.setCenter(90);
         menu.add(serverClosedMessage);
-
-
 
 
         new Thread() {
@@ -875,8 +847,6 @@ public class Home extends Observable implements ActionListener , Minimize {
                 Rbut2.setBounds(home.getWidth() - 50, 20, 25, 25);
 
 
-
-
                 back.setVisible(true);  //窗口可视化
                 float MAXTRANS2 = 0;  //透明度
                 while (MAXTRANS2 <= 1.0) {
@@ -889,6 +859,20 @@ public class Home extends Observable implements ActionListener , Minimize {
             }
         }.start();
 
+        int INITLEFT = back.getX();   //最一开始左边的坐标
+        int INITOP = back.getY();   //最一开始上面的坐标
+        final int[] MOVEAMOUNTX = {0};  //移动X的数量
+        final int[] MOVEAMOUNTY = {0};  //移动Y的数量
+
+        Timer timer3=context.getBean(Timer.class);
+        timer3.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MOVEAMOUNTX[0] = back.getX() - INITLEFT;
+                MOVEAMOUNTY[0] = back.getY() - INITOP;
+                POINT = MouseInfo.getPointerInfo().getLocation();
+            }
+        },1000,100);
 
         //开启后台线程，用于检测菜单展开情况
         Timer timer2 = new Timer();
@@ -899,18 +883,18 @@ public class Home extends Observable implements ActionListener , Minimize {
                     @SneakyThrows
                     @Override
                     public void run() {
-                        if (menuTop.getX()>-118&& (mouseXY[0] >= 0 && mouseXY[0] <= 46) && (mouseXY[1] >= 0 && mouseXY[1] <= 740)) {  //在左半部分退出
+                        if (menuTop.getX() > -118 && (POINT.getX() >= 309+MOVEAMOUNTX[0] && POINT.getX() <= 357+MOVEAMOUNTX[0]) && (POINT.getY() >= 171+MOVEAMOUNTY[0] && POINT.getY() <= 912+MOVEAMOUNTY[0])) {  //在左半部分退出
                             Thread.sleep(500);
-                            if (menuTop.getX()>-117) {
+                            if (menuTop.getX() > -117) {
                                 viewServer.MenuShrink();  //开始收缩
                                 Thread.sleep(2000);
                                 Menu.isShrink = false;
                                 Menu.isOut = false;
                             }
 
-                        } else if (menuTop.getX()>-117&&(mouseXY[0] >= 267) && (mouseXY[1] >= 0 && mouseXY[1] <= 740)) { //最右半部分退出
+                        } else if (menuTop.getX() > -117 && (POINT.getX() >= 578+MOVEAMOUNTX[0]) && (POINT.getY() >= 171+MOVEAMOUNTY[0] && POINT.getY() <= 912+MOVEAMOUNTY[0])) { //最右半部分退出
                             Thread.sleep(500);
-                            if (menuTop.getX()>-118) {
+                            if (menuTop.getX() > -118) {
                                 viewServer.MenuShrink();  //开始收缩
                                 Thread.sleep(2000);
                                 Menu.isShrink = false;
@@ -920,10 +904,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                     }
                 }.start();
             }
-        },1000,500);
-
-
-
+        }, 1000, 500);
 
 
     }
@@ -941,7 +922,7 @@ public class Home extends Observable implements ActionListener , Minimize {
         icon = Icon;  //保存图片
         ImageIcon defaultIcon = new ImageIcon(ImageIO.read(Resources.getResourceAsStream("main/icon.png")));
         //修改一下图像大小
-        BufferedImage realIcon= ToBufferedImage.toBufferedImage(Icon.getScaledInstance(defaultIcon.getIconWidth(),defaultIcon.getIconHeight(),0));  //将图片改为合适的大小，并转化为BufferedImage
+        BufferedImage realIcon = ToBufferedImage.toBufferedImage(Icon.getScaledInstance(defaultIcon.getIconWidth(), defaultIcon.getIconHeight(), 0));  //将图片改为合适的大小，并转化为BufferedImage
         //去除黑色背景
         transparencyIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(realIcon));
         iconLabel = new JLabel(defaultIcon);  //默认头像
@@ -962,30 +943,30 @@ public class Home extends Observable implements ActionListener , Minimize {
                 isMenuChild = true;  //是子组件
             }
         });
-        final boolean[] canDo = {true,true};
+        final boolean[] canDo = {true, true};
         menuOpen = new MouseAdapter() {
             @SneakyThrows
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!menuFlag[0]&& canDo[0]&&canDo[1]) {  //展开
+                if (!menuFlag[0] && canDo[0] && canDo[1]) {  //展开
                     canDo[0] = false;
                     canDo[1] = false;
                     menuFlag[0] = true;//修改标记位
-                    menuHomeBack.setBounds(115, 10, menuIcon.getIconWidth()+600, menuIcon.getIconHeight()+20);
-                    menuHomeUser.setBounds(124, 8, menuIcon.getIconWidth()+200, menuIcon.getIconHeight());
+                    menuHomeBack.setBounds(115, 10, menuIcon.getIconWidth() + 600, menuIcon.getIconHeight() + 20);
+                    menuHomeUser.setBounds(124, 8, menuIcon.getIconWidth() + 200, menuIcon.getIconHeight());
 
                     if (openMenuIndex != -1) {
-                        Menu.DealWithOldMenuCont(openMenuIndex,canDo);
+                        Menu.DealWithOldMenuCont(openMenuIndex, canDo);
                     }
 
                     new Thread() {  //菜单栏开启窗口动画
                         @SneakyThrows
                         @Override
                         public void run() {
-                            int MAXTRANS=1;  //透明度
+                            int MAXTRANS = 1;  //透明度
                             while (MAXTRANS <= 255) {
                                 Thread.sleep(6);
-                                menuHomeUser.setColor(new Color(239, 238, 238,MAXTRANS));
+                                menuHomeUser.setColor(new Color(239, 238, 238, MAXTRANS));
                                 menuHomeUser.repaint();
                                 MAXTRANS += 5;
                             }
@@ -996,17 +977,17 @@ public class Home extends Observable implements ActionListener , Minimize {
                         @SneakyThrows
                         @Override
                         public void run() {
-                            int MAXTRANS=255;  //透明度
+                            int MAXTRANS = 255;  //透明度
                             while (MAXTRANS >= 100) {
                                 Thread.sleep(6);
-                                home.setColor(new Color(166, 163, 163,MAXTRANS));
+                                home.setColor(new Color(166, 163, 163, MAXTRANS));
                                 game1Back.remove(game1Top);
                                 game2Back.remove(game2Top);
                                 game3Back.remove(game3Top);
                                 homeBack.setColor(new Color(239, 238, 238, MAXTRANS));
-                                game1.setSize(0,0);
-                                game2.setSize(0,0);
-                                game3.setSize(0,0);
+                                game1.setSize(0, 0);
+                                game2.setSize(0, 0);
+                                game3.setSize(0, 0);
                                 home.repaint();
                                 MAXTRANS -= 7;
                             }
@@ -1015,7 +996,7 @@ public class Home extends Observable implements ActionListener , Minimize {
                     }.start();
                     openMenuIndex = 0;
 
-                }else if (menuFlag[0]&& canDo[0]&&canDo[1]) {
+                } else if (menuFlag[0] && canDo[0] && canDo[1]) {
                     canDo[0] = false;
                     canDo[1] = false;
                     menuFlag[0] = false;//修改标记位
@@ -1023,10 +1004,10 @@ public class Home extends Observable implements ActionListener , Minimize {
                         @SneakyThrows
                         @Override
                         public void run() {
-                            int MAXTRANS=255;  //透明度
+                            int MAXTRANS = 255;  //透明度
                             while (MAXTRANS >= 0) {
                                 Thread.sleep(6);
-                                menuHomeUser.setColor(new Color(239, 238, 238,MAXTRANS));
+                                menuHomeUser.setColor(new Color(239, 238, 238, MAXTRANS));
                                 menuHomeUser.repaint();
                                 MAXTRANS -= 5;
                             }
@@ -1038,16 +1019,16 @@ public class Home extends Observable implements ActionListener , Minimize {
                         @SneakyThrows
                         @Override
                         public void run() {
-                            int MAXTRANS=1;  //透明度
+                            int MAXTRANS = 1;  //透明度
                             while (MAXTRANS <= 255) {
                                 Thread.sleep(6);
-                                home.setColor(new Color(166, 163, 163,MAXTRANS));
+                                home.setColor(new Color(166, 163, 163, MAXTRANS));
                                 game1Back.add(game1Top);
                                 game2Back.add(game2Top);
                                 game3Back.add(game3Top);
-                                game1.setSize(game1Icon.getIconWidth(),game1Icon.getIconHeight());
-                                game2.setSize(game1Icon.getIconWidth(),game1Icon.getIconHeight());
-                                game3.setSize(game1Icon.getIconWidth(),game1Icon.getIconHeight());
+                                game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 home.repaint();
                                 MAXTRANS += 12;
                             }
@@ -1080,7 +1061,7 @@ public class Home extends Observable implements ActionListener , Minimize {
             @SneakyThrows
             @Override
             public void run() {
-                float MAXTRANS=1;  //透明度
+                float MAXTRANS = 1;  //透明度
                 while (MAXTRANS >= 0) {
                     Thread.sleep(4);
                     AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
@@ -1101,7 +1082,7 @@ public class Home extends Observable implements ActionListener , Minimize {
             @SneakyThrows
             @Override
             public void run() {
-                float MAXTRANS=0;  //透明度
+                float MAXTRANS = 0;  //透明度
                 while (MAXTRANS <= 1.0) {
                     if (iconified) {
                         AWTUtilities.setWindowOpacity(back, 0);  //半透明
