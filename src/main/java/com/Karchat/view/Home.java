@@ -54,6 +54,7 @@ public class Home extends Observable implements ActionListener , Minimize {
     public static JLabel iconLabel ; //头像标签
     public static BufferedImage icon;  //头像图片
     public static MouseAdapter menuOpen;  //打开菜单鼠标点击事件
+    public static BlogWindow blogWindow;
     public static JLabel game1Back;
     public static JLabel game1Top;
     public static ImageIcon game1Icon;
@@ -855,12 +856,11 @@ public class Home extends Observable implements ActionListener , Minimize {
                 menuHomeBack.add(menuHomeUser5);   //点击菜单展开的内容
                 menuHomeBack.add(menuHomeUser6);   //点击菜单展开的内容
 
-                back.add(game1);  //加入背景
-                back.add(game1Back);  //加入背景
-                back.add(game2);  //加入背景
-                back.add(game2Back);  //加入背景
-                back.add(game3);  //加入背景
-                back.add(game3Back);  //加入背景
+
+                blogWindow = new BlogWindow();
+                back.add(blogWindow.mainContentPane);
+
+
                 home.add(Rbut1);  //加入右上角按钮
                 home.add(Rbut2);
                 back.add(homeBack); //加入背景

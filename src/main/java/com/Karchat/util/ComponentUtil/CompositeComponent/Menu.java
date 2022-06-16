@@ -973,9 +973,7 @@ public class Menu {
                                 game2Back.remove(game2Top);
                                 game3Back.remove(game3Top);
                                 homeBack.setColor(new Color(homeColorBack1, homeColorBack2, homeColorBack3, MAXTRANS));
-                                game1.setSize(0, 0);
-                                game2.setSize(0, 0);
-                                game3.setSize(0, 0);
+                                blogWindow.mainContentPane.setSize(0, 0);
                                 home.repaint();
                                 MAXTRANS -= 7;
                             }
@@ -1024,9 +1022,10 @@ public class Menu {
                                 game2Back.add(game2Top);
                                 game3Back.add(game3Top);
                                 homeBack.setColor(new Color(homeColorBack1, homeColorBack2, homeColorBack3, MAXTRANS));
-                                game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
-                                game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
-                                game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+//                                game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+//                                game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+//                                game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                blogWindow.mainContentPane.setSize(880, 620);
                                 home.repaint();
                                 MAXTRANS += 12;
                             }
@@ -1090,6 +1089,8 @@ public class Menu {
                                 game1.setSize(0, 0);
                                 game2.setSize(0, 0);
                                 game3.setSize(0, 0);
+                                blogWindow.mainContentPane.setSize(0, 0);
+
                                 home.repaint();
                                 MAXTRANS -= 7;
                             }
@@ -1141,6 +1142,7 @@ public class Menu {
                                 game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                blogWindow.mainContentPane.setSize(880, 620);
                                 home.repaint();
                                 MAXTRANS += 12;
                             }
@@ -1204,6 +1206,8 @@ public class Menu {
                                 game1.setSize(0, 0);
                                 game2.setSize(0, 0);
                                 game3.setSize(0, 0);
+                                blogWindow.mainContentPane.setSize(0, 0);
+
                                 home.repaint();
                                 MAXTRANS -= 7;
                             }
@@ -1252,6 +1256,7 @@ public class Menu {
                                 game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                blogWindow.mainContentPane.setSize(880, 620);
                                 home.repaint();
                                 MAXTRANS += 12;
                             }
@@ -1314,6 +1319,7 @@ public class Menu {
                                 game1.setSize(0, 0);
                                 game2.setSize(0, 0);
                                 game3.setSize(0, 0);
+                                blogWindow.mainContentPane.setSize(0, 0);
                                 home.repaint();
                                 MAXTRANS -= 7;
                             }
@@ -1365,6 +1371,7 @@ public class Menu {
                                 game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                blogWindow.mainContentPane.setSize(880, 620);
                                 home.repaint();
                                 MAXTRANS += 12;
                             }
@@ -1427,6 +1434,7 @@ public class Menu {
                                 game1.setSize(0, 0);
                                 game2.setSize(0, 0);
                                 game3.setSize(0, 0);
+                                blogWindow.mainContentPane.setSize(0, 0);
                                 home.repaint();
                                 MAXTRANS -= 7;
                             }
@@ -1477,6 +1485,7 @@ public class Menu {
                                 game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                blogWindow.mainContentPane.setSize(880, 620);
                                 home.repaint();
                                 MAXTRANS += 12;
                             }
@@ -1540,6 +1549,8 @@ public class Menu {
                                 game1.setSize(0, 0);
                                 game2.setSize(0, 0);
                                 game3.setSize(0, 0);
+                                blogWindow.mainContentPane.setSize(0, 0);
+
                                 home.repaint();
                                 MAXTRANS -= 7;
                             }
@@ -1591,6 +1602,7 @@ public class Menu {
                                 game1.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game2.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
                                 game3.setSize(game1Icon.getIconWidth(), game1Icon.getIconHeight());
+                                blogWindow.mainContentPane.setSize(880, 620);
                                 home.repaint();
                                 MAXTRANS += 12;
                             }
