@@ -16,6 +16,8 @@ import java.io.*;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static com.Karchat.util.Constant.passwordAll;
+import static com.Karchat.util.Constant.usernameAll;
 import static com.Karchat.view.LoginHome.*;
 
 @Slf4j
@@ -75,11 +77,11 @@ public class LoginServiceImpl implements LoginService {
             music.playSuccessMP3();
               //判断是否保存密码，保存了则储存密码
                 if (Constant.remember) {  //保存密码
-                    log.info("保存了账号: "+Constant.usernameAll);
-                    log.info("保存了密码: "+Constant.passwordAll);
+                    log.info("保存了账号: "+ usernameAll);
+                    log.info("保存了密码: "+ passwordAll);
                     PrintStream userMessage = new PrintStream(new FileOutputStream("userMessage"));
-                    userMessage.println(Constant.usernameAll);
-                    userMessage.println(Constant.passwordAll);
+                    userMessage.println(usernameAll);
+                    userMessage.println(passwordAll);
                 }
             Constant.loginSuccess = true; //登录成功
             LoginHome.background.dispose();  //登录成功关闭页面
@@ -97,6 +99,8 @@ public class LoginServiceImpl implements LoginService {
             wrongMessage.setForeground(new Color(215, 27, 71, 205));
             LoginHome.loginLabel.shake();  //错误后让按钮抖动
             LoginHome.wrongMessage.setTextDynamic("账号不存在或密码错误");
+            System.out.println(usernameAll);
+            System.out.println(passwordAll);
             LoginHome.wrongMessage.shake();
             log.info("账号不存在或密码错误");
             music.playErrorMP3();
@@ -127,7 +131,7 @@ public class LoginServiceImpl implements LoginService {
             if (Objects.equals(messageFromRegister, "true")) {
                 Thread.sleep(1000);
                 log.info("注册成功！");
-                LoginHome.registerFinish(Constant.usernameAll, Constant.passwordAll);  //做出注册完反馈
+                LoginHome.registerFinish(usernameAll, passwordAll);  //做出注册完反馈
                music.playSuccessMP3();
             }
             login.CreateFriendsTable(out,buf);  //注册存放好友的表

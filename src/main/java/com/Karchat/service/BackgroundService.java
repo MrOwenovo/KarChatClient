@@ -17,4 +17,9 @@ public interface BackgroundService {
      * 后台获取每个用户的聊天记录，并更新用户的聊天记录
      */
     public void RefreshChatHistory();
+
+    /**
+     * 后台刷新好友列表
+     */
+    public void RefreshFriendsList();
 }

@@ -43,7 +43,7 @@ public class ChatServiceImpl implements ChatService {
                 label:
                 {
                     while (true) {
-                        if (!isSending && !isCheckingHistory && !isFlashing && !isGetFriendAmount&&!isAddingFriends) {
+                        if (!isSending && !isCheckingHistory && !isFlashing && !isGetFriendAmount&&!isAddingFriends&&!isRefreshFriendsList&&!isDisAgreeFriends&&!isAgreeFriends) {
                             log.info("正在添加好友....");
                             isAddingFriends = true;
                             String bool = addFriend.addFriendWithDataSource(out, buf);
@@ -77,39 +77,86 @@ public class ChatServiceImpl implements ChatService {
         return true;
     }
 
+    @SneakyThrows
     @Override
     public synchronized boolean AcceptFriendInvitation(PrintStream out, BufferedReader buf) {
-        log.info("加好友成功，正在修改好友状态....");
-        new Thread() {
+        log.info("--修改好友状态进入任务队列--");
+
+        new Thread(){
+            @SneakyThrows
             @Override
             public void run() {
-                String BooleanFlag = addFriend.AcceptFriendInvitationWithDataSource(out, buf);
-                if ("true".equals(BooleanFlag)) {
-                    MenuContent.searchText.setText("已同意好友邀请");
-                    log.info("修改好友状态成功!");
-                    MenuContent.searchText.setForeground(new Color(62, 171, 159));
-                    music.playSuccessMP3();
+                label:
+                {
+                    while (true) {
+                        Thread.sleep(1000);
+                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList && !isAgreeFriends && !isDisAgreeFriends) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                            log.info("加好友成功，正在修改好友状态....");
+                            isAgreeFriends = true;  //正在修改好友状态
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    String BooleanFlag = addFriend.AcceptFriendInvitationWithDataSource(out, buf);
+                                    if ("true".equals(BooleanFlag)) {
+                                        MenuContent.searchText.setText("已同意好友邀请");
+                                        log.info("修改好友状态成功!");
+                                        isAgreeFriends = false;  //修改好友状态结束
+                                        MenuContent.searchText.setForeground(new Color(62, 171, 159));
+                                        music.playSuccessMP3();
+                                    }
+                                }
+                            }.start();
+                            while (isAgreeFriends) {
+
+                            }
+                            break label;
+                        }
+
+                    }
                 }
             }
         }.start();
+
         return true;
     }
 
+    @SneakyThrows
     @Override
     public boolean RefuseFriendInvitation(PrintStream out, BufferedReader buf) {
+        log.info("--拒绝好友邀请，删除邀请信息进入任务队列--");
+
         new Thread() {
+            @SneakyThrows
             @Override
             public void run() {
-                log.info("已拒绝好友邀请，正在删除邀请信息....");
-                addFriend.RefuseFriendInvitationWithDataSource(out,buf);
-                MenuContent.searchText.setText("已拒绝好友邀请");
-                MenuContent.searchText.setForeground(new Color(102, 48, 180));
-                music.playSuccessMP3();
+                label2:
+                {
+                    while (true) {
+                        Thread.sleep(1000);
+                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList && !isAgreeFriends && !isDisAgreeFriends) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    log.info("已拒绝好友邀请，正在删除邀请信息....");
+                                    isDisAgreeFriends = true;  //正在拒绝
+                                    addFriend.RefuseFriendInvitationWithDataSource(out, buf);
+                                    MenuContent.searchText.setText("已拒绝好友邀请");
+                                    MenuContent.searchText.setForeground(new Color(102, 48, 180));
+                                    music.playSuccessMP3();
+                                }
+                            }.start();
+                            while (isDisAgreeFriends) {
+
+                            }
+                            break label2;
+                        }
+                    }
+                }
             }
         }.start();
+
         return true;
     }
-
     @Override
     public synchronized void Send(String message, String geter, Socket clien) {
         new Thread() {
@@ -123,7 +170,7 @@ public class ChatServiceImpl implements ChatService {
                 label:
                 {
                     while (true) {
-                        if (!isFlashing && !isCheckingHistory && !isAddingFriends&&!isSending) {  //找到其他刷新任务不在的间隙进行
+                        if (!isFlashing && !isCheckingHistory && !isAddingFriends&&!isSending&& !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends) {  //找到其他刷新任务不在的间隙进行
                             log.info("正在发送给-" + geter + "-: " + message);
                             isSending = true;  //正在发送
                             String flag = chat.SendToDataSource(out,buf,message,geter);

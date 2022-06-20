@@ -116,7 +116,6 @@ public class LoginHome implements ActionListener, Minimize {
     @SneakyThrows
     @PostConstruct
     public void init() {
-        iconString = ToPicture.imageToString(ImageIO.read(Resources.getResourceAsStream("login/sign.png")), "png");
         log.info("登录界面启动中.....");
     }
 
@@ -124,6 +123,8 @@ public class LoginHome implements ActionListener, Minimize {
     @SneakyThrows
     public LoginHome() {
         System.setProperty("sun.java2d.noddraw", "true");  //防止输入法输入时白屏，禁用DirectDraw
+        iconString = ToPicture.imageToString(ImageIO.read(Resources.getResourceAsStream("login/sign.png")), "png");
+
         //创建圆角容器
         background = new Frameless(1380, 743, false);
         AWTUtilities.setWindowOpacity(background, 0);  //全透明

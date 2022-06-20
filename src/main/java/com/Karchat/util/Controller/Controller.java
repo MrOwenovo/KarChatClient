@@ -262,6 +262,15 @@ public class Controller {
                             }
                             canGoOn[0] = false;
                         }
+                        if (getFriendIconNew) {  //更新好友列表标签
+                            getFriendIconNew = false;
+                            boolean flag = initHomePageService.GetFriendsIconNew(out, buf);
+                            while (!canGoOn[0]) {
+                                if (flag)
+                                    canGoOn[0] = true;
+                            }
+                            canGoOn[0] = false;
+                        }
                         if (getUserState) {  //获取好友的状态
                             getUserState = false;
                             boolean flag = initHomePageService.GetFriendsState(out, buf);

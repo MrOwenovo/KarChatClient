@@ -3,6 +3,7 @@ package com.Karchat.service.impl;
 import com.Karchat.service.MusicService;
 import com.Karchat.util.SoundUtil.PlaySound;
 import lombok.SneakyThrows;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 

@@ -1,10 +1,10 @@
 package com.Karchat.service.impl;
 
-import com.Karchat.util.Controller.Controller;
 import com.Karchat.service.BackgroundService;
 import com.Karchat.service.ViewServer;
 import com.Karchat.util.ComponentUtil.CompositeComponent.Menu;
 import com.Karchat.util.Constant;
+import com.Karchat.util.Controller.Controller;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class BackgroundServiceImpl implements BackgroundService {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (!Menu.isClick1_1[0] && !isCheckingHistory && !isSending && !isAddingFriends&&!isFlashing&&whetherBackgroundCanEnabled&&initFinishAndCanFlashChatHistory) {  //需要不在加好友界面，并且不在进行查找历史记录
+                        if (!Menu.isClick1_1[0] && !isCheckingHistory && !isSending && !isAddingFriends && !isFlashing && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends) {  //需要不在加好友界面，并且不在进行查找历史记录
                             log.info("--正在刷新好友邀请列表--");
                             isFlashing = true;
                             isGetFinished = true;
@@ -76,7 +76,7 @@ public class BackgroundServiceImpl implements BackgroundService {
                             labelWhile:
                             {
                                 while (true) {
-                                    if (!isGetIconsFinished&&!isGetFinished && !isPostFinished&&!isPostIconsFinished) {
+                                    if (!isGetIconsFinished && !isGetFinished && !isPostFinished && !isPostIconsFinished) {
                                         log.info("--好友列表刷新成功--");
                                         isFlashing = false;  //执行完刷新
                                         break labelWhile;
@@ -106,18 +106,27 @@ public class BackgroundServiceImpl implements BackgroundService {
                     @SneakyThrows
                     @Override
                     public void run() {
-                        if (!isFlashing && !isSending && !isAddingFriends&&!isCheckingHistory&&whetherBackgroundCanEnabled&&initFinishAndCanFlashChatHistory) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends) {  //需要在不刷新加好友页面时执行,并不能进行发送
                             isCheckingHistory = true;  //正在查询记录
                             isGetFriendAmount = true;
                             log.info("--正在检查聊天记录--");
 
-                            Constant.checkFriendsNameOnly = true;  //获取请求
+                            checkFriendsNameOnly = true;  //获取请求
 
                             label:
                             {
                                 while (true) {
                                     Thread.sleep(1000);
-                                    if (!isGetFriendAmount&&whetherFriendsToTableIndex) {
+                                    if (!isGetFriendAmount && whetherFriendsToTableIndex) {
+                                        if (friendsAmount < iconLengthChat) {  //如果好友数量变多了，要先刷新好友聊天列表
+                                            isRefreshFriendsList = true;
+                                            RefreshFriendsList();  //更新好友聊天列表
+                                            friendsAmount = iconLengthChat;
+                                        }
+                                        while (isRefreshFriendsList) {
+                                            //正在更新好友列表，请等待....
+                                            ;
+                                        }
                                         for (int i = 0; i < iconLengthChat; i++) {
                                             try {
                                                 context.getBean(Controller.class).getChatHistoryAmount(iconNameChat[i]);  //统计聊天记录内容
@@ -127,16 +136,23 @@ public class BackgroundServiceImpl implements BackgroundService {
                                             }
                                         }
                                         while (true) {
+                                            if (iconNameChat.length == 0) {
+                                                isCheckingHistory = false;  //查询完成
+                                                log.info("--查询聊天记录完成--");
+                                                getFriendStatesSuccess = false;  //刷新好友状态是否获得
+                                                break label;
+                                            }
                                             if (isSomeBodyFinished.get(iconNameChat[iconLengthChat - 1])) {
                                                 isCheckingHistory = false;  //查询完成
                                                 log.info("--查询聊天记录完成--");
+                                                getFriendStatesSuccess = false;  //刷新好友状态是否获得
                                                 break label;
                                             }
                                         }
-
                                     }
 
                                 }
+
                             }
                         }
                     }
@@ -146,4 +162,26 @@ public class BackgroundServiceImpl implements BackgroundService {
         }.start();
     }
 
+    @Override
+    public void RefreshFriendsList() {
+        //执行一次刷新好友聊天列表标签
+        log.info("--正在刷新好友聊天列表--");
+
+        getFriendIconNew = true;
+        isCreateNewInnerLabel = true;
+
+
+        labelWhile:
+        {
+            while (true) {
+                if (!isCreateNewInnerLabel && getFriendStatesSuccess) {
+                    getFriendStatesSuccess = false;  //刷新好友头像获取
+                    log.info("--好友列表刷新成功--");
+
+                    isRefreshFriendsList = false;  //执行完刷新
+                    break labelWhile;
+                }
+            }
+        }
+    }
 }

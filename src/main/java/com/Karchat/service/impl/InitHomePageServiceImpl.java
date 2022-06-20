@@ -123,7 +123,22 @@ public class InitHomePageServiceImpl implements InitHomePageService {
             public void run() {
                 log.info("获取好友的头像....");
                 BufferedImage[] icons = initHomePage.GetFriendsIconFromDataSource(out, buf);
-                MenuContent.setContextChat(icons);
+                MenuContent.setContextChat(icons,"all");  //头像全部更新
+            }
+        }.start();
+        Thread.sleep(1000);
+        return true;
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean GetFriendsIconNew(PrintStream out, BufferedReader buf) {
+        new Thread() {
+            @Override
+            public void run() {
+                log.info("获取好友的头像....");
+                BufferedImage[] icons = initHomePage.GetFriendsIconFromDataSource(out, buf);
+                MenuContent.setContextChat(icons,"new");  //只更新新加入的头像
             }
         }.start();
         Thread.sleep(1000);
@@ -158,7 +173,7 @@ public class InitHomePageServiceImpl implements InitHomePageService {
 
         int index = userContent.get(friend);//获取表下标
 
-        InnerLabel friendContext = Home.chatContent[index];  //获取聊天界面
+        InnerLabel friendContext = Home.chatContent.get(index);  //获取聊天界面
 
         histories = initHomePage.GetChatHistoryAndHistoryAmountFromDataSource(out, buf, friend,index);
         String message;
@@ -181,7 +196,7 @@ public class InitHomePageServiceImpl implements InitHomePageService {
             }
 
             //将状态红点标红：
-            messageIcon[userContent.get(friend)].setColor(new Color(227, 34, 34));
+            messageIcon.get(userContent.get(friend)).setColor(new Color(227, 34, 34));
 
         }
 

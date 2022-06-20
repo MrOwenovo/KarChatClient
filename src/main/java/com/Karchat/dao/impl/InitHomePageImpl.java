@@ -208,7 +208,7 @@ public class InitHomePageImpl implements InitHomePage {
                     break;
             }
             if (i == length - 1 && length != 0) {  //如果是最后一句，显示在主界面的最新消息
-                latestMessages[index].setTextDynamic(message);
+                latestMessages.get(index).setTextDynamic(message);
             }
         }
 
@@ -231,7 +231,7 @@ public class InitHomePageImpl implements InitHomePage {
         //获取是在跟谁聊天
         int index = userContent.get(friend);//获取表下标
 
-        InnerLabel friendContext = Home.chatContent[index];  //获取聊天界面
+        InnerLabel friendContext = Home.chatContent.get(index);  //获取聊天界面
         int length = 0;
         try {
             length = Integer.parseInt(buf.readLine());  //消息长度
@@ -259,7 +259,7 @@ public class InitHomePageImpl implements InitHomePage {
 
 
             if (i == length - 1 && length != 0) {  //如果是最后一句，显示在主界面的最新消息
-                latestMessages[index].setTextDynamic(message);
+                latestMessages.get(index).setTextDynamic(message);
             }
         }
 

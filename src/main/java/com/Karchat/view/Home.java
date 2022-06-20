@@ -32,7 +32,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,13 +41,19 @@ import static com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent.icon
 import static com.Karchat.util.ComponentUtil.CompositeComponent.MenuContent.iconNameChat;
 import static com.Karchat.util.Constant.*;
 
+/**
+ * 客户端主界面，左边是菜单，有加好友，同意好友邀请，拒绝好友邀请；
+ * 查看好友状态，与好友聊天；
+ * 更换主题颜色等等
+ * 右边是博客，可以发布博客，删除博客和移动博客位置
+ */
 @Slf4j
 @Component
 @Scope("prototype")
 public class Home extends Observable implements ActionListener, Minimize {
 
     public static final DynamicJLabel serverClosedMessage = new DynamicJLabel("服务器断开连接", new Font("Serif", Font.BOLD, 10), 107);
-    public static Point POINT ;
+    public static Point POINT;
     public static ServerLoading ServerCloseLoad;
     public static JLabel menu;
     public static ImageIcon menuIcon;
@@ -101,7 +107,7 @@ public class Home extends Observable implements ActionListener, Minimize {
     private boolean iconified;
     private int xOld;
     private int yOld;
-    public static InnerLabel[] chatContent;
+    public static ArrayList<InnerLabel> chatContent;
 
     @PostConstruct
     public void init() {  //构造后置方法
@@ -201,9 +207,6 @@ public class Home extends Observable implements ActionListener, Minimize {
         });
 
 
-
-
-
         //创建右上角圆按钮，并添加监听器
         RoundButton Rbut1 = new RoundButton("", new Color(58, 124, 243, 190), new Color(92, 143, 236, 221), new Color(132, 171, 243, 181)) {
             @Override
@@ -271,12 +274,15 @@ public class Home extends Observable implements ActionListener, Minimize {
                 public void run() {
                     label:
                     while (true) {  //如果还没有加载出好友列表就先等待
-                        if (MenuContent.iconLengthChat > 0 && getFriendIconsSuccess&&getFriendStatesSuccess) {
-                            chatContent = new InnerLabel[MenuContent.iconLengthChat];
+                        if (isHomeInitInnerLabelCanJump)
+                            break;
+                        if (MenuContent.iconLengthChat > 0 && getFriendIconsSuccess && getFriendStatesSuccess) {
+                            getFriendStatesSuccess = false;  //刷新好友头像获取
+                            chatContent = new ArrayList<>();
                             for (int i = 0; i < MenuContent.iconLengthChat; i++) {
-                                chatContent[i] = new InnerLabel();
-                                chatContent[i].setSize(0, 0);
-                                back.add(chatContent[i]);
+                                chatContent.add(new InnerLabel());
+                                chatContent.get(i).setSize(0, 0);
+                                back.add(chatContent.get(i));
 
 
                                 //初始化用户聊天界面的存储信息
@@ -284,18 +290,19 @@ public class Home extends Observable implements ActionListener, Minimize {
                                 BufferedImage chatIcon = ToBufferedImage.toBufferedImage(Home.transparencyIcon.getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
                                 //去除黑色背景
                                 BufferedImage newChatIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(chatIcon));
-                                chatContent[i].mine = newChatIcon;  //我的头像
+                                chatContent.get(i).mine = newChatIcon;  //我的头像
 
                                 //修改一下图像大小
                                 BufferedImage friendIcon = ToBufferedImage.toBufferedImage(MenuContent.Chaticons[i].getScaledInstance(45, 45, 0));  //将图片改为合适的大小，并转化为BufferedImage
                                 //去除黑色背景
                                 BufferedImage newFriendIcon = RemoveBackground.ByteToBufferedImage(RemoveBackground.transferAlpha(friendIcon));
 
-                                chatContent[i].friend = newFriendIcon;  //好友头像
-                                chatContent[i].friendName = iconNameChat[i];  //储存好友姓名
+                                chatContent.get(i).friend = newFriendIcon;  //好友头像
+                                chatContent.get(i).friendName = iconNameChat[i];  //储存好友姓名
 
                                 MenuContent.initMessage(iconNameChat[i]);  //初始化聊天内容
                             }
+                            isInitializedChatWindowSuccessfully = true;  //初始化聊天窗口成功
                             while (true) {
                                 if (isSomeBodyFinishedFirstTime.get(iconNameChat[iconLengthChat - 1])) {
                                     initFinishAndCanFlashChatHistory = true;  //查询完成
@@ -477,7 +484,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 @SneakyThrows
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "https://f01-1309918226.file.myqcloud.com/13/2022/04/22/KarGoBang2/loading2.html?x-cos-traffic-limit=819200");
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "https://f01-1309918226.file.myqcloud.com/92/2022/06/14/KarGoBangXiDeng/loading2.html?x-cos-traffic-limit=819200");
                     Home.back.setExtendedState(JFrame.ICONIFIED);
                 }
             });
@@ -811,12 +818,18 @@ public class Home extends Observable implements ActionListener, Minimize {
                 }
 
                 loadingHome.setSize(0, 0);
+
+                while (!isInitializedChatWindowSuccessfully) {
+                    //等待聊天记录页面初始完成
+                }
                 back.add(menu);  //加入菜单
                 back.add(menuTop);  //加入背景
                 menuBack.add(menuTop);
                 game1Back.add(game1Top);
                 game2Back.add(game2Top);
                 game3Back.add(game3Top);
+
+
                 back.add(menuBack);  //加入背景
                 back.add(menuHomeBack);  //点击菜单展开的内容背景
                 menuHomeBack.add(menuHomeUser);   //点击菜单展开的内容
@@ -826,6 +839,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 menuHomeBack.add(menuHomeUser4);   //点击菜单展开的内容
                 menuHomeBack.add(menuHomeUser5);   //点击菜单展开的内容
                 menuHomeBack.add(menuHomeUser6);   //点击菜单展开的内容
+
 
                 back.add(game1);  //加入背景
                 back.add(game1Back);  //加入背景
@@ -864,7 +878,7 @@ public class Home extends Observable implements ActionListener, Minimize {
         final int[] MOVEAMOUNTX = {0};  //移动X的数量
         final int[] MOVEAMOUNTY = {0};  //移动Y的数量
 
-        Timer timer3=context.getBean(Timer.class);
+        Timer timer3 = context.getBean(Timer.class);
         timer3.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -872,7 +886,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 MOVEAMOUNTY[0] = back.getY() - INITOP;
                 POINT = MouseInfo.getPointerInfo().getLocation();
             }
-        },1000,100);
+        }, 1000, 100);
 
         //开启后台线程，用于检测菜单展开情况
         Timer timer2 = new Timer();
@@ -883,7 +897,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                     @SneakyThrows
                     @Override
                     public void run() {
-                        if (menuTop.getX() > -118 && (POINT.getX() >= 309+MOVEAMOUNTX[0] && POINT.getX() <= 357+MOVEAMOUNTX[0]) && (POINT.getY() >= 171+MOVEAMOUNTY[0] && POINT.getY() <= 912+MOVEAMOUNTY[0])) {  //在左半部分退出
+                        if (menuTop.getX() > -118 && (POINT.getX() >= 309 + MOVEAMOUNTX[0] && POINT.getX() <= 357 + MOVEAMOUNTX[0]) && (POINT.getY() >= 171 + MOVEAMOUNTY[0] && POINT.getY() <= 912 + MOVEAMOUNTY[0])) {  //在左半部分退出
                             Thread.sleep(500);
                             if (menuTop.getX() > -117) {
                                 viewServer.MenuShrink();  //开始收缩
@@ -892,7 +906,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                                 Menu.isOut = false;
                             }
 
-                        } else if (menuTop.getX() > -117 && (POINT.getX() >= 578+MOVEAMOUNTX[0]) && (POINT.getY() >= 171+MOVEAMOUNTY[0] && POINT.getY() <= 912+MOVEAMOUNTY[0])) { //最右半部分退出
+                        } else if (menuTop.getX() > -117 && (POINT.getX() >= 578 + MOVEAMOUNTX[0]) && (POINT.getY() >= 171 + MOVEAMOUNTY[0] && POINT.getY() <= 912 + MOVEAMOUNTY[0])) { //最右半部分退出
                             Thread.sleep(500);
                             if (menuTop.getX() > -118) {
                                 viewServer.MenuShrink();  //开始收缩

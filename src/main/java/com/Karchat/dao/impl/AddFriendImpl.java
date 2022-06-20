@@ -43,9 +43,17 @@ public class AddFriendImpl implements AddFriend {
         return BooleanFlag;
     }
 
+    @SneakyThrows
     @Override
     public synchronized void RefuseFriendInvitationWithDataSource(PrintStream out, BufferedReader buf) {
         out.println("deleteAddFriend");
         out.println(deleteAddFriendName);
+        String flag = buf.readLine();
+        System.out.println("运行到这");
+        if (flag.equals("true")) {
+            isDisAgreeFriends = false;  //结束过程
+            System.out.println("成功");
+        }
+
     }
 }

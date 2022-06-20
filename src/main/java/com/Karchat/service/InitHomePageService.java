@@ -62,6 +62,12 @@ public interface InitHomePageService {
     boolean GetFriendsIcon(PrintStream out, BufferedReader buf);
 
     /**
+     * 更新用户头像
+     * @return
+     */
+    boolean GetFriendsIconNew(PrintStream out, BufferedReader buf);
+
+    /**
      * 获取好友在线状态
      * @return
      */

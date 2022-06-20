@@ -26,7 +26,7 @@ public class LoginImpl implements Login {
             out.println(message[0]);  //向服务器发送账号
             out.println(message[1]);  //向服务器发送密码
             Constant.usernameAll = message[0];
-            Constant.passwordAll = message[0];
+            Constant.passwordAll = message[1];
         });
         return buf.readLine();
     }

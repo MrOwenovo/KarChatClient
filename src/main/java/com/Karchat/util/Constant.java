@@ -6,6 +6,7 @@ import com.Karchat.util.BeansUtil.KarConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,7 +16,7 @@ import java.util.HashMap;
 public class Constant {
     //客户端判断
     public static boolean isStart = false;  //是否已经启动了程序
-    public static boolean isOpenMainClient = true;  //是否可以直接打开主客户端（重新连接后会经过主客户端）
+    public static boolean isInitializedChatWindowSuccessfully = false;  ////初始化聊天窗口成功
 
 
     //Spring上下文
@@ -24,6 +25,7 @@ public class Constant {
     //我的账号密码
     public static String usernameAll = "";  //我的账号
     public static String passwordAll = "";  //我的密码
+    public static int friendsAmount = 0;  //我的好友数量
 
     //Controller的相关判断
     public static boolean login = false;  //登录
@@ -41,6 +43,7 @@ public class Constant {
     public static boolean checkFriends = false;  //查看用户的所有好友
     public static boolean checkFriendsNameOnly = false;  //查看用户的所有好友姓名
     public static boolean getFriendIcon = false;  //获得好友的头像
+    public static boolean getFriendIconNew = false;  //刷新好友列表，获取新的好友
     public static boolean getUserState = false;  //获得好友在线状态
 
 
@@ -78,6 +81,13 @@ public class Constant {
     public static boolean initFinishAndCanFlashChatHistory = false;  //聊天记录初始化成功，可以进行聊天记录的刷新
     public static boolean getFriendIconsSuccess = false;  //是否获取好友头像成功
     public static boolean getFriendStatesSuccess = false;  //是否获取好友状态成功
+    public static boolean isRefreshFriendsList = false;  //是否正在刷新好友聊天列表
+    public static boolean isCreateNewInnerLabel = false;  //创建新的好友聊天界面是否正在进行
+    public static boolean isAgreeFriends= false;  //是否正在同意好友邀请
+    public static boolean isDisAgreeFriends= false;  //是否正在同意好友邀请
+    public static boolean isHomeInitInnerLabelCanJump= false;  //没有好友现在，Home里等待好友初始化完成再初始化聊天界面的过程可以跳过了
+
+
     public static int[] mouseXY = new int[2];  //存储当前鼠标的xy
 
 

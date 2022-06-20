@@ -140,24 +140,25 @@ public class InnerLabel extends RadioJLabel {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {  //搜索
                     //发送事件
                     String message=chatText.getText();
-                    send(Type.RIGHT, message, mine);  //发送信息
-                    Constant.context.getBean(Controller.class).send(message,friendName);  //发送信息给service
-                    //将最新消息显示在主界面
-                    int index = MenuContent.userContent.get(friendName);
-                    latestMessages[index].setTextDynamic(message);
+                    if (message.length()>=1) {
+                        send(Type.RIGHT, message, mine);  //发送信息
+                        Constant.context.getBean(Controller.class).send(message, friendName);  //发送信息给service
+                        //将最新消息显示在主界面
+                        int index = MenuContent.userContent.get(friendName);
+                        latestMessages.get(index).setTextDynamic(message);
 
-                    //清空输入栏
-                    chatText.setText("");
+                        //清空输入栏
+                        chatText.setText("");
 
-                    //播放发送音效
-                    new Thread(){
-                        @SneakyThrows
-                        @Override
-                        public void run() {
-                            PlaySound.play("sound/sendmsg.mp3");
-                        }
-                    }.start();
-
+                        //播放发送音效
+                        new Thread() {
+                            @SneakyThrows
+                            @Override
+                            public void run() {
+                                PlaySound.play("sound/sendmsg.mp3");
+                            }
+                        }.start();
+                    }
                 }
             }
         });
@@ -167,25 +168,27 @@ public class InnerLabel extends RadioJLabel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 //发送事件
-                String message=chatText.getText();
-                send(Type.RIGHT, message, mine);  //发送信息
-                Constant.context.getBean(Controller.class).send(message,friendName);  //发送信息给service
-                //将最新消息显示在主界面
-                int index = MenuContent.userContent.get(friendName);
-                latestMessages[index].setTextDynamic(message);
+                String message = chatText.getText();
+                if (message.length() >= 1) {
+                    send(Type.RIGHT, message, mine);  //发送信息
+                    Constant.context.getBean(Controller.class).send(message, friendName);  //发送信息给service
+                    //将最新消息显示在主界面
+                    int index = MenuContent.userContent.get(friendName);
+                    latestMessages.get(index).setTextDynamic(message);
 
-                //清空输入栏
-                chatText.setText("");
+                    //清空输入栏
+                    chatText.setText("");
 
-                //播放发送音效
-                new Thread(){
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        PlaySound.play("sound/sendmsg.mp3");
-                    }
-                }.start();
+                    //播放发送音效
+                    new Thread() {
+                        @SneakyThrows
+                        @Override
+                        public void run() {
+                            PlaySound.play("sound/sendmsg.mp3");
+                        }
+                    }.start();
 
+                }
             }
         });
 
