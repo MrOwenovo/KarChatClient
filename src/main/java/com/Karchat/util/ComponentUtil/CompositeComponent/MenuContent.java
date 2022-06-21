@@ -132,6 +132,7 @@ public class MenuContent extends Observable {
 
     @Resource
     MusicService musicService;
+    private RadioJLabel blackBackRight;
 
     /**
      * 初始化用户信息
@@ -279,7 +280,6 @@ public class MenuContent extends Observable {
                     @SneakyThrows
                     @Override
                     public void run() {
-//                        background1.remove(refresh);
                         background1.add(flash);
                         refresh.setBounds(190, 205, 0, 0);
 
@@ -331,6 +331,13 @@ public class MenuContent extends Observable {
                         flash.repaint();
                         refresh.repaint();
 
+                        //全部刷新
+                        blackBackLeft.repaint();
+                        blackBackRight.repaint();
+                        contextGet.repaint();
+                        contextPost.repaint();
+                        background1.repaint();
+
                     }
                 }.start();
 
@@ -364,7 +371,7 @@ public class MenuContent extends Observable {
         blackBack = new RadioJLabel("");
         blackBackLeft = new RadioJLabel("");
         blackBack.setColor(new Color(229, 227, 227));
-        RadioJLabel blackBackRight = new RadioJLabel("");
+        blackBackRight = new RadioJLabel("");
         blackBackLeft.setColor(new Color(28, 27, 27));
         blackBackLeft.setArc(5, 5);
         blackBackRight.setArc(5, 5);

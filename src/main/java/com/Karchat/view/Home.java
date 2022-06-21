@@ -274,8 +274,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 public void run() {
                     label:
                     while (true) {  //如果还没有加载出好友列表就先等待
-                        if (isHomeInitInnerLabelCanJump)
-                            break;
+
                         if (MenuContent.iconLengthChat > 0 && getFriendIconsSuccess && getFriendStatesSuccess) {
                             getFriendStatesSuccess = false;  //刷新好友头像获取
                             chatContent = new ArrayList<>();
@@ -839,6 +838,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 menuHomeBack.add(menuHomeUser4);   //点击菜单展开的内容
                 menuHomeBack.add(menuHomeUser5);   //点击菜单展开的内容
                 menuHomeBack.add(menuHomeUser6);   //点击菜单展开的内容
+
 
 
                 back.add(game1);  //加入背景
