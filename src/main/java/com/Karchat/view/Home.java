@@ -90,7 +90,7 @@ public class Home extends Observable implements ActionListener, Minimize {
     private ImageIcon game1IconOn;
     private ImageIcon newMenuIcon;
     public static JLabel menuBack = new JLabel();
-    public static JLabel menuTop = new JLabel();
+    public static JLabel menuTop = new JLabel();  //菜单栏展开界面
     public static boolean[] menuFlag = {false}; //是否打开菜单栏0
     public static boolean[] menuFlag1 = {false}; //是否打开菜单栏1
     public static boolean[] menuFlag2 = {false}; //是否打开菜单栏2
@@ -818,9 +818,11 @@ public class Home extends Observable implements ActionListener, Minimize {
 
                 loadingHome.setSize(0, 0);
 
+
                 while (!isInitializedChatWindowSuccessfully) {
                     //等待聊天记录页面初始完成
                 }
+
                 back.add(menu);  //加入菜单
                 back.add(menuTop);  //加入背景
                 menuBack.add(menuTop);
@@ -864,7 +866,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 back.setVisible(true);  //窗口可视化
                 float MAXTRANS2 = 0;  //透明度
                 while (MAXTRANS2 <= 1.0) {
-                    Thread.sleep(4);
+                    Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(back, MAXTRANS2);  //半透明
                     MAXTRANS2 += 0.02;
                 }

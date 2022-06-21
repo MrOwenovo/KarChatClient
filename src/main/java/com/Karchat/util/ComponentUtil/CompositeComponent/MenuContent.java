@@ -1335,7 +1335,7 @@ public class MenuContent extends Observable {
                 });
 
                 //显示最近的消息
-                latestMessages.add(new DynamicJLabel("aaa", new Font("Serif", Font.BOLD, 22), 39));
+                latestMessages.add(new DynamicJLabel("", new Font("Serif", Font.BOLD, 22), 39));
 
                 latestMessages.get(i).setForeground(new Color(98, 97, 97));
                 latestMessages.get(i).setCenter(230);

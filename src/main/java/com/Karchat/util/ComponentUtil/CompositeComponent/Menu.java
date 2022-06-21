@@ -212,9 +212,9 @@ public class Menu {
                                     if (menuFlag6[0] && MENUWIDTH > 12)
                                         menuHomeUser6.setBounds(MENUWIDTH, 10, menuIcon.getIconWidth() + 350, menuIcon.getIconHeight());
 
-                                    WIDTH -= 3;
+                                    WIDTH -= 7;
                                     if (menuFlag[0] || menuFlag1[0] || menuFlag2[0] || menuFlag3[0] || menuFlag4[0] || menuFlag5[0] || menuFlag6[0])
-                                        MENUWIDTH -= 3;
+                                        MENUWIDTH -= 7;
 
                                     if (keepFlag[0]) {
                                         WIDTHNOW[0] = WIDTH;
