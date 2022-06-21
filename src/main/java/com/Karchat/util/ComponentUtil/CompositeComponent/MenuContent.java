@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 
+import static com.Karchat.util.ComponentUtil.CompositeComponent.Menu.newMenuIcon;
 import static com.Karchat.util.Constant.*;
 import static com.Karchat.view.Home.*;
 
@@ -1309,19 +1310,6 @@ public class MenuContent extends Observable {
 
                 heightChat += 90;
 
-
-                {
-                    //这里进行所有界面的重新绘制，来让聊天界面在最上面
-                }
-
-                while (true) {
-                    if (isSomeBodyFinishedFirstTime.get(iconNameChat[iconLengthChat - 1])) {
-                        log.info("--创建新好友聊天界面成功!--");
-                        isCreateNewInnerLabel = false;  //进程不在进行
-                        break;
-                    }
-                }
-
                 //聊天标签添加点击事件
                 int finalI = i;
                 labelsChar.get(i).addMouseListener(new MouseAdapter() {
@@ -1355,9 +1343,35 @@ public class MenuContent extends Observable {
 
             }
 
+            {
+                //这里进行所有界面的重新绘制，来让聊天界面在最上面
+                back.remove(menu);
+//                back.remove(menuTop);
+                back.remove(menuBack);
+                back.remove(menuHomeBack);
+                back.remove(homeBack);
+                back.remove(home);
+
+                back.add(menu);  //加入菜单
+//                back.add(menuTop);  //加入背景
+                back.add(menuBack);  //加入背景
+                back.add(menuHomeBack);  //点击菜单展开的内容背景
+                menuHomeBack.repaint();
+                back.add(homeBack); //加入背景
+                back.add(home);  //加入主页面
+            }
+
+            while (true) {
+                if (isSomeBodyFinishedFirstTime.get(iconNameChat[iconLengthChat - 1])) {
+                    log.info("--创建新好友聊天界面成功!--");
+                    isCreateNewInnerLabel = false;  //进程不在进行
+                    break;
+                }
+            }
             Constant.getUserState = true;
 
             Constant.whetherFriendsToTableIndex = true;
+
 
 
         }
