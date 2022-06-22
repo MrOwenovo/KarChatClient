@@ -273,9 +273,10 @@ public class Controller {
                         }
                         if (getUserState) {  //获取好友的状态
                             getUserState = false;
-                            boolean flag = initHomePageService.GetFriendsState(out, buf);
+                            getUserStateIsFinish = false;
+                            initHomePageService.GetFriendsState(out, buf);
                             while (!canGoOn[0]) {
-                                if (flag)
+                                if (getUserStateIsFinish)
                                     canGoOn[0] = true;
                             }
                             canGoOn[0] = false;

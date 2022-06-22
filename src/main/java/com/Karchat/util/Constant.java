@@ -45,6 +45,8 @@ public class Constant {
     public static boolean getFriendIcon = false;  //获得好友的头像
     public static boolean getFriendIconNew = false;  //刷新好友列表，获取新的好友
     public static boolean getUserState = false;  //获得好友在线状态
+    public static boolean getUserStateIsFinish = false;  //获得好友在线状态是否完成
+    public static boolean putInUserContentIsFinished = false;  //获取新好友头像后，要把用户姓名放入userContent中，标志位代表已经放入成功，在之后查找历史记录获取时需要等待此完成
 
 
 
@@ -86,6 +88,7 @@ public class Constant {
     public static boolean isAgreeFriends= false;  //是否正在同意好友邀请
     public static boolean isDisAgreeFriends= false;  //是否正在同意好友邀请
     public static boolean isHomeInitInnerLabelCanJump= false;  //没有好友现在，Home里等待好友初始化完成再初始化聊天界面的过程可以跳过了
+    public static boolean isRefreshingStates= false;  //是否正在刷新好友在线状态
 
 
     public static int[] mouseXY = new int[2];  //存储当前鼠标的xy

@@ -22,4 +22,9 @@ public interface BackgroundService {
      * 后台刷新好友列表
      */
     public void RefreshFriendsList();
+
+    /**
+     * 后台线程刷新用户在线状态
+     */
+    public void RefreshFriendsState();
 }

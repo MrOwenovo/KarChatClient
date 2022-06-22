@@ -43,7 +43,7 @@ public class ChatServiceImpl implements ChatService {
                 label:
                 {
                     while (true) {
-                        if (!isSending && !isCheckingHistory && !isFlashing && !isGetFriendAmount&&!isAddingFriends&&!isRefreshFriendsList&&!isDisAgreeFriends&&!isAgreeFriends) {
+                        if (!isSending && !isCheckingHistory && !isFlashing && !isGetFriendAmount&&!isAddingFriends&&!isRefreshFriendsList&&!isDisAgreeFriends&&!isAgreeFriends&&!isRefreshingStates) {
                             log.info("正在添加好友....");
                             isAddingFriends = true;
                             String bool = addFriend.addFriendWithDataSource(out, buf);
@@ -90,7 +90,7 @@ public class ChatServiceImpl implements ChatService {
                 {
                     while (true) {
                         Thread.sleep(1000);
-                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList && !isAgreeFriends && !isDisAgreeFriends) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList && !isAgreeFriends && !isDisAgreeFriends&&!isRefreshingStates) {  //需要在不刷新加好友页面时执行,并不能进行发送
                             log.info("加好友成功，正在修改好友状态....");
                             isAgreeFriends = true;  //正在修改好友状态
                             new Thread() {
@@ -133,7 +133,7 @@ public class ChatServiceImpl implements ChatService {
                 {
                     while (true) {
                         Thread.sleep(1000);
-                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList && !isAgreeFriends && !isDisAgreeFriends) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList && !isAgreeFriends && !isDisAgreeFriends&&!isRefreshingStates) {  //需要在不刷新加好友页面时执行,并不能进行发送
                             new Thread() {
                                 @Override
                                 public void run() {
@@ -170,7 +170,7 @@ public class ChatServiceImpl implements ChatService {
                 label:
                 {
                     while (true) {
-                        if (!isFlashing && !isCheckingHistory && !isAddingFriends&&!isSending&& !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends) {  //找到其他刷新任务不在的间隙进行
+                        if (!isFlashing && !isCheckingHistory && !isAddingFriends&&!isSending&& !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends&&!isRefreshingStates) {  //找到其他刷新任务不在的间隙进行
                             log.info("正在发送给-" + geter + "-: " + message);
                             isSending = true;  //正在发送
                             String flag = chat.SendToDataSource(out,buf,message,geter);

@@ -154,9 +154,9 @@ public class InitHomePageServiceImpl implements InitHomePageService {
             public void run() {
                 int[] state = initHomePage.GetFriendsStateFromDataSource(out, buf);
                 MenuContent.setStateIcon(state);  //传入状态
+                getUserStateIsFinish = true;
             }
         }.start();
-        Thread.sleep(1000);
         return true;
     }
 
@@ -171,7 +171,11 @@ public class InitHomePageServiceImpl implements InitHomePageService {
         BufferedReader buf = new BufferedReader(new InputStreamReader(clien.getInputStream())); //接收服务器返回的信息
         //获取是在跟谁聊天
 
+//        while (!putInUserContentIsFinished) {
+//            //等待friend放入userContent中
+//        }
         int index = userContent.get(friend);//获取表下标
+        putInUserContentIsFinished = false;  //重置标志位
 
         InnerLabel friendContext = Home.chatContent.get(index);  //获取聊天界面
 
@@ -196,7 +200,11 @@ public class InitHomePageServiceImpl implements InitHomePageService {
             }
 
             //将状态红点标红：
+            //设置新发送信息的红点
             messageIcon.get(userContent.get(friend)).setColor(new Color(227, 34, 34));
+            messageIcon.get(userContent.get(friend)).setBounds(57, 19, 8, 8);
+            messageIcon.get(userContent.get(friend)).setArc(8, 8);
+            messageIcon.get(userContent.get(friend)).repaint();
 
         }
 

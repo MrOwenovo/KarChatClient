@@ -31,4 +31,14 @@ public class BackgroundServiceAop {
     public void afterRefreshChatHistory(Object returnVal) {
         log.info("-->检查聊天记录进入任务队列成功<--");
     }
+
+    @Before("execution(* com.Karchat.service.BackgroundService.RefreshFriendsState())")
+    public void beforeRefreshFriendsState(JoinPoint joinPoint) {
+        log.info("-->更新好友在线状态进入队列");
+    }
+
+    @AfterReturning(value = "execution(* com.Karchat.service.BackgroundService.RefreshFriendsState())",returning = "returnVal")
+    public void afterRefreshFriendsState(Object returnVal) {
+        log.info("-->正在更新好友在线状态进入队列成功<--");
+    }
 }

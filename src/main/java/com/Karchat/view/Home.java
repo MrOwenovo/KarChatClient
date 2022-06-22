@@ -899,22 +899,24 @@ public class Home extends Observable implements ActionListener, Minimize {
                     @SneakyThrows
                     @Override
                     public void run() {
-                        if (menuTop.getX() > -118 && (POINT.getX() >= 309 + MOVEAMOUNTX[0] && POINT.getX() <= 357 + MOVEAMOUNTX[0]) && (POINT.getY() >= 171 + MOVEAMOUNTY[0] && POINT.getY() <= 912 + MOVEAMOUNTY[0])) {  //在左半部分退出
-                            Thread.sleep(500);
-                            if (menuTop.getX() > -117) {
-                                viewServer.MenuShrink();  //开始收缩
-                                Thread.sleep(2000);
-                                Menu.isShrink = false;
-                                Menu.isOut = false;
-                            }
+                        if (whetherFriendsToTableIndex) {  //判断是否初始化完成，防止报空指针异常,这里标签是是否用户名对应聊天窗
+                            if (menuTop.getX() > -118 && (POINT.getX() >= 309 + MOVEAMOUNTX[0] && POINT.getX() <= 357 + MOVEAMOUNTX[0]) && (POINT.getY() >= 171 + MOVEAMOUNTY[0] && POINT.getY() <= 912 + MOVEAMOUNTY[0])) {  //在左半部分退出
+                                Thread.sleep(500);
+                                if (menuTop.getX() > -117) {
+                                    viewServer.MenuShrink();  //开始收缩
+                                    Thread.sleep(2000);
+                                    Menu.isShrink = false;
+                                    Menu.isOut = false;
+                                }
 
-                        } else if (menuTop.getX() > -117 && (POINT.getX() >= 578 + MOVEAMOUNTX[0]) && (POINT.getY() >= 171 + MOVEAMOUNTY[0] && POINT.getY() <= 912 + MOVEAMOUNTY[0])) { //最右半部分退出
-                            Thread.sleep(500);
-                            if (menuTop.getX() > -118) {
-                                viewServer.MenuShrink();  //开始收缩
-                                Thread.sleep(2000);
-                                Menu.isShrink = false;
-                                Menu.isOut = false;
+                            } else if (menuTop.getX() > -117 && (POINT.getX() >= 578 + MOVEAMOUNTX[0]) && (POINT.getY() >= 171 + MOVEAMOUNTY[0] && POINT.getY() <= 912 + MOVEAMOUNTY[0])) { //最右半部分退出
+                                Thread.sleep(500);
+                                if (menuTop.getX() > -118) {
+                                    viewServer.MenuShrink();  //开始收缩
+                                    Thread.sleep(2000);
+                                    Menu.isShrink = false;
+                                    Menu.isOut = false;
+                                }
                             }
                         }
                     }

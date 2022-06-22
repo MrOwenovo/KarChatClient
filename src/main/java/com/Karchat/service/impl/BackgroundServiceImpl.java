@@ -35,7 +35,7 @@ public class BackgroundServiceImpl implements BackgroundService {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (!Menu.isClick1_1[0] && !isCheckingHistory && !isSending && !isAddingFriends && !isFlashing && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends) {  //需要不在加好友界面，并且不在进行查找历史记录
+                        if (!Menu.isClick1_1[0] && !isCheckingHistory && !isSending && !isAddingFriends && !isFlashing && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends&&!isRefreshingStates) {  //需要不在加好友界面，并且不在进行查找历史记录
                             log.info("--正在刷新好友邀请列表--");
                             isFlashing = true;
                             isGetFinished = true;
@@ -106,7 +106,7 @@ public class BackgroundServiceImpl implements BackgroundService {
                     @SneakyThrows
                     @Override
                     public void run() {
-                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends) {  //需要在不刷新加好友页面时执行,并不能进行发送
+                        if (!isFlashing && !isSending && !isAddingFriends && !isCheckingHistory && whetherBackgroundCanEnabled && initFinishAndCanFlashChatHistory && !isRefreshFriendsList&&!isAgreeFriends&&!isDisAgreeFriends&&!isRefreshingStates) {  //需要在不刷新加好友页面时执行,并不能进行发送
                             isCheckingHistory = true;  //正在查询记录
                             isGetFriendAmount = true;
                             log.info("--正在检查聊天记录--");
@@ -143,6 +143,7 @@ public class BackgroundServiceImpl implements BackgroundService {
                                                 break label;
                                             }
                                             if (isSomeBodyFinished.get(iconNameChat[iconLengthChat - 1])) {
+                                                RefreshFriendsState();  //刷新好友在线状态
                                                 isCheckingHistory = false;  //查询完成
                                                 log.info("--查询聊天记录完成--");
                                                 getFriendStatesSuccess = false;  //刷新好友状态是否获得
@@ -183,5 +184,20 @@ public class BackgroundServiceImpl implements BackgroundService {
                 }
             }
         }
+    }
+
+    @Override
+    public void RefreshFriendsState() {
+        log.info("--正在更新好友在线状态--");
+        isRefreshingStates = true;  //正在刷新好友在线状态
+        getUserStateIsFinish = false;  //保证更新好友完成判断的标志为否，加一层保证
+        getUserState = true;  //在controller中更新好友在线状态
+        while (!getUserStateIsFinish) {
+            //等待更新好友在线状态完成中....
+        }
+        isRefreshingStates = false;  //刷新好友在线状态还曾共
+        log.info("--正在更新好友在线状态成功!--");
+
+
     }
 }

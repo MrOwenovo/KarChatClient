@@ -1148,6 +1148,7 @@ public class MenuContent extends Observable {
 
                 //存储用户名与界面的关系
                 userContent.put(iconNameChat[i], i);
+                putInUserContentIsFinished = true;  //已经成功放入姓名到userContent
 
 
 
@@ -1284,6 +1285,8 @@ public class MenuContent extends Observable {
 
                 //存储用户名与界面的关系
                 userContent.put(iconNameChat[i], i);
+                putInUserContentIsFinished = true;  //已经成功放入姓名到userContent
+
 
                 //增加新的聊天界面
                 chatContent.add(new InnerLabel());
@@ -1393,6 +1396,7 @@ public class MenuContent extends Observable {
                 stateIcon.get(i).setColor(new Color(110, 108, 108));
                 stateIcon.get(i).setBounds(54, 51, 15, 15);
                 stateIcon.get(i).setArc(15, 15);
+                stateIcon.get(i).repaint();
             } else {  //账号在线
                 stateIcon.get(i).setColor(new Color(47, 199, 47));
                 stateIconBack.get(i).setColor(new Color(238, 237, 237));
@@ -1400,12 +1404,16 @@ public class MenuContent extends Observable {
                 stateIconBack.get(i).setBounds(52, 49, 19, 19);
                 stateIcon.get(i).setArc(15, 15);
                 stateIconBack.get(i).setArc(19, 19);
+                stateIcon.get(i).repaint();
+                stateIconBack.get(i).repaint();
+
             }
-            //设置新发送信息的红点
-            messageIcon.get(i).setColor(new Color(227, 34, 34, 0));
-            messageIcon.get(i).setBounds(57, 19, 8, 8);
-//            messageIcon[i].setSize(0,0);
-            messageIcon.get(i).setArc(8, 8);
+//            //设置新发送信息的红点
+//            messageIcon.get(i).setColor(new Color(227, 34, 34, 0));
+//            messageIcon.get(i).setBounds(57, 19, 8, 8);
+////            messageIcon[i].setSize(0,0);
+//            messageIcon.get(i).setArc(8, 8);
+//            messageIcon.get(i).repaint();
 
         }
     }
