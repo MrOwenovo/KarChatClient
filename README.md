@@ -1,3 +1,9 @@
+# 项目简述
+### 三维五子棋客户端，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项。
+---
+
+<br>
+
 # 运行项目配置要求！(运行顺序在后面)：
 ### 1.解决SpringBoot启动swingUI界面报错:
 >![img.png](src/main/resources/readMe/tip1.png)
@@ -48,15 +54,17 @@
 
 ---
 # 程序运行顺序：
->### 1.运行src/main/java下的com.ZLchat.server.EchoThreadServer.java
->###来启动服务器，当弹出管理用户动态表格即为启动成功。
+> ### 1.运行src/main/java下的com.ZLchat.server.EchoThreadServer.java
+> ### 来启动服务器，当弹出管理用户动态表格即为启动成功。
 
-> ####(如果显示xx端口占用,这里以8080为例:
->####根据端口号查找进程： netstat -aon |findstr 8080
+> #### (如果显示xx端口占用,这里以8080为例:
+> #### 根据端口号查找进程： netstat -aon |findstr 8080
 > #### 杀死该进程: taskkill -f -pid 8080)
 
 >### 2.运行src/main/java下的com.ZLchat.ZLChatSpringBootApplication.java
->###来启动客户端程序，要注意配置好相关依赖和配置。
+>### 来启动客户端程序，要注意配置好相关依赖和配置。
+
+<br>
 
 # ZLChat项目结构
 ## 数据访问层:dao
