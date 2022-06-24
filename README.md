@@ -14,42 +14,54 @@
 
 <br> 
 
->![img.png](src/main/resources/readMe/tip3.png)
-
-<br> 
 
 >将这里的VM选项填入
 `-Djava.awt.headless=false`
 ### 2.解决发送邮件验证码报错(jdk默认关闭SSLv3导致发送失败，取消就好):
 
 >找到 jdk->jre/lib/security/java.security
-> ![img.png](src/main/resources/readMe/tip4.png)
 
 <br>
 
 >将第706行：jdk.tls.disabledAlgorithms=SSLv3, DSA, RSA，RC4, DES, MD5withRSA, \ <br>
-> ![img.png](src/main/resources/readMe/tip5.png)
 >改为：jdk.tls.disabledAlgorithms=RC4, DES, MD5withRSA, \
-> ![img.png](src/main/resources/readMe/tip6.png)
 
 ### 3.检查jdk环境和maven环境:
-> ![img.png](src/main/resources/readMe/tip7.png)
+> ![img.png](src/main/resources/readMe/tip3.png)
+>
+<br> 
+
+> ![img.png](src/main/resources/readMe/tip4.png)
 
 <br> 
 
+> ![img.png](src/main/resources/readMe/tip5.png)
+
+<br> 
+
+> ![img.png](src/main/resources/readMe/tip6.png)
+
+<br> 
+
+> ![img.png](src/main/resources/readMe/tip7.png)
+
+
+<br> 
+
+
+
+### 4.如果显示找不到xx包，但是已经通过maven导入:
 > ![img.png](src/main/resources/readMe/tip8.png)
+
 
 <br> 
 
 > ![img.png](src/main/resources/readMe/tip9.png)
 
+
 <br> 
 
 > ![img.png](src/main/resources/readMe/tip10.png)
-
-
-### 4.如果显示找不到xx包，但是已经通过maven导入:
-> ![img.png](src/main/resources/readMe/tip11.png)
 
 
 ---
