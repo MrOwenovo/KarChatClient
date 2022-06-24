@@ -1148,7 +1148,7 @@ public class LoginHome implements ActionListener, Minimize {
             public void run() {
                 float MAXTRANS = 0;  //透明度
                 while (MAXTRANS <= 1.0) {
-                    Thread.sleep(3);
+                    Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(background, MAXTRANS);  //半透明
                     MAXTRANS += 0.01;
                 }

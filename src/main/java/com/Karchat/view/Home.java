@@ -137,11 +137,12 @@ public class Home extends Observable implements ActionListener, Minimize {
             @SneakyThrows
             @Override
             public void windowIconified(WindowEvent e) {
-                AWTUtilities.setWindowOpacity(back, 0);  //半透明
+//                AWTUtilities.setWindowOpacity(back, 0);  //半透明
                 Home.super.setChanged();  //设置变化点
                 Home.super.notifyObservers(true);
                 //最小化状态
                 iconified = true;
+                minimize();
             }
 
             @SneakyThrows
@@ -209,8 +210,15 @@ public class Home extends Observable implements ActionListener, Minimize {
 
         //创建右上角圆按钮，并添加监听器
         RoundButton Rbut1 = new RoundButton("", new Color(58, 124, 243, 190), new Color(92, 143, 236, 221), new Color(132, 171, 243, 181)) {
+            @SneakyThrows
             @Override
             public void mouseClicked(MouseEvent e) {
+                float MAXTRANS = 1;  //透明度
+                while (MAXTRANS >= 0) {
+                    Thread.sleep(2);
+                    AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
+                    MAXTRANS -= 0.03;
+                }
                 back.setExtendedState(JFrame.ICONIFIED);
             }
 
@@ -819,9 +827,9 @@ public class Home extends Observable implements ActionListener, Minimize {
                 loadingHome.setSize(0, 0);
 
 
-                while (!isInitializedChatWindowSuccessfully) {
-                    //等待聊天记录页面初始完成
-                }
+//                while (!isInitializedChatWindowSuccessfully) {
+//                    //等待聊天记录页面初始完成
+//                }
 
                 back.add(menu);  //加入菜单
                 back.add(menuTop);  //加入背景
@@ -1072,22 +1080,26 @@ public class Home extends Observable implements ActionListener, Minimize {
     /**
      * 最小化动画
      */
+    @SneakyThrows
     @Override
     public void minimize() {
         //透明开启效果
-        new Thread() {  //开启窗口动画
-            @SneakyThrows
-            @Override
-            public void run() {
-                float MAXTRANS = 1;  //透明度
+//        new Thread() {  //开启窗口动画
+//            @SneakyThrows
+//            @Override
+//            public void run() {
+        AWTUtilities.setWindowOpacity(back, 0);  //半透明
+        back.setExtendedState(Frame.NORMAL);
+
+        float MAXTRANS = 1;  //透明度
                 while (MAXTRANS >= 0) {
-                    Thread.sleep(4);
+                    Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
                     MAXTRANS -= 0.03;
                 }
                 AWTUtilities.setWindowOpacity(back, 1);  //半透明
-            }
-        }.start();
+//            }
+//        }.start();
     }
 
     /**
@@ -1102,24 +1114,12 @@ public class Home extends Observable implements ActionListener, Minimize {
             public void run() {
                 float MAXTRANS = 0;  //透明度
                 while (MAXTRANS <= 1.0) {
-                    if (iconified) {
-                        AWTUtilities.setWindowOpacity(back, 0);  //半透明
-                        return;
-                    }
-                    Thread.sleep(4);
-                    if (iconified) {
-                        AWTUtilities.setWindowOpacity(back, 0);  //半透明
-                        return;
-                    }
+                    Thread.sleep(2);
                     AWTUtilities.setWindowOpacity(back, MAXTRANS);  //半透明
                     MAXTRANS += 0.03;
-                    if (iconified) {
-                        AWTUtilities.setWindowOpacity(back, 0);  //半透明
-                        return;
-                    }
                 }
                 iconified = false;
-                AWTUtilities.setWindowOpacity(back, 1);  //半透明
+                AWTUtilities.setWindowOpacity(back, 0);  //半透明
             }
         }.start();
     }
