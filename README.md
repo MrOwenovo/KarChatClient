@@ -1,91 +1,84 @@
-# 项目简述
-### 三维五子棋客户端:聊天，三维四子棋AI，本地游玩，远程联机，熄灯模式
+## 项目简述
+### 三维五子棋客户端:聊天，三维四子棋AI，本地游玩，远程联机，熄灯模式 <br>
 客户端开放登陆注册，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项。<br>
 [三维四子棋Web服务器:KarGoBangWebServer](https://github.com/MrOwenovo/KarGoBangWebServer) <br>
 [三维四子棋聊天服务器:KarGoBangServer](https://github.com/MrOwenovo/KarGoBangServer)
----
-##下载地址:
+
+## 下载地址:
 #### 暂时支持下载源码
 #### 三维四子棋游客身份试玩(无法联机):
 #### 首页(...):
 
 
----
 
-##项目内容:
+## 项目内容:
 
-###KarGoBangClient内容:
+### KarGoBangClient内容:
 ![图片2.png](https://s2.loli.net/2022/07/01/M8I6PrvFf7nwizd.png)
-<center><font face="微软雅黑">登录界面</font></center>
+<p align="center">登录界面</p>
 
 ![图片5.png](https://s2.loli.net/2022/07/01/koTCDPqZJ3ydBXj.png)
-<center><font face="微软雅黑">登录中</font></center>
+<p align="center">登录中</p>
 
 ![图片3.png](https://s2.loli.net/2022/07/01/krxocdBFfJm4uy7.png)
-<center><font face="微软雅黑">服务器未连接</font></center>
+<p align="center">服务器未连接</p>
 
 ![图片4.png](https://s2.loli.net/2022/07/01/SaVq1AzwXyHfRIt.png)
-<center><font face="微软雅黑">服务器正在重新连接</font></center>
+<p align="center">服务器正在重新连接</p>
 
 ![图片6.png](https://s2.loli.net/2022/07/01/pmFuf7ZnvLArbJz.png)
-<center><font face="微软雅黑">注册界面</font></center>
+<p align="center">注册界面</p>
 
 ![图片7.png](https://s2.loli.net/2022/07/01/HDoJO4dYbIg3PkW.png)
-<center><font face="微软雅黑">注册中</font></center>
+<p align="center">注册中</p>
 
 ![图片8.png](https://s2.loli.net/2022/07/01/scx8tvqrEG3eZkQ.png)
-<center><font face="微软雅黑">加好友界面-未接收</font></center>
+<p align="center">加好友界面-未接收</p>
 
 ![图片9.png](https://s2.loli.net/2022/07/01/ExCP48gsFLvZoz2.png)
-<center><font face="微软雅黑">加好友界面-已发送</font></center>
+<p align="center">加好友界面-已发送</p>
 
 ![图片10.png](https://s2.loli.net/2022/07/01/Bb96EsTGihLXtkS.png)
-<center><font face="微软雅黑">聊天界面</font></center>
+<p align="center">聊天界面</p>
 
 ![图片11.png](https://s2.loli.net/2022/07/01/RtfZxcYiuB8mpE3.png)
-<center><font face="微软雅黑">更换主题界面</font></center>
+<p align="center">更换主题界面</p>
 
----
-###KarGoBangServer内容:
+<br>
+
+> ### KarGoBangServer内容:
 ![图片1.png](https://s2.loli.net/2022/07/01/h8m5wBVznJXUC2G.png)
-<center><font face="微软雅黑">服务器用户管理界面</font></center>
+<p align="center">服务器用户管理界面</p>
 
----
-###KarGoBangWebServer内容:
+<br>
+
+> ### KarGoBangWebServer内容:
 ![web1.png](https://s2.loli.net/2022/07/01/6Lplj4e1DQzHbUd.png)
-<center><font face="微软雅黑">springSecurity登录界面</font></center>
+<p align="center">springSecurity登录界面</p>
 
 ![web3.png](https://s2.loli.net/2022/07/01/fmsPlG7W8cydizC.png)
-<center><font face="微软雅黑">三维四子棋-AI,本地,联机选择</font></center>
+<p align="center">维四子棋-AI,本地,联机选择</p>
 
 ![wev4.png](https://s2.loli.net/2022/07/01/rN7jUsVJqiX2Fbz.png)
-<center><font face="微软雅黑">三维四子棋AI-困难,中等,简单选择</font></center>
+<p align="center">三维四子棋AI-困难,中等,简单选择</p>
 
 ![web5.png](https://s2.loli.net/2022/07/01/xs9tub6zK5LFXPV.png)
-<center><font face="微软雅黑">自定义联机界面</font></center>
+<p align="center">自定义联机界面</p>
 
 ![web7.png](https://s2.loli.net/2022/07/01/C9EMjskc2Iz7YXh.png)
-<center><font face="微软雅黑">联机创建房间-加密</font></center>
+<p align="center">联机创建房间-加密</p>
 
 ![web8.png](https://s2.loli.net/2022/07/01/7dyaiexk65EslnP.png)
-<center><font face="微软雅黑">联机创建房间成功-等待对方加入</font></center>
+<p align="center">联机创建房间成功-等待对方加入</p>
 
 ![wbe2.png](https://s2.loli.net/2022/07/01/bIhHDMVkUL2Z5Tw.png)
-<center><font face="微软雅黑">三维四子棋加载界面</font></center>
+<p align="center">三维四子棋加载界面</p>
 
 ![web9.png](https://s2.loli.net/2022/07/01/8oAu592ghDTQMsx.png)
-<center><font face="微软雅黑">三维四子棋操作提示</font></center>
+<p align="center">三维四子棋操作提示</p>
 
 ![web10.png](https://s2.loli.net/2022/07/01/UcNkqfzlKa5B4JV.png)
-<center><font face="微软雅黑">AI游戏过程画面</font></center>
-
-
-
-
-
-
-
-
+<p align="center">AI游戏过程画面</p>
 
 
 <br>
@@ -101,8 +94,9 @@
 <br> 
 
 
->将这里的VM选项填入
-`-Djava.awt.headless=false`
+>将这里的VM选项填入 <br>
+
+    -Djava.awt.headless=false
 ### 2.解决发送邮件验证码报错(jdk默认关闭SSLv3导致发送失败，取消就好):
 
 >找到 `jdk->jre/lib/security/java.security`
@@ -152,27 +146,42 @@
 ---
 # 程序运行顺序：
 ### 连接本地聊天服务器:
-> 1.运行`src/main/java下的com.ZLchat.server.EchoThreadServer.java`
-> 来启动服务器，当弹出管理用户动态表格即为启动成功。 <br>
-> *(如果显示xx端口占用,这里以`8080`为例:
-> 根据端口号查找进程：` netstat -aon |findstr 8080`
-> 杀死该进程: `taskkill -f -pid 8080`)*
+功能：
+ - 与前端swing桌面客户端的视图接口对接，完成聊天加好友等功能;
+ - 实时检测在线用户及其ip及端口
+ - 实时输出运行日志
+ 
+运行`src/main/java下的com.ZLchat.server.EchoThreadServer.java`
+来启动服务器，当弹出管理用户动态表格即为启动成功。 <br>
+如果显示xx端口占用,这里以`8080`为例:
+根据端口号查找进程：
+
+     netstat -aon |findstr 8080
+     
+ 杀死该进程: 
+
+     taskkill -f -pid 8080
+    
 ###  连接云聊天服务器:
-> 将`src/main/java/com/ZLchat/util/ComponentUtil/Controller/Controller.java`类中 **52行** 的 <br>
->  `clien = new Socket("localhost", 8888)` 改为 `clien = new Socket("103.46.128.46", 59614)` <br>
-> 云服务器ip:`103.46.128.46`  云服务器端口:`59614`
+ 将`src/main/java/com/ZLchat/util/ComponentUtil/Controller/Controller.java`类中 **52行** 的 <br>
+  
+     clien = new Socket("localhost", 8888)
+改为 
+     
+     clien = new Socket("103.46.128.46", 59614) <br>
+ 云服务器ip:`103.46.128.46`  云服务器端口:`59614`
 ###  连接本地Web服务器(默认连接云端):
-> 功能：
-> - 完成三维四子棋选择AI，本地，联机的选择,即所有网页部分
-> - 加入springSecurity验证登录，对游客开放AI，本地游戏和熄灯游戏，联机游戏下载客户端后开放
-> - 完成联机与后端接口的对接 
-> - 完成首页的展示,开放jar包下载 <br>
+ 功能：
+ - 完成三维四子棋选择AI，本地，联机的选择,即所有网页部分
+ - 加入springSecurity验证登录，对游客开放AI，本地游戏和熄灯游戏，联机游戏下载客户端后开放
+ - 完成联机与后端接口的对接 
+ - 完成首页的展示,开放jar包下载 <br>
 
 下载地址: [三维四子棋Web服务器:KarGoBangWebServer](https://github.com/MrOwenovo/KarGoBangWebServer) <br>
 
 ### 启动客户端:
-> 运行`src/main/java下的com.ZLchat.ZLChatSpringBootApplication.java`
-> 来启动客户端程序，要注意配置好相关依赖和配置。
+ 运行`src/main/java下的com.ZLchat.ZLChatSpringBootApplication.java`
+ 来启动客户端程序，要注意配置好相关依赖和配置。
 
 <br>
 
@@ -186,14 +195,13 @@
 
 <br>
 
----
 
 ## 实体层:entity
 >从数据库中获取的实体类
 
 <br>
 
----
+
 
 ## 服务层:service
 >- 接口部分:
@@ -209,7 +217,7 @@
 
 <br>
 
----
+
 
 ## 工具类:util
 >- `BeansUtil`: 配置spring的IOC容器的配置类，内涵mybatis配置
@@ -252,24 +260,24 @@
 >- `SoundUtil`: 音乐处理类，某些类功能未完善好，光使用PlaySound播放MP3
 >- `PlaySound`:播放音乐
 
->****Constant****:<br>常量类，包括`spring`上下文的`context`,`Controller`用到的是否进行操作的boolean标志，存储的用户名密码，存储的好友列表等等，以及后台线程是否执行完的记录
+> ## Constant:<br>常量类，包括`spring`上下文的`context`,`Controller`用到的是否进行操作的boolean标志，存储的用户名密码，存储的好友列表等等，以及后台线程是否执行完的记录
 
 <br>
 
----
 
-##视图层:view
+
+## 视图层:view
 >- `LoadingHome`:登录界面
 >- `Home`: 主界面
 >- `BlogWindow`：博客窗口界面
 
    <br>
 
----
-##主程序:ZLChatSpringBootApplication
->通过`Controller`的***`start`***方法开始
+
+## 主程序:ZLChatSpringBootApplication
+>通过`Controller`的`start`方法开始
 
 <br>
 
----
+
 
