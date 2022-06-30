@@ -1,16 +1,18 @@
 # 项目简述
 ### 三维五子棋客户端，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项。
+[三维四子棋Web服务器:KarGoBangWebServer](https://github.com/MrOwenovo/KarGoBangWebServer) <br>
+[三维四子棋聊天服务器:KarGoBangServer](https://github.com/MrOwenovo/KarGoBangServer)
 ---
 
 <br>
 
 # 运行项目配置要求！(运行顺序在后面)：
 ### 1.解决SpringBoot启动swingUI界面报错:
->![img.png](src/main/resources/readMe/tip1.png)
+>![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip1.png)
 
 <br>
 
->![img.png](src/main/resources/readMe/tip2.png)
+>![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip2.png)
 
 <br> 
 
@@ -27,23 +29,23 @@
 >改为：jdk.tls.disabledAlgorithms=RC4, DES, MD5withRSA, \
 
 ### 3.检查jdk环境和maven环境:
-> ![img.png](src/main/resources/readMe/tip3.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip3.png)
 >
 <br> 
 
-> ![img.png](src/main/resources/readMe/tip4.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip4.png)
 
 <br> 
 
-> ![img.png](src/main/resources/readMe/tip5.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip5.png)
 
 <br> 
 
-> ![img.png](src/main/resources/readMe/tip6.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip6.png)
 
 <br> 
 
-> ![img.png](src/main/resources/readMe/tip7.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip7.png)
 
 
 <br> 
@@ -51,17 +53,17 @@
 
 
 ### 4.如果显示找不到xx包，但是已经通过maven导入:
-> ![img.png](src/main/resources/readMe/tip8.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip8.png)
 
 
 <br> 
 
-> ![img.png](src/main/resources/readMe/tip9.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip9.png)
 
 
 <br> 
 
-> ![img.png](src/main/resources/readMe/tip10.png)
+> ![img.png](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/tip10.png)
 
 
 ---
@@ -140,7 +142,7 @@
 >    + LoadingBack: 前后速度一致的圆形加载条，只有一条，用于组成LoadingHome
 >    + LoadingHome:登录成功进入主界面的加载界面，由3个半径和颜色不同的LoadingBack组成
        >    <br>LoadingHome:
-       >    ![LoadingHome](src/main/resources/readMe/loading.png)
+       >    ![LoadingHome](https://github.com/MrOwenovo/KarGoBangClient/tree/master/src/main/resources/readMe/loading.png)
 >    + ServerLoading:小范围且加入图片的加载条，如主界面服务器断开连接时左上角头像的加载条
 >- **Controller**: 驱动程序运行的驱动类
 >- EmailUtil: 发送邮件类，需要查看下面的注意事项进行配置
