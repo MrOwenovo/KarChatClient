@@ -81,6 +81,12 @@
 ![web10.png](https://s2.loli.net/2022/07/01/UcNkqfzlKa5B4JV.png)
 <p align="center">AI游戏过程画面</p>
 
+![屏幕截图 2022-07-01 231834.png](https://s2.loli.net/2022/07/01/dRI3zyiGNftx82j.png)
+<p align="center">三维四子棋-熄灯模式操作提示</p>
+
+![屏幕截图 2022-07-01 233450.png](https://s2.loli.net/2022/07/01/eJLm6YNGiDZMdQI.png)
+<p align="center">熄灯模式游戏过程画面</p>
+
 
 <br>
 
