@@ -491,7 +491,7 @@ public class Home extends Observable implements ActionListener, Minimize {
                 @SneakyThrows
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "https://f01-1309918226.file.myqcloud.com/92/2022/06/14/KarGoBangXiDeng/loading2.html?x-cos-traffic-limit=819200");
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "https://f01-1309918226.file.myqcloud.com/13/2022/07/01/KarGobang-xideng/loading2.html?x-cos-traffic-limit=819200");
                     Home.back.setExtendedState(JFrame.ICONIFIED);
                 }
             });
