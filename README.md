@@ -1,6 +1,7 @@
 ## 项目简述
 ### 三维五子棋客户端:聊天，三维四子棋AI，本地游玩，远程联机，熄灯模式 <br>
-客户端开放登陆注册，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项。<br>
+- springBoot项目,前端为java swing
+- 客户端开放登陆注册，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项。<br>
 [三维四子棋Web服务器:KarGoBangWebServer](https://github.com/MrOwenovo/KarGoBangWebServer) <br>
 [三维四子棋聊天服务器:KarGoBangServer](https://github.com/MrOwenovo/KarGoBangServer)
 
