@@ -1,15 +1,9 @@
 ## 项目简述
-### 三维五子棋客户端:聊天，三维四子棋AI，本地游玩，远程联机，熄灯模式 <br>
+### 聊天客户端:支持离线聊天 <br>
 - springBoot项目,前端为java swing
-- 客户端开放登陆注册，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项。<br>
-[三维四子棋Web服务器:KarGoBangWebServer](https://github.com/MrOwenovo/KarGoBangWebServer) <br>
-[三维四子棋聊天服务器:KarGoBangServer](https://github.com/MrOwenovo/KarGoBangServer)
-
-## 下载地址:
-#### 暂时支持下载源码
-#### 三维四子棋游客身份试玩(无法联机):
-#### 首页(...):
-
+- 客户端开放登陆注册，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项，现已单独分出运行。<br>
+[四子棋地址:https://4l1271j523.zicp.fun/](https://4l1271j523.zicp.fun/) <br>
+[聊天后端服务器:KarGoBangServer](https://github.com/MrOwenovo/KarGoBangServer)
 
 
 ## 项目内容:
@@ -53,42 +47,6 @@
 
 <br>
 
-> ### KarGoBangWebServer内容:
-![web1.png](https://s2.loli.net/2022/07/01/6Lplj4e1DQzHbUd.png)
-<p align="center">springSecurity登录界面</p>
-
-![web3.png](https://s2.loli.net/2022/07/01/fmsPlG7W8cydizC.png)
-<p align="center">维四子棋-AI,本地,联机选择</p>
-
-![wev4.png](https://s2.loli.net/2022/07/01/rN7jUsVJqiX2Fbz.png)
-<p align="center">三维四子棋AI-困难,中等,简单选择</p>
-
-![web5.png](https://s2.loli.net/2022/07/01/xs9tub6zK5LFXPV.png)
-<p align="center">自定义联机界面</p>
-
-![web7.png](https://s2.loli.net/2022/07/01/C9EMjskc2Iz7YXh.png)
-<p align="center">联机创建房间-加密</p>
-
-![web8.png](https://s2.loli.net/2022/07/01/7dyaiexk65EslnP.png)
-<p align="center">联机创建房间成功-等待对方加入</p>
-
-![wbe2.png](https://s2.loli.net/2022/07/01/bIhHDMVkUL2Z5Tw.png)
-<p align="center">三维四子棋加载界面</p>
-
-![web9.png](https://s2.loli.net/2022/07/01/8oAu592ghDTQMsx.png)
-<p align="center">三维四子棋操作提示</p>
-
-![web10.png](https://s2.loli.net/2022/07/01/UcNkqfzlKa5B4JV.png)
-<p align="center">AI游戏过程画面</p>
-
-![屏幕截图 2022-07-01 231834.png](https://s2.loli.net/2022/07/01/dRI3zyiGNftx82j.png)
-<p align="center">三维四子棋-熄灯模式操作提示</p>
-
-![屏幕截图 2022-07-01 233450.png](https://s2.loli.net/2022/07/01/eJLm6YNGiDZMdQI.png)
-<p align="center">熄灯模式游戏过程画面</p>
-
-
-<br>
 
 # 运行客户端源码配置要求！(运行顺序在后面)：
 ### 1.解决SpringBoot启动swingUI界面报错:
@@ -176,15 +134,8 @@
 改为 
      
      clien = new Socket("103.46.128.46", 59614) <br>
- 云服务器ip:`103.46.128.46`  云服务器端口:`59614`
-###  连接本地Web服务器(默认连接云端):
- 功能：
- - 完成三维四子棋选择AI，本地，联机的选择,即所有网页部分
- - 加入springSecurity验证登录，对游客开放AI，本地游戏和熄灯游戏，联机游戏下载客户端后开放
- - 完成联机与后端接口的对接 
- - 完成首页的展示,开放jar包下载 <br>
+ 云服务器ip:`103.46.128.46`  云服务器端口:`59614` (暂时关闭)
 
-下载地址: [三维四子棋Web服务器:KarGoBangWebServer](https://github.com/MrOwenovo/KarGoBangWebServer) <br>
 
 ### 启动客户端:
  运行`src/main/java下的com.ZLchat.ZLChatSpringBootApplication.java`
