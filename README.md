@@ -2,13 +2,13 @@
 ### 聊天客户端:支持离线聊天 <br>
 - springBoot项目,前端为java swing
 - 客户端开放登陆注册，登录注册进去后，有左侧为聊天系统，右侧为三维五子棋（其实是四子棋）的AI，本地，联机以及熄灯玩法，还有普通五子棋的选项，现已单独分出运行。<br>
-[四子棋地址:https://4l1271j523.zicp.fun/](https://4l1271j523.zicp.fun/) <br>
+[四子棋地址:https://bbzlhmsh3.neiwangyun.net/](https://bbzlhmsh3.neiwangyun.net/) <br>
 [聊天后端服务器:KarGoBangServer](https://github.com/MrOwenovo/KarGoBangServer)
 
 
 ## 项目内容:
 
-### KarGoBangClient内容:
+### KarChatClient内容:
 ![图片2.png](https://s2.loli.net/2022/07/01/M8I6PrvFf7nwizd.png)
 <p align="center">登录界面</p>
 
